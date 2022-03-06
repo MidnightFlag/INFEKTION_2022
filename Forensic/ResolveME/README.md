@@ -23,7 +23,7 @@ N3oWind
 
 Pour commencer, on ouvre la capture avec wireshark :
 
-![alt](images/wireshark.png)
+![alt](Images/wireshark.png)
 
 Ensuite afin d'avoir une vue d'ensemble, j'utilise la commande :
 
@@ -36,7 +36,7 @@ Cette commande nous donne plusieurs indications :
 - La taille des trames
 - L'arborescence des couches de protcols.
 
-![alt](images/1.png)
+![alt](Images/1.png)
 
 Dans les protocols interessants, on retrouve : 
 
@@ -51,7 +51,7 @@ On s'aperçoit que parmis les 12 trames HTTP, il y a 1 trame dans laquelle se tr
 
 Dans wireshark fichier > exporter objet > HTTP
 
-![alt](images/objethttp.png)
+![alt](Images/objethttp.png)
 
 On a notre première partie !!!
 En regardant de plus pret, on reconnait l'encodage utiliser comme étant de la base64
@@ -60,7 +60,7 @@ On décide donc de passer le debut du fichier dans cyberchef afin qu'il puisse p
 
 Ensuite, on essaye de trouver les autres partie...
 
-![alt](images/a-few-moments-later.gif)
+![alt](Images/a-few-moments-later.gif)
 
 On se rend compte qu'il y a de la base64 dans certaine requete DNS.
 On essaye de les extraires grâce à Tshark en prenant soin de supprimer les doublons et de prendre uniquement la base64 qui se trouve à gauche du domain "midnightflag.fr".
@@ -90,11 +90,11 @@ fichier.close()
 
 **Résultat de la commande** :
 
-![alt](images/python.png) 
+![alt](Images/python.png) 
 
 Il faut maintenant reconstruire notre image en faisant attention de remettre les parties dans le bon ordre :
 
-![alt](images/reconstruction.png)
+![alt](Images/reconstruction.png)
 
 Et enfin pour finir, il nous reste plus qu'à enlever les sauts à la ligne et décoder la base64 :
 
