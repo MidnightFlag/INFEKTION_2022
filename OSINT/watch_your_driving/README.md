@@ -22,7 +22,7 @@ x
 
 ## <u>Solution</u> :
 
-On commcence directement en recherchant la plaque sur google ou directement sur evaluer-chauffeur.fr
+On commence directement en recherchant la plaque sur google ou directement sur evaluer-chauffeur.fr
 
 ![](./photos/plaque.png)
 
