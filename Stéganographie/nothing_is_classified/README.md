@@ -5,8 +5,8 @@ Stéganographie / Facile
 
 ## <u>**Description**</u> :
 
-Un de nos agent a trouvé un fichier classifié sur un des ordinateurs d'un camp ennemi. 
-Examinez ce fichier et trouvez le secret qu'il renferme.
+Un de nos agent a trouvé un fichier classifié sur un des ordinateurs d'un camp ennemi.  
+Examinez ce fichier et trouvez le secret qu'il renferme.  
 Format : MCTF{flag}
 
 ## <u>**Hints**</u> :
