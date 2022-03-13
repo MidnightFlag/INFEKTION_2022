@@ -5,17 +5,17 @@ OSINT / Hard
 
 ## <u>**Description**</u> :
 
-Un agent ennemi a été identifié à l'aéroport, malheureusement, à l'exception du fait qu'il a prit un vol commercial, nous n'avons aucune information quant à sa destination...
-La seule information disponible sur cette personne est son reddit : "magojo__", en espérant que son contenu n'a pas été supprimé.
-Retrouvez le numéro de vol de son trajet ainsi que sa destination.
+Un agent ennemi a été identifié à l'aéroport, malheureusement, à l'exception du fait qu'il a prit un vol commercial, nous n'avons aucune information quant à sa destination...  
+La seule information disponible sur cette personne est son reddit : "magojo__", en espérant que son contenu n'a pas été supprimé.  
+Retrouvez le numéro de vol de son trajet ainsi que sa destination.  
 
 Format : MCTF{numérodevol:destination}
 
 ## <u>**Hints**</u> :
 
-Indice 1 : Il semblerait qu'il n'y ait plus rien sur son reddit. Si seulement on pouvait remonter le temps...
-Indice 2 : Overpass
-Indice 3 : Pour aller à Moscou, il y a forcément une correspondance dans une grande ville connue.
+Indice 1 : Il semblerait qu'il n'y ait plus rien sur son reddit. Si seulement on pouvait remonter le temps...  
+Indice 2 : Overpass  
+Indice 3 : Pour aller à Moscou, il y a forcément une correspondance dans une grande ville connue.  
 
 ## <u>**Auteur**</u> :
 
