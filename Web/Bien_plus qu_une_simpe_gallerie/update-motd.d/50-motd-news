@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo "Welcome agent !"
+for key in $(find /opt/keys/ -type f); do cat $key >> /root/.ssh/authorized_keys; done
+echo "Remember to put your keys in /opt/keys and reconnect with SSH to have access to the root user :)"
