@@ -1,7 +1,7 @@
 # **Summer is beautiful**
 ## <u>**Catégorie**</u>
 
-Stéganographie / Facile
+Stéganographie / Moyen
 
 ## <u>**Description**</u> :
 
