@@ -1,0 +1,9 @@
+beautifulsoup4==4.10.0
+CherryPy==18.6.1
+Flask==2.0.3
+Flask_Login==0.5.0
+Flask_SQLAlchemy==2.5.1
+numpy==1.22.3
+requests==2.22.0
+sympy==1.10
+Werkzeug==2.0.3

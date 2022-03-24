@@ -1,0 +1,27 @@
+
+<title>БГК</title>
+<form method="POST" action="/login">
+<link href="../../static/css/login.css" rel="stylesheet" />
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+    <!-- Tabs Titles -->
+    <h2 class="active" ><a href="/login">Sign In</a></h2>
+    <h2 class="inactive underlineHover"><a href="/signup">Sign Up</a></h2>
+
+
+    <!-- Login Form -->
+    <form method="post" action="/login">
+      <input type="text" id="login" class="fadeIn second" name="name" placeholder="login">
+      <input type="password" id="password" class="fadeIn third" name="password" placeholder="password">
+      <input type="submit" class="fadeIn fourth" value="login">
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+          <div class="notification is-danger">
+              {{ messages[0] }}
+          </div>
+      {% endif %}
+      {% endwith %}
+    </form>
+
+  </div>
+</div>

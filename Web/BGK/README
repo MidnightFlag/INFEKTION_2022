@@ -1,0 +1,5 @@
+Pour changer le port d'écoute du serveur web modifier le dans le fichier start.sh.
+Pour lancer le chall, "sudo docker buid -t nomduchall ." (depuis le dossier web-sapwnzii)
+Puis "sudo docker run -it nomduchall"
+
+La bise les copains <3

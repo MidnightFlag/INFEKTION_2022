@@ -1,0 +1,25 @@
+<title>БГК</title>
+<link href="../../static/css/login.css" rel="stylesheet" />
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+    <!-- Tabs Titles -->
+    <h2 class="inactive underlineHover" ><a href="/login">Sign In</a></h2>
+    <h2 class="active"><a href="/signup">Sign Up</a></h2>
+
+    <!-- Login Form -->
+    <form method="post" action="/signup">
+      <input type="text" id="login" class="fadeIn second" name="name" placeholder="name">
+      <input type="text" id="email" class="fadeIn third" name="email" placeholder="email">
+      <input type="password" id="password" class="fadeIn third" name="password" placeholder="password">
+      <input type="submit" class="fadeIn fourth" value="Signup">
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+          <div class="notification is-danger">
+              {{ messages[0] }}. Go to <a href="{{ url_for('auth.login') }}">login page</a>.
+          </div>
+      {% endif %}
+      {% endwith %}
+    </form>
+
+  </div>
+</div>
