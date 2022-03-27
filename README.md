@@ -17,9 +17,9 @@ Github  : https://github.com/MidnightFlag
 
 | Name                                                             | Category      | Author     | Score  | Difficulty |
 |------------------------------------------------------------------|:-------------:|:----------:|:------:|:----------:|
-| [Something hidden](Crypto/Something_hidden)                      | Crypto        | 0xSysr3ll  | ?      |Easy        |
-| [Weird base message](Crypto/weird_base_message)                  | Crypto        | 0xSysr3ll  | ?      |Easy        |
-| [Tout droit vers le point](Crypto/tout-droit-vers-le-point)      | Crypto        | ZarKyo     | ?      |Easy        |
+| [Something hidden](Cryptographie/Something_hidden)                      | Crypto        | 0xSysr3ll  | ?      |Easy        |
+| [Weird base message](Cryptographie/weird_base_message)                  | Crypto        | 0xSysr3ll  | ?      |Easy        |
+| [Tout droit vers le point](Cryptographie/tout-droit-vers-le-point)      | Crypto        | ZarKyo     | ?      |Easy        |
 | [NoSpaces.](Misc/No_space)                                       | Misc          | Processus Thief     | ?     |Easy|
 | [Encoded strings](Misc/encoded_strings)                          | Misc          | x          | ?      |Easy        |
 | [Will the big wheel](OSINT/Will_the_big_wheel)                   | OSINT         | A0d3n      | ?      |Easy        |
@@ -28,8 +28,8 @@ Github  : https://github.com/MidnightFlag
 | [Craft it yourself](Web/craft_it_yourself)                       | Web           | Arathor    | ?      |Easy        |       
 | [Bien plus qu'une simple gallerie](Web/Bien_plus_qu_une_simpe_gallerie) | Web    | 0xSysr3ll  | ?      |Easy?       |       
 | [BGK](Web/BGK)                                                   | Web           | SpawnZii   | ?      |Hard        |            
-| [Le jeton de Catwoman](Network/le_jeton_de_catwoman)             | Network       | Processus Thief     | ?    |Easy |
-| [Private network isn't safe](Network/private_network_isnt_safe)  | Network       | x          | ?      |Easy        |
+| [Le jeton de Catwoman](Network/catwoman)                         | Réseau        | Processus Thief     | ?    |Easy |
+| [Private network isn't safe](Network/private_network_isnt_safe)  | Réseau        | x          | ?      |Easy        |
 | [Not that hard](Reverse/Not_that_hard)                           | Reverse       | ToRr0aN    | ?      |Easy        |
 | [Rocket launch validator](Reverse/rocket_launch_validator)       | Reverse       | SeulAParis | ?      |Easy        |
 | [Challenge de recrutement au KGB](Reverse/challenge_recrutement_kgb) | Reverse   | SeulAParis | ?      |?           |
