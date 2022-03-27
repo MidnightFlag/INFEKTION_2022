@@ -17,9 +17,9 @@ Github  : https://github.com/MidnightFlag
 
 | Name                                                             | Category      | Author     | Score  | Difficulty |
 |------------------------------------------------------------------|:-------------:|:----------:|:------:|:----------:|
-| [Something hidden](Cryptographie/Something_hidden)                      | Crypto        | 0xSysr3ll  | ?      |Easy        |
-| [Weird base message](Cryptographie/weird_base_message)                  | Crypto        | 0xSysr3ll  | ?      |Easy        |
-| [Tout droit vers le point](Cryptographie/tout-droit-vers-le-point)      | Crypto        | ZarKyo     | ?      |Easy        |
+| [Something hidden](Cryptographie/Something_hidden)               | Crypto        | 0xSysr3ll  | ?      |Easy        |
+| [Weird base message](Cryptographie/weird_base_message)           | Crypto        | 0xSysr3ll  | ?      |Easy        |
+| [Tout droit vers le point](Cryptographie/tout-droit-vers-le-point)| Crypto        | ZarKyo     | ?      |Easy        |
 | [NoSpaces.](Misc/No_space)                                       | Misc          | Processus Thief     | ?     |Easy|
 | [Encoded strings](Misc/encoded_strings)                          | Misc          | x          | ?      |Easy        |
 | [Will the big wheel](OSINT/Will_the_big_wheel)                   | OSINT         | A0d3n      | ?      |Easy        |
