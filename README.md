@@ -28,8 +28,8 @@ Github  : https://github.com/MidnightFlag
 | [Craft it yourself](Web/craft_it_yourself)                       | Web           | Arathor    | ?      |Easy        |       
 | [Bien plus qu'une simple gallerie](Web/Bien_plus_qu_une_simpe_gallerie) | Web    | 0xSysr3ll  | ?      |Easy?       |       
 | [BGK](Web/BGK)                                                   | Web           | SpawnZii   | ?      |Hard        |            
-| [Le jeton de Catwoman](Network/catwoman)                         | Réseau        | Processus Thief     | ?    |Easy |
-| [Private network isn't safe](Network/private_network_isnt_safe)  | Réseau        | x          | ?      |Easy        |
+| [Le jeton de Catwoman](Network/le_jeton_de_catwoman)             | Netowrk       | Processus Thief     | ?    |Easy |
+| [Private network isn't safe](Network/private_network_isnt_safe)  | Network       | x          | ?      |Easy        |
 | [Not that hard](Reverse/Not_that_hard)                           | Reverse       | ToRr0aN    | ?      |Easy        |
 | [Rocket launch validator](Reverse/rocket_launch_validator)       | Reverse       | SeulAParis | ?      |Easy        |
 | [Challenge de recrutement au KGB](Reverse/challenge_recrutement_kgb) | Reverse   | SeulAParis | ?      |?           |
