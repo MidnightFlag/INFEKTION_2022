@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="hhttps://i.ibb.co/hBS8wpj/MCTF.png" alt="test"/>
-</p>
+![banner](https://i.ibb.co/hBS8wpj/MCTF.png)
 
 # MidnightFlag  - INFEKTIONCTF
 
