@@ -19,14 +19,15 @@ Github  : https://github.com/MidnightFlag
 |------------------------------------------------------------------|:-------------:|:----------:|:------:|:----------:|
 | [Something hidden](Cryptographie/Something_hidden)               | Crypto        | 0xSysr3ll  | ?      |Easy        |
 | [Weird base message](Cryptographie/weird_base_message)           | Crypto        | 0xSysr3ll  | ?      |Easy        |
-| [Tout droit vers le point](Cryptographie/Tout-droit-vers-le-point)| Crypto        | ZarKyo     | ?      |Easy        |
-| [NoSpaces.](Misc/No_space)                                       | Misc          | Processus Thief     | ?     |Easy|
+| [Tout droit vers le point](Cryptographie/Tout-droit-vers-le-point)| Crypto        | ZarKyo    | ?      |Easy        |
 | [Encoded strings](Misc/encoded_strings)                          | Misc          | x          | ?      |Easy        |
+| [NoSpaces.](Misc/No_space)                                       | Misc          | Processus Thief     | ?     |Easy|
+| [DansTonChattr](Misc/dans_ton_chattr)                            | Misc          | Processus Thief     | ?     |Easy|
 | [Will the big wheel](OSINT/Will_the_big_wheel)                   | OSINT         | A0d3n      | ?      |Easy        |
 | [Watch your driving](OSINT/watch_your_driving)                   | OSINT         | x          | ?      |Medium      |
 | [From Russia with love](OSINT/from_russia_with_love)             | OSINT         | x          | ?      |Hard        |
 | [Craft it yourself](Web/craft_it_yourself)                       | Web           | Arathor    | ?      |Easy        |       
-| [Bien plus qu'une simple gallerie](Web/Bien_plus%20qu_une_simpe_gallerie) | Web    | 0xSysr3ll  | ?      |Easy?       |       
+| [Bien plus qu'une simple gallerie](Web/Bien_plus%20qu_une_simpe_gallerie) | Web    | 0xSysr3ll| ?      |Easy?       |       
 | [BGK](Web/BGK)                                                   | Web           | SpawnZii   | ?      |Hard        |            
 | [Le jeton de Catwoman](Réseau/le_jeton_de_catwoman)              | Network       | Processus Thief     | ?    |Easy |
 | [Private network isn't safe](Réseau/private_network_isnt_safe)   | Network       | x          | ?      |Easy        |
