@@ -46,4 +46,4 @@ Github  : https://github.com/MidnightFlag
 | [Too well hidden for you](Stéganographie/Too_well_hidden_for_you) | Steganography | Arathor    | ?      |Medium     |
 
 
-**Total : 26 challenges (? points)**
+**Total : 27 challenges (? points)**
