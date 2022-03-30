@@ -39,7 +39,7 @@ Github  : https://github.com/MidnightFlag
 | [ResolveMe](Forensic/ResolveME)                                  | Forensic      | N3oWind    | ?      |  Easy      |
 | [Sur Écoute](Forensic/Sur_écoute_Réseau_Abyss_Watcher)           | Forensic      | Abyss Watcher| ?    |Hard        |
 | [Trousse social](Android/Trousse_social)                         | Android       | ToRr0aN    | ?      |  Easy      |
-| [sPoNs0r_PaGe](Stéganographie/sPoNs0r_PaGe)                      | Steganography | x          | ?      |Easy        |
+| [sPoNs0r PaGe](Stéganographie/sPoNs0r_PaGe)                      | Steganography | x          | ?      |Easy        |
 | [Nothing is classified](Stéganographie/nothing_is_classified)    | Steganography | x          | ?      |Easy        |
 | [A blurred text is illegible](Stéganographie/a_blurred_text_is_illegible) | Steganography | x | ?      | Easy       |
 | [Can you hear me?](Stéganographie/Can_You_Hear_Me)               | Steganography | A0d3n      | ?      |Easy/Medium |
