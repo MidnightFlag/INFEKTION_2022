@@ -31,12 +31,12 @@ Github  : https://github.com/MidnightFlag
 | [BGK](Web/BGK)                                                   | Web           | SpawnZii   | ?      |Hard        |            
 | [Le jeton de Catwoman](Réseau/le_jeton_de_catwoman)              | Network       | Processus Thief     | ?    |Easy |
 | [Private network isn't safe](Réseau/private_network_isnt_safe)   | Network       | x          | ?      |Easy        |
-| [Not that hard](Reverse/Not_that_hard)                           | Reverse       | ToRr0aN    | ?      |Easy        |
+| [Not that hard](Reverse/Not_that_hard)                           | Reverse       | ToRr0aN    | ?      |Medium        |
 | [Rocket launch validator](Reverse/rocket_launch_validator)       | Reverse       | SeulAParis | ?      |Easy        |
 | [Challenge de recrutement au KGB](Reverse/challenge_recrutement_kgb) | Reverse   | SeulAParis | ?      |?           |
 | [Corruption](Reverse/corruption)                                 | Reverse       | SeulAParis | ?      |?           |
 | [ResolveMe](Forensic/ResolveME)                                  | Forensic      | N3oWind    | ?      |  Easy      |
-| [Sur Écoute](Forensic/Sur_écoute_Réseau_Abyss_Watcher)           | Forensic    | Abyss Watcher| ?      |Medium/Hard?|
+| [Sur Écoute](Forensic/Sur_écoute_Réseau_Abyss_Watcher)           | Forensic    | Abyss Watcher| ?      |Hard|
 | [Trousse social](Android/Trousse_social)                         | Android       | ToRr0aN    | ?      |  Easy      |
 | [Nothing is classified](Stéganographie/nothing_is_classified)     | Steganography | x          | ?      |Easy       |
 | [A blurred text is illegible](Stéganographie/a_blurred_text_is_illegible) | Steganography | x  | ?      | Easy      |
