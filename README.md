@@ -23,6 +23,7 @@ Github  : https://github.com/MidnightFlag
 | [Encoded strings](Misc/encoded_strings)                          | Misc          | x          | ?      |Easy        |
 | [NoSpaces.](Misc/No_space)                                       | Misc          | Processus Thief     | ?     |Easy|
 | [DansTonChattr](Misc/dans_ton_chattr)                            | Misc          | Processus Thief     | ?     |Easy|
+| [Look more closely](OSINT/look_more_closely)                   | OSINT         | ToRr0aN      | ?      |Easy        |
 | [Will the big wheel](OSINT/Will_the_big_wheel)                   | OSINT         | A0d3n      | ?      |Easy        |
 | [Watch your driving](OSINT/watch_your_driving)                   | OSINT         | x          | ?      |Medium      |
 | [From Russia with love](OSINT/from_russia_with_love)             | OSINT         | x          | ?      |Hard        |
