@@ -22,6 +22,7 @@ Github  : https://github.com/MidnightFlag
 | [Tout droit vers le point](Cryptographie/Tout-droit-vers-le-point)| Crypto       | ZarKyo     | ?      |Easy        |
 | [Leakeyd](Cryptographie/Leakeyd)                                 | Crypto        | Arathor    | ?      |Easy        |  
 | [Encoded strings](Misc/encoded_strings)                          | Misc          | x          | ?      |Easy        |
+| [A blurred text is illegible](Misc/a_blurred_text_is_illegible)  | Steganography | x          | ?      | Easy       |
 | [NoSpaces.](Misc/No_space)                                       | Misc          | Processus Thief     | ?     |Easy|
 | [DansTonChattr](Misc/dans_ton_chattr)                            | Misc          | Processus Thief     | ?     |Easy|
 | [Look more closely](OSINT/look_more_closely)                     | OSINT         | ToRr0aN    | ?      |Easy        |
@@ -43,7 +44,6 @@ Github  : https://github.com/MidnightFlag
 | [Admin panel](Android/Admin_panel)                               | Android       | Arathor    | ?      |  Easy      |
 | [sPoNs0r PaGe](Stéganographie/sPoNs0r_PaGe)                      | Steganography | x          | ?      |Easy        |
 | [Nothing is classified](Stéganographie/nothing_is_classified)    | Steganography | x          | ?      |Easy        |
-| [A blurred text is illegible](Stéganographie/a_blurred_text_is_illegible) | Steganography | x | ?      | Easy       |
 | [Can you hear me?](Stéganographie/Can_You_Hear_Me)               | Steganography | A0d3n      | ?      |Easy/Medium |
 | [Summer is beautiful](Stéganographie/summer_is_beautiful)        | Steganography | x          | ?      |Medium      |
 | [Too well hidden for you](Stéganographie/Too_well_hidden_for_you)| Steganography | Arathor    | ?      |Medium      |
