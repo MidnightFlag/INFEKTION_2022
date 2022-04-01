@@ -1,7 +1,7 @@
 # **A blurred text is illegible**
 ## <u>**Catégorie**</u>
 
-Stéganographie / Facile
+Misc / Facile
 
 ## <u>**Description**</u> :
 
