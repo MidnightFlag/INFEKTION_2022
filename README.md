@@ -20,6 +20,7 @@ Github  : https://github.com/MidnightFlag
 | [Something hidden](Cryptographie/Something_hidden)               | Crypto        | 0xSysr3ll  | ?      |Easy        |
 | [Weird base message](Cryptographie/weird_base_message)           | Crypto        | 0xSysr3ll  | ?      |Easy        |
 | [Tout droit vers le point](Cryptographie/Tout-droit-vers-le-point)| Crypto       | ZarKyo     | ?      |Easy        |
+| [Leakeyd](Cryptographie/Leakeyd)                                 | Crypto        | Arathor    | ?      |Easy        |  
 | [Encoded strings](Misc/encoded_strings)                          | Misc          | x          | ?      |Easy        |
 | [NoSpaces.](Misc/No_space)                                       | Misc          | Processus Thief     | ?     |Easy|
 | [DansTonChattr](Misc/dans_ton_chattr)                            | Misc          | Processus Thief     | ?     |Easy|
@@ -39,6 +40,7 @@ Github  : https://github.com/MidnightFlag
 | [ResolveMe](Forensic/ResolveME)                                  | Forensic      | N3oWind    | ?      |  Easy      |
 | [Sur Écoute](Forensic/Sur_écoute_Réseau_Abyss_Watcher)           | Forensic      | Abyss Watcher| ?    |Hard        |
 | [Trousse social](Android/Trousse_social)                         | Android       | ToRr0aN    | ?      |  Easy      |
+| [Admin panel](Android/Admin_panel)                               | Android       | Arathor    | ?      |  Easy      |
 | [sPoNs0r PaGe](Stéganographie/sPoNs0r_PaGe)                      | Steganography | x          | ?      |Easy        |
 | [Nothing is classified](Stéganographie/nothing_is_classified)    | Steganography | x          | ?      |Easy        |
 | [A blurred text is illegible](Stéganographie/a_blurred_text_is_illegible) | Steganography | x | ?      | Easy       |
@@ -46,4 +48,4 @@ Github  : https://github.com/MidnightFlag
 | [Summer is beautiful](Stéganographie/summer_is_beautiful)        | Steganography | x          | ?      |Medium      |
 | [Too well hidden for you](Stéganographie/Too_well_hidden_for_you)| Steganography | Arathor    | ?      |Medium      |
 
-**Total : 28 challenges (? points)**
+**Total : 30 challenges (? points)**
