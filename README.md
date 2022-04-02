@@ -43,6 +43,7 @@ Github  : https://github.com/MidnightFlag
 | [Sur Écoute](Forensic/Sur_écoute_Réseau_Abyss_Watcher)           | Forensic      | Abyss Watcher| ?    |Hard        |
 | [Trousse social](Android/Trousse_social)                         | Android       | ToRr0aN    | ?      |  Easy      |
 | [Admin panel](Android/Admin_panel)                               | Android       | Arathor    | ?      |  Easy      |
+| [The man from space](Stéganographie/the_man_from_space)          | Steganography | x          | ?      |Easy        |
 | [sPoNs0r PaGe](Stéganographie/sPoNs0r_PaGe)                      | Steganography | x          | ?      |Easy        |
 | [Nothing is classified](Stéganographie/nothing_is_classified)    | Steganography | x          | ?      |Easy        |
 | [Can you hear me?](Stéganographie/Can_You_Hear_Me)               | Steganography | A0d3n      | ?      |Easy/Medium |
