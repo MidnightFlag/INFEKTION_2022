@@ -50,4 +50,14 @@ Github  : https://github.com/MidnightFlag
 | [Summer is beautiful](Stéganographie/summer_is_beautiful)        | Steganography | x          | ?      |Medium      |
 | [Too well hidden for you](Stéganographie/Too_well_hidden_for_you)| Steganography | Arathor    | ?      |Medium      |
 
-**Total : 32 challenges (? points)**
+**Total : 32 challenges (? points)  **
+Challenges par catégorie :  
+- 4 Crypto  
+- 4 Misc  
+- 5 OSINT  
+- 3 Web  
+- 2 Network  
+- 4 Reverse  
+- 2 Forensic  
+- 2 Android  
+- 6 Steganography
