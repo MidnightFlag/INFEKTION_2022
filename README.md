@@ -27,6 +27,7 @@ Github  : https://github.com/MidnightFlag
 | [DansTonChattr](Misc/dans_ton_chattr)                            | Misc          | Processus Thief     | ?     |Easy|
 | [Look more closely](OSINT/look_more_closely)                     | OSINT         | ToRr0aN    | ?      |Easy        |
 | [Will the big wheel](OSINT/Will_the_big_wheel)                   | OSINT         | A0d3n      | ?      |Easy        |
+| [Escape route](OSINT/escape_route)                               | OSINT         | x          | ?      |?           |
 | [Watch your driving](OSINT/watch_your_driving)                   | OSINT         | x          | ?      |Medium      |
 | [From Russia with love](OSINT/from_russia_with_love)             | OSINT         | x          | ?      |Hard        |
 | [Craft it yourself](Web/craft_it_yourself)                       | Web           | Arathor    | ?      |Easy        |       
@@ -48,4 +49,4 @@ Github  : https://github.com/MidnightFlag
 | [Summer is beautiful](Stéganographie/summer_is_beautiful)        | Steganography | x          | ?      |Medium      |
 | [Too well hidden for you](Stéganographie/Too_well_hidden_for_you)| Steganography | Arathor    | ?      |Medium      |
 
-**Total : 30 challenges (? points)**
+**Total : 31 challenges (? points)**
