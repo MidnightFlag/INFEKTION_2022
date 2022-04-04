@@ -20,7 +20,7 @@ Github  : https://github.com/MidnightFlag
 | [Something hidden](Cryptographie/Something_hidden)               | Crypto        | 0xSysr3ll  | ?      |Easy        |
 | [Weird base message](Cryptographie/weird_base_message)           | Crypto        | 0xSysr3ll  | ?      |Easy        |
 | [Tout droit vers le point](Cryptographie/Tout-droit-vers-le-point)| Crypto       | ZarKyo     | ?      |Easy        |
-| [Leakeyd](Cryptographie/Leakeyd)                                 | Crypto        | Arathor    | ?      |Easy        |  
+| [Leakeyd](Cryptographie/Leakeyd)                                 | Crypto        | Arathor    | ?      |?           |  
 | [Encoded strings](Misc/encoded_strings)                          | Misc          | x          | ?      |Easy        |
 | [A blurred text is illegible](Misc/a_blurred_text_is_illegible)  | Misc          | x          | ?      | Easy       |
 | [NoSpaces.](Misc/No_space)                                       | Misc          | Processus Thief     | ?     |Easy|
