@@ -27,7 +27,7 @@ Github  : https://github.com/MidnightFlag
 | [DansTonChattr](Misc/dans_ton_chattr)                            | Misc          | Processus Thief     | ?     |Easy|
 | [Look more closely](OSINT/look_more_closely)                     | OSINT         | ToRr0aN    | ?      |Easy        |
 | [Will the big wheel](OSINT/Will_the_big_wheel)                   | OSINT         | A0d3n      | ?      |Easy        |
-| [Escape route](OSINT/escape_route)                               | OSINT         | x          | ?      |?           |
+| [Escape route](OSINT/escape_route)                               | OSINT         | x          | ?      |Medium          |
 | [Watch your driving](OSINT/watch_your_driving)                   | OSINT         | x          | ?      |Medium      |
 | [From Russia with love](OSINT/from_russia_with_love)             | OSINT         | x          | ?      |Hard        |
 | [Craft it yourself](Web/craft_it_yourself)                       | Web           | Arathor    | ?      |Easy        |       
