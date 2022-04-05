@@ -5,11 +5,7 @@ OSINT /
 
 ## <u>**Description**</u> :
 
-<<<<<<< HEAD
 La cible a réussie à s'enfuir ! Nous n'arrivons plus à retrouver sa trace mais nous avons néanmoins réussi à intercepter une de ses communications. En vous aidant de vos trouvailles précédentes et de cet audio, retrouvez la ville ainsi que le pays dans lequel l'ennemi doit retrouver son contact.
-=======
-La cible a réussi à s'enfuir ! Nous n'arrivons plus à retrouver sa trace mais nous avons néanmoins réussi à intercepter une de ses communications. En vous aidant de vos trouvailles précédentes et de cet audio, retrouvez la ville ainsi que le pays dans lequel l'ennemi doit retrouver son contact.
->>>>>>> 46b7c319754091192cc0c68b4e5dc2228565847d
 
 Format : MCTF{ville:pays} (écrit en français)
 
@@ -88,8 +84,4 @@ L'adresse est indiquée :
 
 Il n'y a plus qu'à la noter et on obtient le flag.
 
-<<<<<<< HEAD
 **Flag : MCTF{Mexico:Mexique}**
-=======
-**Flag : MCTF{Mexico:Mexique}**
->>>>>>> 46b7c319754091192cc0c68b4e5dc2228565847d
