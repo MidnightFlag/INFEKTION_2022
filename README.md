@@ -31,7 +31,8 @@ Github  : https://github.com/MidnightFlag
 | [Watch your driving](OSINT/watch_your_driving)                   | OSINT         | x          | ?      |Medium      |
 | [From Russia with love](OSINT/from_russia_with_love)             | OSINT         | x          | ?      |Hard        |
 | [Craft it yourself](Web/craft_it_yourself)                       | Web           | Arathor    | ?      |Easy        |       
-| [Bien plus qu'une simple gallerie](Web/Bien_plus%20qu_une_simpe_gallerie) | Web    | 0xSysr3ll| ?      |Easy?       |       
+| [Bien plus qu'une simple gallerie](Web/Bien_plus%20qu_une_simpe_gallerie) | Web    | 0xSysr3ll| ?      |Easy?       |
+| [Unfinished intranet](Web/unfinished_intranet) | Web    | .Yo0x| ?      |Easy       |       
 | [BGK](Web/BGK)                                                   | Web           | SpawnZii   | ?      |Hard        |            
 | [Le jeton de Catwoman](Réseau/le_jeton_de_catwoman)              | Network       | Processus Thief     | ?    |Easy |
 | [Private network isn't safe](Réseau/private_network_isnt_safe)   | Network       | x          | ?      |Easy        |
