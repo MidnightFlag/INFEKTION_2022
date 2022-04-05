@@ -56,11 +56,11 @@ Challenges par catégorie :
 - 4 Crypto  
 - 4 Misc  
 - 5 OSINT  
-- 3 Web  
+- 4 Web  
 - 2 Network  
 - 4 Reverse  
 - 2 Forensic  
 - 2 Android  
 - 6 Steganography  
 
-**Total : 32 challenges (? points)**  
+**Total : 33 challenges (? points)**  
