@@ -1,12 +1,12 @@
 # **A blurred text is illegible**
 ## <u>**Catégorie**</u>
 
-Stéganographie / Facile
+Misc / Facile
 
 ## <u>**Description**</u> :
 
-En fouillant les fichiers ennemis, nous venons de tomber sur une image pixelisée, qui, semble-t-il, renferme un mot de passe...  
-Essayez de récupérer le texte pixellisé depuis cette image.  
+En fouillant les fichiers ennemis, nous venons de tomber sur une image pixelisée, qui, semble-t-il, renferme un mot de passe...
+Essayez de récupérer le texte pixellisé depuis cette image.
 
 Format : MCTF{letextedépixellisé}
 
