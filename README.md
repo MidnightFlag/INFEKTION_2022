@@ -37,6 +37,7 @@ Github  : https://github.com/MidnightFlag
 | [BGK](Web/BGK)                                                   | Web           | SpawnZii   | ?      |Hard        |            
 | [Le jeton de Catwoman](Réseau/le_jeton_de_catwoman)              | Network       | Processus Thief     | ?    |Easy |
 | [Private network isn't safe](Réseau/private_network_isnt_safe)   | Network       | x          | ?      |Easy        |
+| [Unencrypted communication](Réseau/unencrypted_communication)    | Network       | x          | ?      |Easy        |
 | [Not that hard](Reverse/Not_that_hard)                           | Reverse       | ToRr0aN    | ?      |Medium      |
 | [Rocket launch validator](Reverse/rocket_launch_validator)       | Reverse       | SeulAParis | ?      |Easy        |
 | [Challenge de recrutement au KGB](Reverse/challenge_recrutement_kgb) | Reverse   | SeulAParis | ?      |?           |
