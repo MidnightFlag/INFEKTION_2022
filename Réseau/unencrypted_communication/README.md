@@ -9,7 +9,7 @@ Réseau / Facile
 Nous avons intercepté des communications ennemies, il semblerait que certains informations importantes aient transitées en clair.
 Retrouvez le flag.
 
-Format : MCTF{flag} (le flag est sensible à la casse)
+Format : MCTF{flag}
 
 ## <u>**Hints**</u> :
 
