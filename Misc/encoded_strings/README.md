@@ -46,7 +46,7 @@ dcode ZPGS{0u_j0j_FhpU_gElU4eQ} -rot all
 
 ![](./photos/flag.png)
 
-Étant donné que Decodify ne fournit que des minuscules, on va devoir rajouter les majuscules dans le flag en se basant sur les majuscules du flag :
+Étant donné que Decodify ne fournit que des minuscules, on va devoir rajouter les majuscules dans le flag en se basant sur les majuscules du flag codé en ROT :
 ```
 ZPGS{0u_j0j_FhpU_gElU4eQ}
 MCTF{0h_w0w_SucH_tRyH4rD}
