@@ -60,10 +60,10 @@ Challenges par catégorie :
 - 5 OSINT  
 - 1 Pwn  
 - 4 Web  
-- 2 Network  
+- 3 Network  
 - 4 Reverse  
 - 2 Forensic  
 - 2 Android  
 - 6 Steganography  
 
-**Total : 34 challenges (? points)**  
+**Total : 35 challenges (? points)**  
