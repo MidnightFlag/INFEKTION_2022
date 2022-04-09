@@ -42,9 +42,9 @@ Github  : https://github.com/MidnightFlag
 | [Rocket launch validator](Reverse/rocket_launch_validator)       | Reverse       | SeulAParis | ?      |Easy        |
 | [Challenge de recrutement au KGB](Reverse/challenge_recrutement_kgb) | Reverse   | SeulAParis | ?      |?           |
 | [Corruption](Reverse/corruption)                                 | Reverse       | SeulAParis | ?      |?           |
-| [It Remembers Everything 1/3](/Forensic/it_remembers_everything_1-3)| Forensic   | x          | ?      |  Easy      |
-| [It Remembers Everything 2/3](/Forensic/it_remembers_everything_2-3)| Forensic   | x          | ?      |  Easy      |
-| [It Remembers Everything 3/3](/Forensic/it_remembers_everything_3-3)| Forensic   | x          | ?      |  Easy      |
+| [It remembers everything 1/3](/Forensic/it_remembers_everything_1-3)| Forensic   | x          | ?      |  Easy      |
+| [It remembers everything 2/3](/Forensic/it_remembers_everything_2-3)| Forensic   | x          | ?      |  Easy      |
+| [It remembers everything 3/3](/Forensic/it_remembers_everything_3-3)| Forensic   | x          | ?      |  Easy      |
 | [ResolveMe](Forensic/ResolveME)                                  | Forensic      | N3oWind    | ?      |  Easy      |
 | [Sur Écoute](Forensic/Sur_écoute_Réseau_Abyss_Watcher)           | Forensic      | Abyss Watcher| ?    |Hard        |
 | [Trousse social](Android/Trousse_social)                         | Android       | ToRr0aN    | ?      |  Easy      |
