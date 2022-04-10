@@ -34,7 +34,7 @@ Une des plus intéressantes  est la photo postée par le compte instagram trouv�
 En effet la bio de la publication est assez explicite compte tenu du contexte : Back to business 🍁
 
 Une première chose à faire est de localiser la photo. Pour ce faire, il est possible de localiser l'endroit de la photo en utilisant la recherche inversée de Google Image ou Yandex :
-![img](geoint.png)
+![img](img/geoint.png)
 
 Il s'agit donc de Besse-et-Saint-Anastaise.
 
@@ -53,4 +53,4 @@ Une fois cette manipulation faîte, on trouve rapidement la story faite par Jacq
 (Je la posterai quelques heures avant le début du CTF pour qu'elle n'expire pas avant)
 
 
-##**Flag : MCTF{M0d3rN_D34L_1s_N0w_0n_S0c14L_M4D14}**
+## **Flag : MCTF{M0d3rN_D34L_1s_N0w_0n_S0c14L_M4D14}**
