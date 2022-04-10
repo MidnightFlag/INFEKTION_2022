@@ -35,9 +35,9 @@ Github  : https://github.com/MidnightFlag
 | [Bien plus qu'une simple gallerie](Web/Bien_plus%20qu_une_simpe_gallerie) | Web    | 0xSysr3ll| ?      |Easy?       |
 | [Unfinished intranet](Web/unfinished_intranet)                   | Web           | .Yo0x| ?      |Easy       |       
 | [BGK](Web/BGK)                                                   | Web           | SpawnZii   | ?      |Hard        |            
-| [Le jeton de Catwoman](Réseau/le_jeton_de_catwoman)              | Network       | Processus Thief     | ?    |Easy |
-| [Private network isn't safe](Réseau/private_network_isnt_safe)   | Network       | x          | ?      |Easy        |
-| [Unencrypted communication](Réseau/unencrypted_communication)    | Network       | x          | ?      |Easy        |
+| [Le jeton de Catwoman](Reseau/le_jeton_de_catwoman)              | Network       | Processus Thief     | ?    |Easy |
+| [Private network isn't safe](Reseau/private_network_isnt_safe)   | Network       | x          | ?      |Easy        |
+| [Unencrypted communication](Reseau/unencrypted_communication)    | Network       | x          | ?      |Easy        |
 | [Not that hard](Reverse/Not_that_hard)                           | Reverse       | ToRr0aN    | ?      |Medium      |
 | [Rocket launch validator](Reverse/rocket_launch_validator)       | Reverse       | SeulAParis | ?      |Easy        |
 | [Challenge de recrutement au KGB](Reverse/challenge_recrutement_kgb) | Reverse   | SeulAParis | ?      |?           |
@@ -49,12 +49,12 @@ Github  : https://github.com/MidnightFlag
 | [Sur Écoute](Forensic/Sur_écoute_Réseau_Abyss_Watcher)           | Forensic      | Abyss Watcher| ?    |Hard        |
 | [Trousse social](Android/Trousse_social)                         | Android       | ToRr0aN    | ?      |  Easy      |
 | [Admin panel](Android/Admin_panel)                               | Android       | Arathor    | ?      |  Easy      |
-| [The man from space](Stéganographie/the_man_from_space)          | Steganography | x          | ?      |Easy        |
-| [sPoNs0r PaGe](Stéganographie/sPoNs0r_PaGe)                      | Steganography | x          | ?      |Easy        |
-| [Nothing is classified](Stéganographie/nothing_is_classified)    | Steganography | x          | ?      |Easy        |
-| [Can you hear me?](Stéganographie/Can_You_Hear_Me)               | Steganography | A0d3n      | ?      |Easy/Medium |
-| [Summer is beautiful](Stéganographie/summer_is_beautiful)        | Steganography | x          | ?      |Medium      |
-| [Too well hidden for you](Stéganographie/Too_well_hidden_for_you)| Steganography | Arathor    | ?      |Medium      |
+| [The man from space](Steganographie/the_man_from_space)          | Steganography | x          | ?      |Easy        |
+| [sPoNs0r PaGe](Steganographie/sPoNs0r_PaGe)                      | Steganography | x          | ?      |Easy        |
+| [Nothing is classified](Steganographie/nothing_is_classified)    | Steganography | x          | ?      |Easy        |
+| [Can you hear me?](Steganographie/Can_You_Hear_Me)               | Steganography | A0d3n      | ?      |Easy/Medium |
+| [Summer is beautiful](Steganographie/summer_is_beautiful)        | Steganography | x          | ?      |Medium      |
+| [Too well hidden for you](Steganographie/Too_well_hidden_for_you)| Steganography | Arathor    | ?      |Medium      |
 
 Challenges par catégorie :   
 
