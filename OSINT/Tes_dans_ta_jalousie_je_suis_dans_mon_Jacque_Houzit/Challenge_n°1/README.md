@@ -46,7 +46,7 @@ Une annonce sort rapidement du lot :
 (pas faîte au moment de l'écriture du Write-Up, elle sera mise en ligne un jour ou deux avant l’évènement pour ne pas être trop basse dans les résultats)
 
 On peut regarder le profil qui a posté cette annonce :
-![img](lbc.png)
+![img](img/lbc.png)
 
 En croisant les informations, on se doute très fortement qu'il s'agit de Jacque Houzit.
 On récupère donc comme nouvelle information :
@@ -55,7 +55,7 @@ On récupère donc comme nouvelle information :
 On cherche donc un moyen de pivoter autour de celui-ci.
 
 Qui dit username dit généralement sherlock ou maigret :
-![img](maigret.png)
+![img](img/maigret.png)
 
 Maigret nous renvoie un Instagram (https://www.instagram.com/jcq.hzt/) avec comme bio : 
 ``
@@ -66,7 +66,7 @@ Il s'agit bien du compte Instagram de Jacque Houzit.
 Il faut maintenant se rappeler de l'énoncer et de ce qui est demandé : il faut retrouver l'email de Jacque Houzit.
 
 Pour avoir des informations sur celle-ci, on peut lancer un toutatis sur le compte Instagram récupéré :
-![img](toutatis.png)
+![img](img/toutatis.png)
 
 L'adresse email est donc au format j....h@gmail.com
 La partie un peu technique de ce challenge est qu'il faut, à partir des infos récupérées, en déduire l'adresse e-mail utilisée.
