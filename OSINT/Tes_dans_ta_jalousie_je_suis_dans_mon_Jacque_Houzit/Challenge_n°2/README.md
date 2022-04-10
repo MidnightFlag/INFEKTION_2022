@@ -42,16 +42,16 @@ Deux solutions :
 
 Pour l'exemple on peut utiliser le site afin d'automatiser le process.
 Sur le site, on spécifie l'username du compte instagram et on valide :
-![img](onlinedork.png)
+![img](img/onlinedork.png)
 
 Évidemment, ici le dork ne renvoie rien car la publication n'a pas encore été référencée.
 Dès qu'elle le sera, une publication envoyée par ce compte sera dans les résultats de recherche :
-![img](public.png)
+![img](img/public.png)
 
 On voit bien que le compte "postbad_jacque" a été identifié, on peut le vérifier en allant visiter son profil et en concordant les informations données dans la description du challenge.
 
 On visite le compte qui a publié la photo et on récupère le flag dans la biographie :
-![img](profile.png)
+![img](img/profile.png)
  
 
 
