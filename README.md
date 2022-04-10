@@ -27,8 +27,11 @@ Github  : https://github.com/MidnightFlag
 | [DansTonChattr](Misc/dans_ton_chattr)                            | Misc          | Processus Thief     | ?     |Easy|
 | [Look more closely](OSINT/look_more_closely)                     | OSINT         | ToRr0aN    | ?      |Easy        |
 | [Will the big wheel](OSINT/Will_the_big_wheel)                   | OSINT         | A0d3n      | ?      |Easy        |
+| [T'es dans ta jalousie, je suis dans mon Jacque Houzit 2/3.](OSINT/Tes_dans_ta_jalousie_je_suis_dans_mon_Jacque_Houzit/Challenge_n°2)| OSINT | Kazuno|?|Easy|
+| [T'es dans ta jalousie, je suis dans mon Jacque Houzit 1/3.](OSINT/Tes_dans_ta_jalousie_je_suis_dans_mon_Jacque_Houzit/Challenge_n°1)| OSINT | Kazuno|?|Easy/Medium|
 | [Escape route](OSINT/escape_route)                               | OSINT         | x          | ?      |Medium      |
 | [Watch your driving](OSINT/watch_your_driving)                   | OSINT         | x          | ?      |Medium      |
+| [T'es dans ta jalousie, je suis dans mon Jacque Houzit 3/3.](OSINT/Tes_dans_ta_jalousie_je_suis_dans_mon_Jacque_Houzit/Challenge_n°3)| OSINT | Kazuno|?|Hard|
 | [From Russia with love](OSINT/from_russia_with_love)             | OSINT         | x          | ?      |Hard        |
 | [Ret2Liberty](Pwn/Ret2Liberty)             | Pwn         | Processus Thief          | ?      |Easy/medium        |
 | [Craft it yourself](Web/craft_it_yourself)                       | Web           | Arathor    | ?      |Easy        |       
@@ -60,7 +63,7 @@ Challenges par catégorie :
 
 - 4 Crypto  
 - 4 Misc  
-- 5 OSINT  
+- 8 OSINT  
 - 1 Pwn  
 - 4 Web  
 - 3 Network  
@@ -69,4 +72,4 @@ Challenges par catégorie :
 - 2 Android  
 - 6 Steganography  
 
-**Total : 38 challenges (? points)**  
+**Total : 41 challenges (? points)**  
