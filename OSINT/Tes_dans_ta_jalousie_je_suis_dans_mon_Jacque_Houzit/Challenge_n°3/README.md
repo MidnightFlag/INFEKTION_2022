@@ -38,8 +38,8 @@ Une première chose à faire est de localiser la photo. Pour ce faire, il est po
 
 Il s'agit donc de Besse-et-Saint-Anastaise.
 
-En SOCMINT, il existe différentes façons de pivoter autour d'une location : 
-• Regarder les publications récentes autour de la ville
+En SOCMINT, il existe différentes façons de pivoter autour d'une location :  
+• Regarder les publications récentes autour de la ville  
 • Regarder les tweets publiés autour de cette localisation, etc...
 
 Dans la description du premier challenge, on peut lire :
