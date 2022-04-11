@@ -60,7 +60,7 @@ Qui dit username dit généralement sherlock ou maigret :
 Maigret nous renvoie un Instagram (https://www.instagram.com/jcq.hzt/) avec comme bio : 
 ``
 Professeur de mathématiques
-`` </br>
+``  
 Il s'agit bien du compte Instagram de Jacque Houzit.
 
 Il faut maintenant se rappeler de l'énoncer et de ce qui est demandé : il faut retrouver l'email de Jacque Houzit.
