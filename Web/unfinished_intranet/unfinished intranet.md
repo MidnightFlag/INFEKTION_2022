@@ -18,7 +18,7 @@ De plus la création de compte semble vulnérable.
 
 après la création du compte on est rediriger vers un endpoint nous informant de l'indisponibilité du site 
 
-![[Pasted image 20220404231904.png]]
+![](../20220404231904.png)
 
 Pour y voir plus claire, il est nécessaire de capturer la requête.
 
