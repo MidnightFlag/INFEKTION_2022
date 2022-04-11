@@ -4,7 +4,7 @@
 
 OSINT
 
-## <u>**T'es dans ta jalousie, je suis dans mon Jacque Houzit 3/3**</u> :
+## <u>**Description**</u> :
 
 ```
 L'agence Stranger Case vous demande maintenant de mettre fin à l'activité de Jacque Houzit en l'envoyant derrère les barreaux !
