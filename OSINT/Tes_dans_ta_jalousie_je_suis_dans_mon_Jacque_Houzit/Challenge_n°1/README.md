@@ -65,7 +65,7 @@ Il s'agit bien du compte Instagram de Jacque Houzit.
 
 Il faut maintenant se rappeler de l'énoncé et de ce qui est demandé : il faut retrouver l'email de Jacque Houzit.
 
-Pour avoir des informations sur celle-ci, on peut lancer un toutatis sur le compte Instagram récupéré :
+Pour avoir des informations sur celle-ci, on peut lancer l'outil toutatis sur le compte Instagram récupéré :
 ![img](img/toutatis.png)
 
 L'adresse email est donc au format j....h@gmail.com
