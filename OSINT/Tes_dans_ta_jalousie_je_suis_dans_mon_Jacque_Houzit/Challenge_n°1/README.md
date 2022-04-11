@@ -63,7 +63,7 @@ Professeur de mathématiques
 ``  
 Il s'agit bien du compte Instagram de Jacque Houzit.
 
-Il faut maintenant se rappeler de l'énoncer et de ce qui est demandé : il faut retrouver l'email de Jacque Houzit.
+Il faut maintenant se rappeler de l'énoncé et de ce qui est demandé : il faut retrouver l'email de Jacque Houzit.
 
 Pour avoir des informations sur celle-ci, on peut lancer un toutatis sur le compte Instagram récupéré :
 ![img](img/toutatis.png)
