@@ -9,7 +9,7 @@ OSINT
 Une agence vous mandate pour une nouvelle affaire qu'ils viennent de recevoir.
 
 Vous allez devoir enquêter sur Jacque Houzit, un ancien professeur de mathématiques licencié l'année dernière pour consommation de cannabis sur son lieu de travail.
-Il semblerait qu'il ait récemment fait surface. Il est notamment suspecté d'être à la tête d'un réseau de deal à grande échelle et d'utiliser différents réseaux sociaux pour en faire la promotion. 
+Il semblerait qu'il ait récemment fait surface. Il est notamment suspecté d'être à la tête d'un réseau de deal à grande échelle dans un village français et d'utiliser différents réseaux sociaux pour en faire la promotion. 
 L'agence aurait réussi à obtenir des informations de son côté sur le fait qu'il proposerait des cours de mathématiques à des particuliers sur la ville de Rennes.
 
 Commencez votre enquête et trouvez l'adresse e-mail de Jacque Houzit.
