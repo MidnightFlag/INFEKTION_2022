@@ -68,7 +68,7 @@ Il faut maintenant se rappeler de l'énoncé et de ce qui est demandé : il faut
 Pour avoir des informations sur celle-ci, on peut lancer l'outil toutatis sur le compte Instagram récupéré :
 ![img](img/toutatis.png)
 
-L'adresse email est donc au format j....h@gmail.com
+L'adresse email est donc au format j....t@gmail.com
 La partie un peu technique de ce challenge est qu'il faut, à partir des infos récupérées, en déduire l'adresse e-mail utilisée.
 
 On peut déjà créer une petite wordlist d'e-mail :
