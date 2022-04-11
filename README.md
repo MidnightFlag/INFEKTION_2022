@@ -1,4 +1,4 @@
-![banner](https://pbs.twimg.com/profile_banners/1324819457764696071/1649170289/1500x500)
+![banner](https://i.ibb.co/hFPd3zG/MCTF.png)
 
 # MidnightFlag  - INFEKTIONCTF
 
