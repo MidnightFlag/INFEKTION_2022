@@ -47,6 +47,7 @@ Dans la description du premier challenge, on peut lire :
 Il est notamment suspecté d'être à la tête d'un réseau de deal à grande échelle et d'utiliser différents réseaux sociaux pour en faire la promotion. 
 ``  
 Aujourd'hui, de nombreux dealers utilisent notamment le réseau social Snapchat pour faire la promotion de leurs produits.  
+
 Pour trouver le flag, il suffit d'utiliser la map snapchat : https://map.snapchat.com/, de se placer dans la ville localisée et de regarder les storys que l'on peut trouver autour de la ville.
 
 Une fois cette manipulation faîte, on trouve rapidement la story faite par Jacques Houzit avec le flag.
