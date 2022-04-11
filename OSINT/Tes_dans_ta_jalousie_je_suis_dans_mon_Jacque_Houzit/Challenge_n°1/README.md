@@ -40,7 +40,7 @@ Une information importante peut être relevée dans la description :
 
 On sait donc que Jacque Houzit propose donc des cours de maths sur la ville de Rennes. 
 
-Cet élément nous fait penser (ou pas aha) au site de vente en ligne "leboncoin.com".
+Cet élément nous fait penser (ou pas aha) au site de vente en ligne "leboncoin.fr".
 On peut regarder si une annonce correspondrait à ce que l'on cherche.
 Une annonce sort rapidement du lot :
 (pas faîte au moment de l'écriture du Write-Up, elle sera mise en ligne un jour ou deux avant l’évènement pour ne pas être trop basse dans les résultats)
