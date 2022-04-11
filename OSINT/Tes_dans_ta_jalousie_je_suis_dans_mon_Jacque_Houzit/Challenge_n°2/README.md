@@ -6,7 +6,7 @@ OSINT
 ## <u>**Description**</u> :
 
 ```
-L'agence qui vous a mandaté à elle aussi menée une enquête de son côté. Elle aurait réussi à trouver un second compte instagram privé appartenant à Jacque Houzit.
+L'agence qui vous a mandaté a elle aussi menée une enquête de son côté. Elle aurait réussi à trouver un second compte instagram privé appartenant à Jacque Houzit.
 Continuez leur enquête et essayez de trouver des informations reliées à ce compte.
 
 Le compte instagram trouvé par l'agence : postbad_jacque
