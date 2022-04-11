@@ -49,7 +49,7 @@ On peut regarder le profil qui a posté cette annonce :
 ![img](img/lbc.png)
 
 En croisant les informations, on se doute très fortement qu'il s'agit de Jacque Houzit.
-On récupère donc comme nouvelle information :
+On récupère donc comme nouvelle information :  
 	- Un username : **jcq.hzt**
 
 On cherche donc un moyen de pivoter autour de celui-ci.
