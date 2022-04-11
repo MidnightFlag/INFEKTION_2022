@@ -6,7 +6,7 @@ OSINT
 ## <u>**Description**</u> :
 
 ```
-L'agence Stranger Case vous mandate pour une nouvelle affaire qu'ils viennent de recevoir.
+Une agence vous mandate pour une nouvelle affaire qu'ils viennent de recevoir.
 
 Vous allez devoir enquêter sur Jacque Houzit, un ancien professeur de mathématiques licencié l'année dernière pour consommation de cannabis sur son lieu de travail.
 Il semblerait qu'il ait récemment fait surface. Il est notamment suspecté d'être à la tête d'un réseau de deal à grande échelle et d'utiliser différents réseaux sociaux pour en faire la promotion. 
@@ -23,7 +23,7 @@ Pas de hint
 
 ## <u>Difficulté</u>
 
-Easy / Medium
+Medium
     
 ## <u>Tentatives</u> 
 
