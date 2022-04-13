@@ -34,7 +34,7 @@ Github  : https://github.com/MidnightFlag
 | [T'es dans ta jalousie, je suis dans mon Jacque Houzit 3/3.](OSINT/Tes_dans_ta_jalousie_je_suis_dans_mon_Jacque_Houzit/Challenge_n°3)| OSINT | Kazuno|?|Hard|
 | [From Russia with love](OSINT/from_russia_with_love)             | OSINT         | x          | ?      |Hard        |
 | [Ret2Liberty](Pwn/Ret2Liberty)             | Pwn         | Processus Thief          | ?      |Easy/medium        |
-| [To be private or not to be private](Web/to_be_private_or_not_to_be_private)| Web| Arathor    | ?      |Easy        |
+| [To be private or not to be private](Web/to_be_private_or_not_to_be_private)| Web| Spownark   | ?      |Easy        |
 | [Craft it yourself](Web/craft_it_yourself)                       | Web           | Arathor    | ?      |Easy        |       
 | [Bien plus qu'une simple gallerie](Web/Bien_plus%20qu_une_simpe_gallerie) | Web    | 0xSysr3ll| ?      |Easy?       |
 | [Unfinished intranet](Web/unfinished_intranet)                   | Web           | .Yo0x| ?      |Easy       |       
