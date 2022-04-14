@@ -33,11 +33,12 @@ Github  : https://github.com/MidnightFlag
 | [Watch your driving](OSINT/watch_your_driving)                   | OSINT         | x          | ?      |Medium      |
 | [T'es dans ta jalousie, je suis dans mon Jacque Houzit 3/3.](OSINT/Tes_dans_ta_jalousie_je_suis_dans_mon_Jacque_Houzit/Challenge_n°3)| OSINT | Kazuno|?|Hard|
 | [From Russia with love](OSINT/from_russia_with_love)             | OSINT         | x          | ?      |Hard        |
-| [Ret2Liberty](Pwn/Ret2Liberty)             | Pwn         | Processus Thief          | ?      |Easy/medium        |
+| [Ret2Liberty](Pwn/Ret2Liberty)                                   | Pwn           | Processus Thief | ? |Easy/medium |
 | [To be private or not to be private](Web/to_be_private_or_not_to_be_private)| Web| Spownark   | ?      |Easy        |
 | [Craft it yourself](Web/craft_it_yourself)                       | Web           | Arathor    | ?      |Easy        |       
 | [Bien plus qu'une simple gallerie](Web/Bien_plus%20qu_une_simpe_gallerie) | Web    | 0xSysr3ll| ?      |Easy?       |
-| [Unfinished intranet](Web/unfinished_intranet)                   | Web           | .Yo0x| ?      |Easy       |       
+| [Unfinished intranet](Web/unfinished_intranet)                   | Web           | .Yo0x      | ?      |Easy        |       
+| [TV23](Web/TV23)                                                 | Web           | SpawnZii   | ?      |?           |   
 | [BGK](Web/BGK)                                                   | Web           | SpawnZii   | ?      |Hard        |            
 | [Le jeton de Catwoman](Reseau/le_jeton_de_catwoman)              | Network       | Processus Thief     | ?    |Easy |
 | [Private network isn't safe](Reseau/private_network_isnt_safe)   | Network       | x          | ?      |Easy        |
@@ -66,11 +67,11 @@ Challenges par catégorie :
 - 4 Misc  
 - 8 OSINT  
 - 1 Pwn  
-- 5 Web  
+- 6 Web  
 - 3 Network  
 - 4 Reverse  
 - 5 Forensic  
 - 2 Android  
 - 6 Steganography  
 
-**Total : 42 challenges (? points)**  
+**Total : 43 challenges (? points)**  
