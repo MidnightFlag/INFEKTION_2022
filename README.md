@@ -25,8 +25,8 @@ Github  : https://github.com/MidnightFlag
 | [Crypto easy](Cryptographie/crypto-easy)                         | Crypto        | KODA       | ?      |?           |  
 | [Encoded strings](Misc/encoded_strings)                          | Misc          | x          | ?      |Easy        |
 | [A blurred text is illegible](Misc/a_blurred_text_is_illegible)  | Misc          | x          | ?      | Easy       |
-| [NoSpaces.](Misc/No_space)                                       | Misc          | Processus Thief     | ?     |Easy|
-| [DansTonChattr](Misc/dans_ton_chattr)                            | Misc          | Processus Thief     | ?     |Easy|
+| [NoSpaces.](Misc/No_space)                                       | Misc          | Processus Thief| ?  |Easy        |
+| [DansTonChattr](Misc/dans_ton_chattr)                            | Misc          | Processus Thief| ?  |Easy        |
 | [Look more closely](OSINT/look_more_closely)                     | OSINT         | ToRr0aN    | ?      |Easy        |
 | [Will the big wheel](OSINT/Will_the_big_wheel)                   | OSINT         | A0d3n      | ?      |Easy        |
 | [T'es dans ta jalousie, je suis dans mon Jacque Houzit 2/3.](OSINT/Tes_dans_ta_jalousie_je_suis_dans_mon_Jacque_Houzit/Challenge_n°2)| OSINT | Kazuno|?|Easy|
@@ -38,20 +38,20 @@ Github  : https://github.com/MidnightFlag
 | [Ret2Liberty](Pwn/Ret2Liberty)                                   | Pwn           | Processus Thief | ? |Easy/medium |
 | [To be private or not to be private](Web/to_be_private_or_not_to_be_private)| Web| Spownark   | ?      |Easy        |
 | [Craft it yourself](Web/craft_it_yourself)                       | Web           | Arathor    | ?      |Easy        |       
-| [Bien plus qu'une simple gallerie](Web/Bien_plus%20qu_une_simpe_gallerie) | Web    | 0xSysr3ll| ?      |Easy?       |
+| [Bien plus qu'une simple gallerie](Web/Bien_plus%20qu_une_simpe_gallerie) | Web  | 0xSysr3ll  | ?      |Easy?       |
 | [Unfinished intranet](Web/unfinished_intranet)                   | Web           | .Yo0x      | ?      |Easy        | 
 | [Infektion_api](Web/Infektion_api)                               | Web           | .Yo0x      | ?      |?           | 
 | [TV23](Web/TV23)                                                 | Web           | SpawnZii   | ?      |?           |   
 | [BGK](Web/BGK)                                                   | Web           | SpawnZii   | ?      |Hard        |           
-| [Le jeton de Catwoman](Reseau/le_jeton_de_catwoman)              | Network       | Processus Thief     | ?    |Easy |
+| [Le jeton de Catwoman](Reseau/le_jeton_de_catwoman)              | Network       | Processus Thief| ?  |Easy        |
 | [Private network isn't safe](Reseau/private_network_isnt_safe)   | Network       | x          | ?      |Easy        |
 | [Unencrypted communication](Reseau/unencrypted_communication)    | Network       | x          | ?      |Easy        |
 | [Not that hard](Reverse/Not_that_hard)                           | Reverse       | ToRr0aN    | ?      |Medium      |
-| [Le stagiaire](Reverse/Le_stagiaire)                           | Reverse       | ToRr0aN    | ?      |Medium      |
+| [Le stagiaire](Reverse/Le_stagiaire)                             | Reverse       | ToRr0aN    | ?      |Medium      |
 | [Rocket launch validator](Reverse/rocket_launch_validator)       | Reverse       | SeulAParis | ?      |Easy        |
 | [Challenge de recrutement au KGB](Reverse/challenge_recrutement_kgb) | Reverse   | SeulAParis | ?      |?           |
 | [Corruption](Reverse/corruption)                                 | Reverse       | SeulAParis | ?      |?           |
-| [Dizzy_dev](Forensic/Dizzy_Dev)                                  | Forensic      | Alpine     | ?      | Easy       |
+| [Dizzy dev](Forensic/Dizzy_Dev)                                  | Forensic      | Alpine     | ?      | Easy       |
 | [It remembers everything 1/3](/Forensic/it_remembers_everything_1-3)| Forensic   | x          | ?      |  Easy      |
 | [It remembers everything 2/3](/Forensic/it_remembers_everything_2-3)| Forensic   | x          | ?      |  Easy      |
 | [It remembers everything 3/3](/Forensic/it_remembers_everything_3-3)| Forensic   | x          | ?      |  Easy      |
