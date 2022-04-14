@@ -21,8 +21,8 @@ Github  : https://github.com/MidnightFlag
 | [Weird base message](Cryptographie/weird_base_message)           | Crypto        | 0xSysr3ll  | ?      |Easy        |
 | [Tout droit vers le point](Cryptographie/Tout-droit-vers-le-point)| Crypto       | ZarKyo     | ?      |Easy        |
 | [Leakeyd](Cryptographie/Leakeyd)                                 | Crypto        | Arathor    | ?      |?           |
-| [C'est_carré](Cryptographie/c'est_carré)                                 | Crypto        | x    | ?      |?           |
-| [crypto-easy](Cryptographie/crypto-easy)                                 | Crypto        | x    | ?      |?           |  
+| [C'est carré](Cryptographie/c'est_carré)                         | Crypto        | Moumou     | ?      |?           |
+| [Crypto easy](Cryptographie/crypto-easy)                         | Crypto        | KODA       | ?      |?           |  
 | [Encoded strings](Misc/encoded_strings)                          | Misc          | x          | ?      |Easy        |
 | [A blurred text is illegible](Misc/a_blurred_text_is_illegible)  | Misc          | x          | ?      | Easy       |
 | [NoSpaces.](Misc/No_space)                                       | Misc          | Processus Thief     | ?     |Easy|
@@ -39,10 +39,10 @@ Github  : https://github.com/MidnightFlag
 | [To be private or not to be private](Web/to_be_private_or_not_to_be_private)| Web| Spownark   | ?      |Easy        |
 | [Craft it yourself](Web/craft_it_yourself)                       | Web           | Arathor    | ?      |Easy        |       
 | [Bien plus qu'une simple gallerie](Web/Bien_plus%20qu_une_simpe_gallerie) | Web    | 0xSysr3ll| ?      |Easy?       |
-| [Unfinished intranet](Web/unfinished_intranet)                   | Web           | .Yo0x      | ?      |Easy        |       
+| [Unfinished intranet](Web/unfinished_intranet)                   | Web           | .Yo0x      | ?      |Easy        | 
+| [Infektion_api](Web/Infektion_api)                               | Web           | .Yo0x      | ?      |?           | 
 | [TV23](Web/TV23)                                                 | Web           | SpawnZii   | ?      |?           |   
-| [BGK](Web/BGK)                                                   | Web           | SpawnZii   | ?      |Hard        |
-| [Infektion_api](Web/Infektion_api)                                                   | Web           | x   | ?      |?        |            
+| [BGK](Web/BGK)                                                   | Web           | SpawnZii   | ?      |Hard        |           
 | [Le jeton de Catwoman](Reseau/le_jeton_de_catwoman)              | Network       | Processus Thief     | ?    |Easy |
 | [Private network isn't safe](Reseau/private_network_isnt_safe)   | Network       | x          | ?      |Easy        |
 | [Unencrypted communication](Reseau/unencrypted_communication)    | Network       | x          | ?      |Easy        |
@@ -50,12 +50,12 @@ Github  : https://github.com/MidnightFlag
 | [Rocket launch validator](Reverse/rocket_launch_validator)       | Reverse       | SeulAParis | ?      |Easy        |
 | [Challenge de recrutement au KGB](Reverse/challenge_recrutement_kgb) | Reverse   | SeulAParis | ?      |?           |
 | [Corruption](Reverse/corruption)                                 | Reverse       | SeulAParis | ?      |?           |
+| [Dizzy_dev](Forensic/Dizzy_Dev)                                  | Forensic      | Alpine     | ?      | Easy       |
 | [It remembers everything 1/3](/Forensic/it_remembers_everything_1-3)| Forensic   | x          | ?      |  Easy      |
 | [It remembers everything 2/3](/Forensic/it_remembers_everything_2-3)| Forensic   | x          | ?      |  Easy      |
 | [It remembers everything 3/3](/Forensic/it_remembers_everything_3-3)| Forensic   | x          | ?      |  Easy      |
 | [ResolveMe](Forensic/ResolveME)                                  | Forensic      | N3oWind    | ?      |  Easy      |
 | [Sur Écoute](Forensic/Sur_écoute_Réseau_Abyss_Watcher)           | Forensic      | Abyss Watcher| ?    |Hard        |
-| [Dizzy_dev](Forensic/Dizzy_Dev)           | Forensic      | x| ?    |?        |
 | [Trousse social](Android/Trousse_social)                         | Android       | ToRr0aN    | ?      |  Easy      |
 | [Admin panel](Android/Admin_panel)                               | Android       | Arathor    | ?      |  Easy      |
 | [The man from space](Steganographie/the_man_from_space)          | Steganography | x          | ?      |Easy        |
