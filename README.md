@@ -1,4 +1,4 @@
-![banner](https://pbs.twimg.com/profile_banners/1324819457764696071/1649170289/1500x500)
+![banner](https://i.ibb.co/hFPd3zG/MCTF.png)
 
 # MidnightFlag  - INFEKTIONCTF
 
@@ -27,17 +27,21 @@ Github  : https://github.com/MidnightFlag
 | [DansTonChattr](Misc/dans_ton_chattr)                            | Misc          | Processus Thief     | ?     |Easy|
 | [Look more closely](OSINT/look_more_closely)                     | OSINT         | ToRr0aN    | ?      |Easy        |
 | [Will the big wheel](OSINT/Will_the_big_wheel)                   | OSINT         | A0d3n      | ?      |Easy        |
+| [T'es dans ta jalousie, je suis dans mon Jacque Houzit 2/3.](OSINT/Tes_dans_ta_jalousie_je_suis_dans_mon_Jacque_Houzit/Challenge_n°2)| OSINT | Kazuno|?|Easy|
+| [T'es dans ta jalousie, je suis dans mon Jacque Houzit 1/3.](OSINT/Tes_dans_ta_jalousie_je_suis_dans_mon_Jacque_Houzit/Challenge_n°1)| OSINT | Kazuno|?|Easy/Medium|
 | [Escape route](OSINT/escape_route)                               | OSINT         | x          | ?      |Medium      |
 | [Watch your driving](OSINT/watch_your_driving)                   | OSINT         | x          | ?      |Medium      |
+| [T'es dans ta jalousie, je suis dans mon Jacque Houzit 3/3.](OSINT/Tes_dans_ta_jalousie_je_suis_dans_mon_Jacque_Houzit/Challenge_n°3)| OSINT | Kazuno|?|Hard|
 | [From Russia with love](OSINT/from_russia_with_love)             | OSINT         | x          | ?      |Hard        |
 | [Ret2Liberty](Pwn/Ret2Liberty)             | Pwn         | Processus Thief          | ?      |Easy/medium        |
+| [To be private or not to be private](Web/to_be_private_or_not_to_be_private)| Web| Spownark   | ?      |Easy        |
 | [Craft it yourself](Web/craft_it_yourself)                       | Web           | Arathor    | ?      |Easy        |       
 | [Bien plus qu'une simple gallerie](Web/Bien_plus%20qu_une_simpe_gallerie) | Web    | 0xSysr3ll| ?      |Easy?       |
 | [Unfinished intranet](Web/unfinished_intranet)                   | Web           | .Yo0x| ?      |Easy       |       
 | [BGK](Web/BGK)                                                   | Web           | SpawnZii   | ?      |Hard        |            
-| [Le jeton de Catwoman](Réseau/le_jeton_de_catwoman)              | Network       | Processus Thief     | ?    |Easy |
-| [Private network isn't safe](Réseau/private_network_isnt_safe)   | Network       | x          | ?      |Easy        |
-| [Unencrypted communication](Réseau/unencrypted_communication)    | Network       | x          | ?      |Easy        |
+| [Le jeton de Catwoman](Reseau/le_jeton_de_catwoman)              | Network       | Processus Thief     | ?    |Easy |
+| [Private network isn't safe](Reseau/private_network_isnt_safe)   | Network       | x          | ?      |Easy        |
+| [Unencrypted communication](Reseau/unencrypted_communication)    | Network       | x          | ?      |Easy        |
 | [Not that hard](Reverse/Not_that_hard)                           | Reverse       | ToRr0aN    | ?      |Medium      |
 | [Rocket launch validator](Reverse/rocket_launch_validator)       | Reverse       | SeulAParis | ?      |Easy        |
 | [Challenge de recrutement au KGB](Reverse/challenge_recrutement_kgb) | Reverse   | SeulAParis | ?      |?           |
@@ -49,24 +53,24 @@ Github  : https://github.com/MidnightFlag
 | [Sur Écoute](Forensic/Sur_écoute_Réseau_Abyss_Watcher)           | Forensic      | Abyss Watcher| ?    |Hard        |
 | [Trousse social](Android/Trousse_social)                         | Android       | ToRr0aN    | ?      |  Easy      |
 | [Admin panel](Android/Admin_panel)                               | Android       | Arathor    | ?      |  Easy      |
-| [The man from space](Stéganographie/the_man_from_space)          | Steganography | x          | ?      |Easy        |
-| [sPoNs0r PaGe](Stéganographie/sPoNs0r_PaGe)                      | Steganography | x          | ?      |Easy        |
-| [Nothing is classified](Stéganographie/nothing_is_classified)    | Steganography | x          | ?      |Easy        |
-| [Can you hear me?](Stéganographie/Can_You_Hear_Me)               | Steganography | A0d3n      | ?      |Easy/Medium |
-| [Summer is beautiful](Stéganographie/summer_is_beautiful)        | Steganography | x          | ?      |Medium      |
-| [Too well hidden for you](Stéganographie/Too_well_hidden_for_you)| Steganography | Arathor    | ?      |Medium      |
+| [The man from space](Steganographie/the_man_from_space)          | Steganography | x          | ?      |Easy        |
+| [sPoNs0r PaGe](Steganographie/sPoNs0r_PaGe)                      | Steganography | x          | ?      |Easy        |
+| [Nothing is classified](Steganographie/nothing_is_classified)    | Steganography | x          | ?      |Easy        |
+| [Can you hear me?](Steganographie/Can_You_Hear_Me)               | Steganography | A0d3n      | ?      |Easy/Medium |
+| [Summer is beautiful](Steganographie/summer_is_beautiful)        | Steganography | x          | ?      |Medium      |
+| [Too well hidden for you](Steganographie/Too_well_hidden_for_you)| Steganography | Arathor    | ?      |Medium      |
 
 Challenges par catégorie :   
 
 - 4 Crypto  
 - 4 Misc  
-- 5 OSINT  
+- 8 OSINT  
 - 1 Pwn  
-- 4 Web  
+- 5 Web  
 - 3 Network  
 - 4 Reverse  
 - 5 Forensic  
 - 2 Android  
 - 6 Steganography  
 
-**Total : 38 challenges (? points)**  
+**Total : 42 challenges (? points)**  
