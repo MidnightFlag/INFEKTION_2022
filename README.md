@@ -78,4 +78,4 @@ Challenges par catégorie :
 - 2 Android  
 - 6 Steganography  
 
-**Total : 43 challenges (? points)**  
+**Total : 47 challenges (? points)**  
