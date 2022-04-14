@@ -67,14 +67,14 @@ Github  : https://github.com/MidnightFlag
 
 Challenges par catégorie :   
 
-- 4 Crypto  
+- 6 Crypto  
 - 4 Misc  
 - 8 OSINT  
 - 1 Pwn  
-- 6 Web  
+- 7 Web  
 - 3 Network  
 - 4 Reverse  
-- 5 Forensic  
+- 6 Forensic  
 - 2 Android  
 - 6 Steganography  
 
