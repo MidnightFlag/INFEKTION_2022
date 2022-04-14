@@ -47,6 +47,7 @@ Github  : https://github.com/MidnightFlag
 | [Private network isn't safe](Reseau/private_network_isnt_safe)   | Network       | x          | ?      |Easy        |
 | [Unencrypted communication](Reseau/unencrypted_communication)    | Network       | x          | ?      |Easy        |
 | [Not that hard](Reverse/Not_that_hard)                           | Reverse       | ToRr0aN    | ?      |Medium      |
+| [Le stagiaire](Reverse/Le_stagiaire)                           | Reverse       | ToRr0aN    | ?      |Medium      |
 | [Rocket launch validator](Reverse/rocket_launch_validator)       | Reverse       | SeulAParis | ?      |Easy        |
 | [Challenge de recrutement au KGB](Reverse/challenge_recrutement_kgb) | Reverse   | SeulAParis | ?      |?           |
 | [Corruption](Reverse/corruption)                                 | Reverse       | SeulAParis | ?      |?           |
