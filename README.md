@@ -74,9 +74,9 @@ Challenges par catégorie :
 - 1 Pwn  
 - 7 Web  
 - 3 Network  
-- 4 Reverse  
+- 5 Reverse  
 - 6 Forensic  
 - 2 Android  
 - 6 Steganography  
 
-**Total : 47 challenges (? points)**  
+**Total : 48 challenges (? points)**  
