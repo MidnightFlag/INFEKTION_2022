@@ -1,0 +1,2 @@
+cd TV23 ; sudo docker build -t TV23 .
+docker run -p 80:80 -it TV23
