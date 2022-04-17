@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tv22
+  name: bgk
   namespace: challenge
 
 spec:
-  replicas: 1
+  replicas: 15
   selector:
     matchLabels:
-      app: tv22
+      app: bgk
   template:
     metadata:
       labels:
-        app: tv22
+        app: bgk
     spec:
       containers:
-      - name: tv22
-        image: web/tv23
+      - name: bgk
+        image: web/bgk
         imagePullPolicy: Never
         ports:
         - containerPort: 80
@@ -25,12 +25,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: tv22
+  name: bgk
   namespace: challenge
 spec:
   selector:
-    app: tv22
+    app: bgk
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 80
+      targetPort: 8181

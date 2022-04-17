@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tv22
+  name: intranet
   namespace: challenge
 
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: tv22
+      app: intranet
   template:
     metadata:
       labels:
-        app: tv22
+        app: intranet
     spec:
       containers:
-      - name: tv22
-        image: web/tv23
+      - name: intranet
+        image: web/intranet
         imagePullPolicy: Never
         ports:
         - containerPort: 80
@@ -25,11 +25,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: tv22
+  name: intranet
   namespace: challenge
 spec:
   selector:
-    app: tv22
+    app: intranet
   ports:
     - protocol: TCP
       port: 80

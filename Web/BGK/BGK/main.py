@@ -18,11 +18,11 @@ def home():
         name = "Гость"
     return render_template("home.html",name=name)
 
-@main.route("/scan")
+@main.route("/bgk/scan")
 def scan():
     return render_template('scan.html')
 
-@main.route("/srvinfos",methods=['GET','POST'])
+@main.route("/bgk/srvinfos",methods=['GET','POST'])
 def infos():
     if current_user.is_authenticated:
         if current_user.id == 1:

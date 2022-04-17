@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tv22
+  name: craft-it
   namespace: challenge
 
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: tv22
+      app: craft-it
   template:
     metadata:
       labels:
-        app: tv22
+        app: craft-it
     spec:
       containers:
-      - name: tv22
-        image: web/tv23
+      - name: craft-it
+        image: web/craft-it
         imagePullPolicy: Never
         ports:
         - containerPort: 80
@@ -25,12 +25,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: tv22
+  name: craft-it
   namespace: challenge
 spec:
   selector:
-    app: tv22
+    app: craft-it
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 80
+      targetPort: 8181

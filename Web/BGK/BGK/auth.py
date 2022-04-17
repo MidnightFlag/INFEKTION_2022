@@ -9,15 +9,15 @@ from flask_login import login_user, logout_user, login_required
 
 auth = Blueprint('auth', __name__)
 
-@auth.route('/login',methods=["GET"])
+@auth.route('/bgk/login',methods=["GET"])
 def login():
     return render_template('login.html')
 
-@auth.route('/signup', methods=["GET"])
+@auth.route('/bgk/signup', methods=["GET"])
 def signup():
     return render_template('signup.html')
 
-@auth.route('/signup', methods=['POST'])
+@auth.route('/bgk/signup', methods=['POST'])
 def signup_post():
     email = request.form.get('email')
     name = request.form.get('name')
@@ -55,7 +55,7 @@ def login_post():
     login_user(user)
     return redirect(url_for('main.home'))
 
-@auth.route('/logout')
+@auth.route('/bgk/logout')
 @login_required
 def logout():
     logout_user()
