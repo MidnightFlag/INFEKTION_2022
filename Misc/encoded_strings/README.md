@@ -8,7 +8,7 @@ Misc / Facile
 Nos agents viennent d'intercepter un fichier, néanmoins, ce dernier semble codé. Peu importe à quel point nous essayons, le codage semble persister...  
 Passez les différents niveaux de codage et récuperez le flag.  
 
-Format : MCTF{flagenmajuscule}
+Format : MCTF{flag}
 
 ## <u>**Hints**</u> :
 
