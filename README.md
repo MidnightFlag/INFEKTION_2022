@@ -23,6 +23,7 @@ Github  : https://github.com/MidnightFlag
 | [Leakeyd](Cryptographie/Leakeyd)                                 | Crypto        | Arathor    | ?      |?           |
 | [C'est carré](Cryptographie/c'est_carré)                         | Crypto        | Moumou     | ?      |?           |
 | [Crypto easy](Cryptographie/crypto-easy)                         | Crypto        | KODA       | ?      |?           |  
+| [Biohacker](Cryptographie/biohacker)                         | Crypto        | SeulAParis       | ?      |?           |  
 | [Encoded strings](Misc/encoded_strings)                          | Misc          | x          | ?      |Easy        |
 | [A blurred text is illegible](Misc/a_blurred_text_is_illegible)  | Misc          | x          | ?      | Easy       |
 | [NoSpaces.](Misc/No_space)                                       | Misc          | Processus Thief| ?  |Easy        |
@@ -46,6 +47,7 @@ Github  : https://github.com/MidnightFlag
 | [Le jeton de Catwoman](Reseau/le_jeton_de_catwoman)              | Network       | Processus Thief| ?  |Easy        |
 | [Private network isn't safe](Reseau/private_network_isnt_safe)   | Network       | x          | ?      |Easy        |
 | [Unencrypted communication](Reseau/unencrypted_communication)    | Network       | x          | ?      |Easy        |
+| [Exfiltration d'agent](Reseau/exfiltration_d'agent)    | Network       | 0xSysr3ll          | ?      |Easy        |
 | [Not that hard](Reverse/Not_that_hard)                           | Reverse       | ToRr0aN    | ?      |Medium      |
 | [Le stagiaire](Reverse/Le_stagiaire)                             | Reverse       | ToRr0aN    | ?      |Medium      |
 | [Rocket launch validator](Reverse/rocket_launch_validator)       | Reverse       | SeulAParis | ?      |Easy        |
@@ -68,12 +70,12 @@ Github  : https://github.com/MidnightFlag
 
 Challenges par catégorie :   
 
-- 6 Crypto  
+- 7 Crypto  
 - 4 Misc  
 - 8 OSINT  
 - 1 Pwn  
 - 7 Web  
-- 3 Network  
+- 4 Network  
 - 5 Reverse  
 - 6 Forensic  
 - 2 Android  
