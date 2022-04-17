@@ -47,7 +47,7 @@ Github  : https://github.com/MidnightFlag
 | [Le jeton de Catwoman](Reseau/le_jeton_de_catwoman)              | Network       | Processus Thief| ?  |Easy        |
 | [Private network isn't safe](Reseau/private_network_isnt_safe)   | Network       | x          | ?      |Easy        |
 | [Unencrypted communication](Reseau/unencrypted_communication)    | Network       | x          | ?      |Easy        |
-| [Exfiltration d'agent](Reseau/exfiltration_d'agent)    | Network       | 0xSysr3ll          | ?      |Easy        |
+| [Exfiltration d'agent](Reseau/exflitration_d'agent)    | Network       | 0xSysr3ll          | ?      |Easy        |
 | [Not that hard](Reverse/Not_that_hard)                           | Reverse       | ToRr0aN    | ?      |Medium      |
 | [Le stagiaire](Reverse/Le_stagiaire)                             | Reverse       | ToRr0aN    | ?      |Medium      |
 | [Rocket launch validator](Reverse/rocket_launch_validator)       | Reverse       | SeulAParis | ?      |Easy        |
