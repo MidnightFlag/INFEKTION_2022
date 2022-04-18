@@ -20,7 +20,8 @@ Github  : https://github.com/MidnightFlag
 | [Something hidden](Cryptographie/Something_hidden)               | Crypto        | 0xSysr3ll  | ?      |Easy        |
 | [Weird base message](Cryptographie/weird_base_message)           | Crypto        | 0xSysr3ll  | ?      |Easy        |
 | [Tout droit vers le point](Cryptographie/Tout-droit-vers-le-point)| Crypto       | ZarKyo     | ?      |Easy        |
-| [Leakeyd](Cryptographie/Leakeyd)                                 | Crypto        | Arathor    | ?      |?           |
+| [Weird encrpytion](Cryptographie/weird_encryption)               | Crypto        | Arathor    | ?      |Easy        |
+| [Leakeyd](Cryptographie/Leakeyd)                                 | Crypto        | Arathor    | ?      |Medium      |
 | [C'est carré](Cryptographie/c'est_carré)                         | Crypto        | Moumou     | ?      |?           |
 | [Crypto easy](Cryptographie/crypto-easy)                         | Crypto        | KODA       | ?      |?           |  
 | [Biohacker](Cryptographie/biohacker)                         | Crypto        | SeulAParis       | ?      |?           |  
@@ -70,7 +71,7 @@ Github  : https://github.com/MidnightFlag
 
 Challenges par catégorie :   
 
-- 7 Crypto  
+- 8 Crypto  
 - 4 Misc  
 - 8 OSINT  
 - 1 Pwn  
@@ -81,4 +82,4 @@ Challenges par catégorie :
 - 2 Android  
 - 6 Steganography  
 
-**Total : 50 challenges (? points)**  
+**Total : 51 challenges (? points)**  
