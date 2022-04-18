@@ -24,7 +24,6 @@ Github  : https://github.com/MidnightFlag
 | [Leakeyd](Cryptographie/Leakeyd)                                 | Crypto        | Arathor    | ?      |Medium      |
 | [C'est carré](Cryptographie/c'est_carré)                         | Crypto        | Moumou     | ?      |?           |
 | [Crypto easy](Cryptographie/crypto-easy)                         | Crypto        | KODA       | ?      |?           |  
-| [Biohacker](Cryptographie/biohacker)                         | Crypto        | SeulAParis       | ?      |?           |  
 | [Encoded strings](Misc/encoded_strings)                          | Misc          | x          | ?      |Easy        |
 | [A blurred text is illegible](Misc/a_blurred_text_is_illegible)  | Misc          | x          | ?      | Easy       |
 | [NoSpaces.](Misc/No_space)                                       | Misc          | Processus Thief| ?  |Easy        |
@@ -40,7 +39,7 @@ Github  : https://github.com/MidnightFlag
 | [Ret2Liberty](Pwn/Ret2Liberty)                                   | Pwn           | Processus Thief | ? |Easy/medium |
 | [To be private or not to be private](Web/to_be_private_or_not_to_be_private)| Web| Spownark   | ?      |Easy        |
 | [Craft it yourself](Web/craft_it_yourself)                       | Web           | Arathor    | ?      |Easy        |       
-| [Bien plus qu'une simple gallerie](Web/Bien_plus%20qu_une_simpe_gallerie) | Web  | 0xSysr3ll???  | ?      |Easy?       |
+| [Bien plus qu'une simple gallerie](Web/Bien_plus%20qu_une_simpe_gallerie) | Web  | 0xSysr3ll??| ?      |Easy?       |
 | [Unfinished intranet](Web/unfinished_intranet)                   | Web           | .Yo0x      | ?      |Easy        | 
 | [Infektion_api](Web/Infektion_api)                               | Web           | .Yo0x      | ?      |?           | 
 | [TV23](Web/TV23)                                                 | Web           | SpawnZii   | ?      |?           |   
@@ -48,7 +47,7 @@ Github  : https://github.com/MidnightFlag
 | [Le jeton de Catwoman](Reseau/le_jeton_de_catwoman)              | Network       | Processus Thief| ?  |Easy        |
 | [Private network isn't safe](Reseau/private_network_isnt_safe)   | Network       | x          | ?      |Easy        |
 | [Unencrypted communication](Reseau/unencrypted_communication)    | Network       | x          | ?      |Easy        |
-| [Exfiltration d'agent](Reseau/exflitration_d'agent)    | Network       | 0xSysr3ll          | ?      |Easy        |
+| [Exfiltration d'agent](Reseau/exflitration_d'agent)              | Network       | 0xSysr3ll  | ?      |Easy        |
 | [Not that hard](Reverse/Not_that_hard)                           | Reverse       | ToRr0aN    | ?      |Medium      |
 | [Le stagiaire](Reverse/Le_stagiaire)                             | Reverse       | ToRr0aN    | ?      |Medium      |
 | [Rocket launch validator](Reverse/rocket_launch_validator)       | Reverse       | SeulAParis | ?      |Easy        |
@@ -65,13 +64,14 @@ Github  : https://github.com/MidnightFlag
 | [The man from space](Steganographie/the_man_from_space)          | Steganography | x          | ?      |Easy        |
 | [sPoNs0r PaGe](Steganographie/sPoNs0r_PaGe)                      | Steganography | x          | ?      |Easy        |
 | [Nothing is classified](Steganographie/nothing_is_classified)    | Steganography | x          | ?      |Easy        |
+| [Biohacker](Steganographie/biohacker)                            | Steganography | SeulAParis | ?      |Easy/Medium |  
 | [Can you hear me?](Steganographie/Can_You_Hear_Me)               | Steganography | A0d3n      | ?      |Easy/Medium |
 | [Summer is beautiful](Steganographie/summer_is_beautiful)        | Steganography | x          | ?      |Medium      |
 | [Too well hidden for you](Steganographie/Too_well_hidden_for_you)| Steganography | Arathor    | ?      |Medium      |
 
 Challenges par catégorie :   
 
-- 8 Crypto  
+- 7 Crypto  
 - 4 Misc  
 - 8 OSINT  
 - 1 Pwn  
@@ -80,6 +80,6 @@ Challenges par catégorie :
 - 5 Reverse  
 - 6 Forensic  
 - 2 Android  
-- 6 Steganography  
+- 7 Steganography  
 
 **Total : 51 challenges (? points)**  
