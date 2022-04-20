@@ -27,7 +27,7 @@ Kazuno
 ## <u>Solution</u> :
 
 
-Nous avons comme nouvelle information le nom et prénom d'un ami proche de Jacque Houzit.
+Nous avons comme nouvelle information le nom et prénom d'un ami proche de Jacque Houzit.  
 En cherchant ce nom et prénom, on tombe rapidement sur ce compte Twitter :   
 ![img](img/tweetprofile.PNG)
 
