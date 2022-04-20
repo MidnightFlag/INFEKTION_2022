@@ -31,11 +31,11 @@ Nous avons comme nouvelle information le nom et prénom d'un ami proche de Jacqu
 En cherchant ce nom et prénom, on tombe rapidement sur ce compte Twitter :   
 ![img](img/tweetprofile.PNG)
 
-En investiguant sur celui-ci, on trouve deux tweets très intéressant.
+En investiguant sur celui-ci, on trouve deux tweets très intéressants.
 Le premier parlant de l'utilisation de mot de passe faible par le protagoniste :  
 ![img](img/tweet1.PNG)
 
-Le tweet cité parle entre autre de l'utilisation de sa date de naissance comme mot de passe.  
+Le tweet cité parle entre autres de l'utilisation de sa date de naissance comme mot de passe.  
 Au vu de la réaction de Gilles, on peut supposer qu'il utilise / qu'il ait utilisé ce format comme mot de passe personnel.
 
 Le deuxième tweet intéressant est celui-ci :  
@@ -43,9 +43,9 @@ Le deuxième tweet intéressant est celui-ci :
 
 On récupère ici deux informations différentes :
  - Le mot de passe du compte Instagram de Gilles aurait été leak
- - Dans le tweet, il nous fourni un lien menant vers celui-ci mais est apparament protégé par un mot de passe
+ - Dans le tweet, il nous fournit un lien menant vers celui-ci mais est apparemment protégé par un mot de passe
 
-En se rendant sur ce lien, on tombe sur un fichier zip partagé via google drive. On y trouve à l'intérieur un fichier leak.txt qui pourrait contenir des informations intéressante.  
+En se rendant sur ce lien, on tombe sur un fichier zip partagé via Google Drive. On y trouve à l'intérieur un fichier leak.txt qui pourrait contenir des informations intéressantes.  
 ![img](img/drive.PNG)  
 
 On télécharge donc le fichier .zip pour l'extraire localement :  
@@ -64,13 +64,13 @@ Nous avons maintenant sa date de naissance précise, il est né le 12/07/1978
 Lorsque l'on essaye le mot de passe 12071978 sur le zip, on accède bien au contenu du fichier texte :  
 ![img](img/link.PNG)
 
-Le fichier leak.txt révèle un lien pastebin avec une combo list de comptes Instagram datant de 2018 et contenant plusieurs username et hash md5.    
+Le fichier leak.txt révèle un lien pastebin avec une combo list de comptes Instagram datant de 2018 et contenant plusieurs usernames et hashs md5.    
   
-On peut essayer de localiser le username appartenant à Gilles pour trouver son compte Instagram.  
+On peut essayer de localiser l'username appartenant à Gilles pour trouver son compte Instagram.  
 En faisant un ctrl+f sur "gilles", un username sort rapidement du lot :  
 ![img](img/leak.PNG)
 
-On peut regarder sur Instagram si un compte existe avec ce username. On tombe sur ce profil appartenant bien à Gilles :  
+On peut regarder sur Instagram si un compte existe avec cet username. On tombe sur ce profil appartenant bien à Gilles :  
 ![img](img/instagramprofile.PNG)
 
 Sur ce compte, il n'y a qu'une seule publication  et on peut y voir un second compte tag dessus :  
