@@ -16,7 +16,9 @@ MCTF{}
 
 ## <u>Hints</u> 
 
-Pas de hint
+Hint n°1 : Quel réseau social est généralement utilisé pour faire la vente et la promotion de produits illicites ?  
+Hint n°2 : Quel informations publiques sont disponibles sur ce réseau ?  
+Hint n°3 : La publication de gilleparballes est un des éléments-clés !  
 
 ## <u>Difficulté</u> 
 
