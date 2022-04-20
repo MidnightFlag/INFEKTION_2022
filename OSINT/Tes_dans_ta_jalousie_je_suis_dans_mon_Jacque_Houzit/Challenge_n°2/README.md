@@ -43,7 +43,7 @@ Le deuxième tweet intéressant est celui-ci :
 
 On récupère ici deux informations différentes :
  - Le mot de passe du compte Instagram de Gilles aurait été leak
- - Dans le tweet, il nous fournit un lien menant vers celui-ci mais est apparemment protégé par un mot de passe
+ - Il nous fournit un lien menant vers celui-ci mais est apparemment protégé par un mot de passe
 
 En se rendant sur ce lien, on tombe sur un fichier zip partagé via Google Drive. On y trouve à l'intérieur un fichier leak.txt qui pourrait contenir des informations intéressantes.  
 ![img](img/drive.PNG)  
