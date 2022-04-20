@@ -31,7 +31,7 @@ Nous avons comme nouvelle information le nom et prénom d'un ami proche de Jacqu
 En cherchant ce nom et prénom, on tombe rapidement sur ce compte Twitter :   
 ![img](img/tweetprofile.PNG)
 
-En investiguant sur celui-ci, on trouve deux tweets très intéressants.
+En investiguant sur celui-ci, on trouve deux tweets très intéressants.  
 Le premier parlant de l'utilisation de mot de passe faible par le protagoniste :  
 ![img](img/tweet1.PNG)
 
