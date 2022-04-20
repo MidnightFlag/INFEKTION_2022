@@ -11,6 +11,10 @@ Format : MCTF{ville:pays} (écrit en français)
 
 *Nécessite d'avoir terminé le challenge précédent
 
+## <u>**Difficulté**</u> :
+
+Hard
+
 ## <u>**Hints**</u> :
 
 Indice 1 : Ce qu'il dit n'est pas la seule information disponible dans cette bande son..  
