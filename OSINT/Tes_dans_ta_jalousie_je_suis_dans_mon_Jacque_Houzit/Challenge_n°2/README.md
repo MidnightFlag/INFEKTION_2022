@@ -32,10 +32,10 @@ En cherchant ce nom et prénom, on tombe rapidement sur ce compte Twitter :
 ![img](img/tweetprofile.PNG)
 
 En investiguant sur celui-ci, on trouve deux tweets très intéressants.  
-Le premier parlant de l'utilisation de mot de passe faible par le protagoniste :  
+Le premier parlant de l'utilisation de mot de passe faible :  
 ![img](img/tweet1.PNG)
 
-Le tweet cité parle entre autres de l'utilisation de sa date de naissance comme mot de passe.  
+Le tweet parle entre autres de l'utilisation de sa date de naissance comme mot de passe.  
 Au vu de la réaction de Gilles, on peut supposer qu'il utilise / qu'il ait utilisé ce format comme mot de passe personnel.
 
 Le deuxième tweet intéressant est celui-ci :  
