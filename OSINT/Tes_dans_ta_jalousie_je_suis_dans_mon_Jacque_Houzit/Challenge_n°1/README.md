@@ -45,7 +45,7 @@ On sait donc que Jacque Houzit propose donc des cours de maths sur la ville de R
 Cet élément nous fait penser (ou pas aha) au site de vente en ligne "leboncoin.fr".
 On peut regarder si une annonce correspondrait à ce que l'on cherche.
 Une annonce sort rapidement du lot :
-(pas faîte au moment de l'écriture du Write-Up, elle sera mise en ligne un jour ou deux avant l’évènement pour ne pas être trop basse dans les résultats)
+![img](img/math.png)
 
 On peut regarder le profil qui a posté cette annonce :
 ![img](img/lbc.png)
@@ -68,7 +68,7 @@ Il s'agit bien du compte Instagram de Jacque Houzit.
 Il faut maintenant se rappeler de l'énoncé et de ce qui est demandé : il faut retrouver l'email de Jacque Houzit.
 
 Pour avoir des informations sur celle-ci, on peut lancer l'outil toutatis sur le compte Instagram récupéré :
-![img](img/toutatis.png)
+![img](img/toutatis.png)  
 
 L'adresse email est donc au format j....t@gmail.com
 La partie un peu technique de ce challenge est qu'il faut, à partir des infos récupérées, en déduire l'adresse e-mail utilisée.
