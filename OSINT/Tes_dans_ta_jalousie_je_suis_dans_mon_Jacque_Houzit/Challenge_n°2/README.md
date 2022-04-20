@@ -52,7 +52,7 @@ On télécharge donc le fichier .zip pour l'extraire localement :
 ![img](img/password.PNG)  
 
 On est bloqué par le mot de passe mentionné dans le deuxième tweet de Gilles. Il nous faut donc trouver un moyen d'accéder au contenu.  
-Nous ne pouvons pas contacter Gilles afin de le SE car il ne répond pas le week-end, dommage ;)  
+Nous ne pouvons pas contacter Gilles afin de le SE car il nous dit dans son deuxième tweet qu'il ne répond pas le week-end, dommage ;)  
 Par contre, on se souvient la mention d'utilisation de mot de passe faible par Gilles. On pourrait tenter de casser le zip.  
 
 Le jour et le mois de naissance de Gilles est public, il ne nous manque plus qu'à trouver son année de naissance pour potentiellement trouver son mot de passe.  
