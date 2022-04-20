@@ -19,7 +19,9 @@ MCTF{e-mail}
 ```
 ## <u>Hints</u> 
 
-Pas de hint
+Hint n°1 : Il faut déduire l'adresse e-mail de Jacque Houzit à partir des informations récoltées !
+Hint n°2 : Par toutatis !
+Hint n°2 : Quel outils permettent de savoir si une adresse e-mail existe ?
 
 ## <u>Difficulté</u>
 
