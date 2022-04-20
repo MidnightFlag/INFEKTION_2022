@@ -29,7 +29,7 @@ Kazuno
 
 Nous avons comme nouvelle information le nom et prénom d'un ami proche de Jacque Houzit.
 En cherchant ce nom et prénom, on tombe rapidement sur ce compte Twitter :
-![img](img/tweetprofile.png)
+![img](img/tweetprofile.PNG)
 
 En investiguant sur celui-ci, on trouve deux tweets très intéressant.
 Le premier parlant de l'utilisation de mot de passe faible par le protagoniste :
