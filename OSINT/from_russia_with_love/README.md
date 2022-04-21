@@ -15,8 +15,8 @@ Format : MCTF{numérodevol:destination}
 
 Indice 1 : Il semblerait qu'il n'y ait plus rien sur son reddit. Si seulement on pouvait remonter le temps...  
 Indice 2 : Overpass  
-Indice 3 : Pour aller à Moscou, il y a forcément une correspondance dans une grande ville connue. 
-Indice 4 : Si seulement les avions pouvaient remonter le temps, eux aussi... 
+Indice 3 : Pour aller à Moscou, il y a forcément une correspondance dans une grande ville connue.  
+Indice 4 : Si seulement les avions pouvaient remonter le temps, eux aussi...  
 
 ## <u>**Auteur**</u> :
 
