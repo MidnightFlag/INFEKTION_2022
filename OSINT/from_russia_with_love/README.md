@@ -15,7 +15,8 @@ Format : MCTF{numérodevol:destination}
 
 Indice 1 : Il semblerait qu'il n'y ait plus rien sur son reddit. Si seulement on pouvait remonter le temps...  
 Indice 2 : Overpass  
-Indice 3 : Pour aller à Moscou, il y a forcément une correspondance dans une grande ville connue.  
+Indice 3 : Pour aller à Moscou, il y a forcément une correspondance dans une grande ville connue. 
+Indice 4 : Si seulement les avions pouvaient remonter le temps, eux aussi... 
 
 ## <u>**Auteur**</u> :
 
@@ -99,7 +100,10 @@ La basse altitude de l'avion combinée au fait que nous connaissons sa destinati
 
 Bingo ! On retrouve les vols effectués depuis Brest sur leur site officiel : https://www.brest.aeroport.bzh/
 
-En indiquant la bonne date, on retrouve un vol qui pourrait correspondre. 
+Malheureusement, les vols affichés ne remontent pas à plus de deux jours... 
+On va donc utiliser la wayback machine sur l'url : https://www.brest.aeroport.bzh/departs-et-arrivees
+
+À partir de là, on peut accéder à la bonne date et observer les arrivées ainsi que les départs du jour. 
 
 ![](./photos/aéroport.png)
 
