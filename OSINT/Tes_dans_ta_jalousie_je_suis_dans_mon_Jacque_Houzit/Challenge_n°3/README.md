@@ -7,8 +7,8 @@ OSINT
 ## <u>**Description**</u> :
 
 ```
-L'agence vous demande maintenant de mettre fin à l'activité de Jacque Houzit en l'envoyant derrère les barreaux !
-A partir des informations que vous avez réussi à récolter, trouvez la preuve que Jacque Houzit est bien à la tête d'un réseau de deal.
+L'agence vous demande maintenant de mettre fin à l'activité de Jacque Houzit en l'envoyant derrière les barreaux !
+À partir des informations que vous avez réussi à récolter, trouvez la preuve que Jacque Houzit est bien à la tête d'un réseau de deal.
 
 FORMAT DU FLAG : 
 MCTF{}
