@@ -57,8 +57,8 @@ On voit rapidement que le business de Jacque et Gilles tourne bien autour de la 
 Autre information importante, un compte Snapchat qui servirait à la communication de leur business est mentionné dans un channel : saleplantjg  
 
 Le compte Snapchat existe bien et il possède un profil public avec une story à la une :  
-![img](img/story1.png)
-![img](img/story2.png)
+![img](img/story1.jpg)
+![img](img/story2.jpg)
 
 (Une troisième story est disponible avec le flag pour les téléphones qui auraient rogné le flag sur la deuxième story)
 
