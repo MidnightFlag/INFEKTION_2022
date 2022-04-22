@@ -18,7 +18,7 @@ Pas de hint
 
 ## <u>Difficulté</u> 
 
-Easy
+Medium
 
 ## <u>Auteur</u> 
 
