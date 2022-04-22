@@ -12,7 +12,7 @@ Vous allez devoir enquêter sur Jacque Houzit, un ancien professeur de mathémat
 Il semblerait qu'il ait récemment fait surface. Il est notamment suspecté d'être à la tête d'un réseau de deal à grande échelle et d'utiliser différents réseaux sociaux pour en faire la promotion. 
 L'agence aurait réussi à obtenir des informations de son côté sur le fait qu'il proposerait des cours de mathématiques à des particuliers sur la ville de Rennes.
 
-Commencez votre enquête et trouvez l'adresse e-mail de Jacque Houzit.
+Commencez votre enquête et trouvez un moyen d'obtenir l'adresse e-mail de Jacque Houzit.
 
 FORMAT DU FLAG : 
 MCTF{e-mail}
