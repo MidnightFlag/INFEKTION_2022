@@ -8,7 +8,7 @@ OSINT
 
 ```
 L'agence Stranger Case vous demande maintenant de mettre fin à l'activité de Jacque Houzit en l'envoyant derrère les barreaux !
-A partir des informations que vous avez réussi à récolter, trouvez une preuve factuelle que Jacque Houzit est bien à la tête d'un réseau de deal à grande échelle.
+A partir des informations que vous avez réussi à récolter, trouvez la preuve que Jacque Houzit est bien à la tête d'un réseau de deal à grande échelle.
 
 FORMAT DU FLAG : 
 MCTF{}
