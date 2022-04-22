@@ -7,8 +7,8 @@ OSINT
 ## <u>**Description**</u> :
 
 ```
-L'agence Stranger Case vous demande maintenant de mettre fin à l'activité de Jacque Houzit en l'envoyant derrère les barreaux !
-A partir des informations que vous avez réussi à récolter, trouvez la preuve que Jacque Houzit est bien à la tête d'un réseau de deal à grande échelle.
+L'agence vous demande maintenant de mettre fin à l'activité de Jacque Houzit en l'envoyant derrère les barreaux !
+A partir des informations que vous avez réussi à récolter, trouvez la preuve que Jacque Houzit est bien à la tête d'un réseau de deal.
 
 FORMAT DU FLAG : 
 MCTF{}
@@ -39,7 +39,7 @@ On voit rapidement qu'il s'agit d'un compte de motivation pour les entrepreneurs
 En regardant le contenu de celui-ci, une publication saute rapidement aux yeux :  
 ![img](img/publi.PNG)
 
-À partir des informations qui sont données, on se doute qu'il s'agit d'un compte tenu par Jacque Houzit lui-même. On retrouve d'ailleurs son compte privé comme seul abonnement du compte business.  
+À partir de ce qui est dit, on se doute qu'il s'agit d'un compte tenu par Jacque Houzit lui-même. On retrouve d'ailleurs son compte privé comme seul abonnement.    
 Dans la description de la publication, un lien discord est donné. Des choses intéressantes pourraient s'y retrouver.  
 En le rejoignant, on s'aperçoit que nos actions ainsi que les channels sont très limités :  
 ![img](img/chan.PNG)
