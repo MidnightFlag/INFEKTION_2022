@@ -60,7 +60,7 @@ Le compte Snapchat existe bien et il possède un profil public avec une story à
 ![img](img/story1.png)
 ![img](img/story2.png)
 
-(Une troisième story est disponible avec le flag pour téléphone qui aurait rogné le flag sur la deuxième story)
+(Une troisième story est disponible avec le flag pour les téléphones qui auraient rogné le flag sur la deuxième story)
 
 Nos soupçons sont confirmés ! Nous avons maintenant une preuve factuelle que Jacque Houzit est bien à la tête d'un réseau de vente de produit illicite.
 
