@@ -56,4 +56,4 @@ L'option -C de stegsnow permet de compresser/décompresser le message caché lor
 
 Vous avez la 3 ème partie du flag.
 
-**Flag : MCTF{St3g4n0grAphY_iS_r34LlY_Us3fULl}**
+**Flag : MCTF{St3g4n0grAphY_iS_r34LlY_Us3fUL}**
