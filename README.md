@@ -68,18 +68,3 @@ Github  : https://github.com/MidnightFlag
 | [Can you hear me?](Steganographie/Can_You_Hear_Me)               | Steganography | A0d3n      | ?      |Easy/Medium |
 | [Summer is beautiful](Steganographie/summer_is_beautiful)        | Steganography | x          | ?      |Medium      |
 | [Too well hidden for you](Steganographie/Too_well_hidden_for_you)| Steganography | Arathor    | ?      |Medium      |
-
-Challenges par catégorie :   
-
-- 7 Crypto  
-- 4 Misc  
-- 8 OSINT  
-- 1 Pwn  
-- 7 Web  
-- 4 Network  
-- 5 Reverse  
-- 6 Forensic  
-- 2 Android  
-- 7 Steganography  
-
-**Total : 51 challenges (? points)**  
