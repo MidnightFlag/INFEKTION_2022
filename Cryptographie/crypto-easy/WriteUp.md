@@ -18,6 +18,6 @@ KODA
 
 ## <u>Solution</u> :
 
-Pour le résoudre, il suffit d'itendifier le chiffrement via l'outil de dcode : https://www.dcode.fr/identification-chiffrement
+Pour le résoudre, il suffit d'identifier le chiffrement via l'outil de dcode : https://www.dcode.fr/identification-chiffrement
 
 ##**Flag : MCTF{T_as_le_bonjour_d_Alfred}**
