@@ -1,7 +1,7 @@
-# **NOM DU CHALL**.
-## <u>**CRYPTO**</u>
+# **Guerre culturelle**.
+## <u>**Catégorie**</u>
 
-CATEGORIE DU CHALL
+Cryptographie
 
 ## <u>**Description**</u> :
 
@@ -12,17 +12,12 @@ Une guerre culturelle et pendant cette période, certains en ont profité.
 
 ## <u>Hints</u> 
 
- pourquoi un etre un cowboy 
-
 ## <u>Auteur</u> 
 
 KODA
 
 ## <u>Solution</u> :
 
-pour le resoudre nous remarquons un chiffrement; nous analysons le chiffrement 
-puis une fois compris  en cherchant nous pouvons toruver que c'est le chiffrement chuck Norris 
-aller sur Deocde  chiffrement de chuck norris  puis le flag apparait.
+Pour le résoudre, il suffit d'itendifier le chiffrement via l'outil de dcode : https://www.dcode.fr/identification-chiffrement
 
 ##**Flag : MCTF{T_as_le_bonjour_d_Alfred}**
-
