@@ -6,7 +6,7 @@ Reverse
 ## **Description**
 
 ```
-Notre stagiaire a écrit un programme mais il a oublié son mot de passe. Aidez donc se pauvre enfant.
+Notre stagiaire a écrit un programme mais il a oublié son mot de passe. Aidez donc ce pauvre enfant.
 
 ```
 
@@ -21,7 +21,7 @@ ToRr0aN
 
 
 On cherche d'abord la version de python compatible. Le magic number vaut 0x0d6f soit 3439. On voit que 3439 correspond à python 3.10b1. (https://github.com/google/pytype/blob/main/pytype/pyc/magic.py)  
-Malheuresement, aucun décompilo n'est disponible pour cette version. On va donc devoir s'afférer à la lecture du bytecode.  
+Malheureusement, aucun décompilo n'est disponible pour cette version. On va donc devoir s'affairer à la lecture du bytecode.  
 
 Pour obtenir un bytecode potable, on peut trouver ce projet sur git : https://github.com/gmodena/pycdump/blob/master/dump.py
 
@@ -384,7 +384,7 @@ On trouve les lignes ci dessous qui semblent être affichées lorsque le chall e
 
 Après chiffrement le password doit donc être égal à 'NBUE|sStd^ShhnMN~'  
 
-Juste avant, on voit un espèce de chiifrement. On essaye de le déchiffrer : 
+Juste avant, on voit une espèce de chifrement. On essaye de le déchiffrer : 
 
 
 ```
@@ -433,7 +433,7 @@ Juste avant, on voit un espèce de chiifrement. On essaye de le déchiffrer :
 
 ```
 
-on comprend que le code d'origone doit ressembler à ça : 
+on comprend que le code d'origine doit ressembler à ça : 
 
 ```py
 tmp_string = ""
@@ -447,7 +447,7 @@ for letter in string:
         it = 1
 ```
 
-Une fois la fonction déchiffrer, on obtient MCTF{tRuc_RigoLO}.
+Une fois la fonction déchiffrée, on obtient MCTF{tRuc_RigoLO}.
 
 
 ## **Flag : `MCTF{tRuc_RigoLO}`**
