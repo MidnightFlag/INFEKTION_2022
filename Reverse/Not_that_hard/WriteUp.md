@@ -6,7 +6,7 @@ Reverse
 ## <u>**Description**</u> :
 
 ```
-Un agent à voler un dossier confidentiel, cependant il à oublier de demander le mot de passe à la personne qu'il a volé. Trouvez ce mot de passe.
+Un agent a volé un dossier confidentiel, cependant il a oublié de demander le mot de passe à la personne qu'il a volée. Trouvez ce mot de passe.
 
 FORMAT DU FLAG : MCTF{password}
 ```
@@ -23,9 +23,9 @@ ToRr0aN
 
 ## <u>Solution</u> :
 
-Après avoir passer l'exécutable au decompilo (de ghidra pour ma part), on commence part essayer de comprendre le code du main.
+Après avoir passé l'exécutable au decompilo (de ghidra pour ma part), on commence par essayer de comprendre le code du main.
 
-On voit très vite que si la taille du string donnée en entrée n'est pas de 0xc (12) charactères,  alors l'app se ferme.
+On voit très vite que si la taille du string donnée en entrée n'est pas de 0xc (12) caractères,  alors l'app se ferme.
 
 ```c
 puts("Give me your password : ");
@@ -50,10 +50,10 @@ else {
 ```
 
 
-Nous pouvons essayer de lancer l'app en mettant un breakpoint sur le if qui utilise notre entrée voir ce qu'il se passe.
+Nous pouvons essayer de lancer l'app en mettant un breakpoint sur le if qui utilise notre entrée pour voir ce qu'il se passe.
 
 On voit que deux valeurs sont comparées, edx et eax. L'une des deux est fixe et l'autre varie en fonction de l'entrée.  
-Pour obtenir l'égalité avec la première valeur, on voit qu'il faut 65. Le premier charactère est donc un 'e'.   
+Pour obtenir l'égalité avec la première valeur, on voit qu'il faut 65. Le premier caractère est donc un 'e'.   
 Après avoir la même chose pour chaque charactère, on trouve : **e4sy_R3vEr5e**
 
 ## **Flag : MCTF{e4sy_R3vEr5e}**
