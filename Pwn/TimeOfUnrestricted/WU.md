@@ -25,7 +25,7 @@ Noiche
 
 ## <u>Solution</u> :
 
-Il existe ici une Race Condition de type TOCTOU, en effet il se passe un certain délai entre le moment où le programme vérifie les droits d'accès au fichier et le moment où il l'ouvre pour le lire. Il est possible d'utiliser un lien symbolique pointant vers un fichier disponble à la lecture pour bypass le check de permissions, puis d'éditer le lien symbolique pour le faire pointer vers le fichier flag.txt avant l'ouverture du fichier.
+Il existe ici une Race Condition de type TOCTOU, en effet il se passe un certain délai entre le moment où le programme vérifie les droits d'accès au fichier et le moment où il l'ouvre pour le lire. Il est possible d'utiliser un lien symbolique pointant vers un fichier disponible à la lecture pour bypass le check de permissions, puis d'éditer le lien symbolique pour le faire pointer vers le fichier flag.txt avant l'ouverture du fichier.
 
 Exemple :
 
