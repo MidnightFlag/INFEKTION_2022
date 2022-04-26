@@ -10,7 +10,7 @@ Votre mission sera de le décoder et de récupérer le message (MCTF{message}
 
  - Fichier .wav à ouvrir avec Audacity
  
- - ![Indice1](/contenu01.png "Contenu audio")
+ ![](./contenu01.png)
 
  - Les données que nous cherchons sont en binaires et se trouve répété 3 fois lors de 5,6ms. Le reste n'est que du bruit issu de Duga-1 (https://fr.wikipedia.org/wiki/Pic-vert_russe).
 
