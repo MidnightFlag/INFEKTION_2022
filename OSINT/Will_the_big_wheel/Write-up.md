@@ -10,7 +10,7 @@ Votre mission est de décoder son message et de nous renvoyer le lieu d'extratio
 
  - Ajouter l'extension .png au fichier reçu. (MessageRecover)
 
- ![Indice1](/Grande_Roue_Pripyat.png "Grand Roue Pripyat")
+ ![](./Grande_Roue_Pripyat.png)
 
  - Passer l'image à la moulinette pour obtenir dans les métas données le message suivant: WzUxLjQwMzA5LCAzMC4wNDQwMXw1MS40MDc4OSwgMzAuMDU1NjR8NTEuNDAwODksIDMwLjA2NDA4XSwgSSB3SUxsIHdBSXQgWW9VIGFUIHRIZSBjRW50RVIu
 
@@ -22,7 +22,7 @@ Votre mission est de décoder son message et de nous renvoyer le lieu d'extratio
 
  - Pour créer un triangle ayant pour sommet les 3 points précédents. En cherchant dans la zone dessiné par le triangle, on trouve un seul point d'intéret qui semble correspondre à notre image du début (Чорнобиль). Seul point d'intérêt dans la zone délimitée.
 
- ![Indice2](/pripyat_maps.png "Triangulation Maps")
+ ![](./pripyat_maps.png)
 
  - Dnas notre triangle, on trouve un seul point d'intérêt (Чорнобиль), la grande roue est la même que sur l'image que l'on a au début du chall.
 
