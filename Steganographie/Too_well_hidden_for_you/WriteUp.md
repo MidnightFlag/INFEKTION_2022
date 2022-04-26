@@ -29,11 +29,13 @@ Arathor
 On constate que le zip contient 3 images et un fichier texte, il faut retrouver les 3 parties du flag pour l'obtenir. D'après ce qui nous a été dit dans la description tous les documents ne nous serviront pas. 
 
 
-Document 1.png
+![](./chall/1.png)  
+Document 1 :  
 Le 1.png apparaît comme corrompu, il faut se diriger dans le code source de l'image et à l'aide de ctrl+f chercher MCTF pour trouver la première partie du flag
 
 
-Document 2.png
+Document 2 ::
+ ![](./chall/2.png)!  
 Solution 1 : installer le paquet stegano puis utiliser l'argument reveal qui sert à révéler les messages potentiellement caché couplé à l'option -i permettant d'indiquer le chemin vers l'image à traiter.
 
     stegano-lsb reveal -i "Chemin_vers_l'image"
@@ -45,10 +47,12 @@ Solution 2 : utiliser stegano comme librairie python dans un script :
 
 Vous avez maintenant la 2 ème partie du flag
 
-Document 3.png
+
+Document 3 :  
+ ![](./chall/3.png)  
 il n'y a rien ici 
 
-Document neige.txt
+Document neige.txt :  
 Ici, il s'agit d'un texte caché dans du texte qui est invisible à l'oeil nu. Il faut utiliser la programme en ligne de commande Stegsnow pour le voir.
 L'option -C de stegsnow permet de compresser/décompresser le message caché lors de l'encodage ou du décodage. 
 
