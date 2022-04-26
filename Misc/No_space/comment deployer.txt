@@ -1,8 +1,0 @@
-MCTF{sP4c3s_4r3_f0r_n3wb13s} 
-
-
-pour importer :
-docker import nospace.tar
-docker image ls <- voir l'identifiant de l'image importée
-docker tag <id_image> nospace
-docker run --name nospace -h nospace -p 0.0.0.0:3001:3001 -d nospace /bin/sh /root/start.sh
