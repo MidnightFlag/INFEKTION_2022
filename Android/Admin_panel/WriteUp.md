@@ -28,13 +28,13 @@ On nous donne pour ce challenge une APK.
 
 On sait d'ores et déjà qu'il s'agira de reverse sur ce challenge.
 
-Il existe plusieurs moyen de reverse une apk, voici une des façon :
+Il existe plusieurs moyens de reverse une apk, voici une des façons :
 
 On peut accéder au code source simplement en utilisant le décompilateur d'Android studio qui ouvrira un projet contenant le code de l'APK, cependant les fichiers seront en .smali qui rend la lecture du code difficile. Cependant, Android studio est utile pour pouvoir lancer le projet et faire nos tests...
 
 Pour ce faire nous allons utiliser dex2jar et jd-gui qui sont respectivement un convertisseur d'APK vers un fichier JAR et un décompileur java. 
 
-Regrouper les fichiers dex2jar et l'APK dans le même dossier et depuis l'invite de commande saisissez la ligne suivant. 
+Regrouper les fichiers dex2jar et l'APK dans le même dossier et depuis l'invite de commande saisissez la ligne suivante. 
 
         d2j-dex2jar.bat -f -o output.jar AdminPanel.apk
 
