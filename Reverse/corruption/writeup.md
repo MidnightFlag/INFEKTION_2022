@@ -27,7 +27,7 @@ Dans ce writeup, je vais aller droit au but et ignorer toutes les phases de rech
 
 Les trois fonctions dans lesquelles il est pertinent de plonger sont les fonctions `main`, `getint` et `parseint`.
 
-On pourrait en analyser le code assembleur, les passer dans un décompilateur ou autre, ce qui compte est d'en obtenir une bonne compréhension. Ici, après les avoir passé dans le décompilateur de ghidra de cutter on obtient ça :
+On pourrait en analyser le code assembleur, les passer dans un décompilateur ou autres, ce qui compte est d'en obtenir une bonne compréhension. Ici, après les avoir passés dans le décompilateur de ghidra de cutter on obtient ça :
 
 ```c
 uint32_t parseint(void *arg1)
@@ -166,7 +166,7 @@ undefined8 main(undefined8 argc, char **argv) {
 }
 ```
 
-On peut pousser le vice encore plus loin : quand a vraiment compris ce que faisait une fonction, on peut simplement la remplacer par une phrase :
+On peut pousser le vice encore plus loin : quant a vraiment compris ce que faisait une fonction, on peut simplement la remplacer par une phrase :
 
 ```c
 uint32_t parseint(void *arg1) {
