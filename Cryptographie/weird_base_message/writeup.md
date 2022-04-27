@@ -27,6 +27,6 @@ FORMAT DU FLAG : MCTF{}
 
 Recette cyberchef :
 
-From base64 > From base32 > From base85 > From base58 > Zlib inflate > From hex
+From hex > Zlib inflate > From base58 > From base85 > From base32 > From base64
 
 **Flag : MCTF{3nc0d1n6_15_n0_cryp70}**
