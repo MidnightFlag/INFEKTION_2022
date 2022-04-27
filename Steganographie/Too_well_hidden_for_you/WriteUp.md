@@ -6,7 +6,7 @@ Steganographie / Médium
 ## <u>**Description**</u> :
 
 Un de nos agents a réussi à intercepter un mail suspecté d'être envoyé par l'ennemi contenant plusieurs fichiers. Il n'a vraisemblablement pas trouvé d'information confidentielle à l'oeil nues... Vos supérieurs sont pourtant certains qu'ils contiennent un message secret. 
-Menez votre enquête pour rendre compte à vos supérieurs. Faites attention, peut-être certains documents sont présents pour brouiller les pistes...
+Menez votre enquête pour rendre compte à vos supérieurs. Faites attention, certains documents sont peut-être présents pour brouiller les pistes...
 
 Format : MCTF{PartiesDuFlagConcaténées}
 
