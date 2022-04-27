@@ -15,7 +15,7 @@ FORMAT DU FLAG : MCTF{FLAG_EN_MAJUSCULES}
 
 ## <u>Hints</u> 
 
-Vous apercevez une note grifonné sur la marge : "J’aimɇ l’idɇɇ quɇ lɇ plus grand dɇs Sɇx-symbols nɇw-yorkais n’ɇtait qu’un chiɇn dans un foyɇr dɇ Brazzavillɇ"
+Vous apercevez une note griffonnée sur la marge : "J’aimɇ l’idɇɇ quɇ lɇ plus grand dɇs Sɇx-symbols nɇw-yorkais n’ɇtait qu’un chiɇn dans un foyɇr dɇ Brazzavillɇ"
 
 ## <u>Auteur</u> 
 
@@ -34,18 +34,18 @@ Ensuite quand on regarde le texte on remarque ce : C 42 M M ainsi que 42 M M
 On part donc sur:
     42 -> O
 
-Suite a une analyse on peut voir ce schéma qui se répète : T 13 O 33
+Suite à une analyse on peut voir ce schéma qui se répète : T 13 O 33
 Ainsi on trouve :
     13 -> I
     33 -> N
 
 Suite à cela on voit au tout début du texte : N I C O 15 12 25
-Directement on peux penser à Nicolas
+Directement on peut penser à Nicolas
     15 -> L
     12 -> A
     25 -> S
 
-On cherche ensuite des mots presque terminé en les complétant : I N 21 I C A T I O N , I N 55 A S I O N, O 24 24 O S I T I O N
+On cherche ensuite des mots presque terminés en les complétant : I N 21 I C A T I O N , I N 55 A S I O N, O 24 24 O S I T I O N
     21 -> D
     55 -> V
     24 -> P
@@ -53,7 +53,7 @@ On cherche ensuite des mots presque terminé en les complétant : I N 21 I C A T
 V O 23 L A I T
     23 -> U
 
-Il ne reste plus grand chose au flag : M C T F {L A 32 77 I N 77 D 77 S M O U 77 T T 77 S}
+Il ne reste plus grand-chose au flag : M C T F {L A 32 77 I N 77 D 77 S M O U 77 T T 77 S}
 Ce qui nous donne
     77 -> E
     32 -> R
