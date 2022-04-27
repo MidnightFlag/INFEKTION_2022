@@ -26,7 +26,6 @@ Github  : https://github.com/MidnightFlag
 | [Crypto easy](Cryptographie/crypto-easy)                         | Crypto        | KODA       | ?      |?           |  
 | [Encoded strings](Misc/encoded_strings)                          | Misc          | x          | ?      |Easy        |
 | [A blurred text is illegible](Misc/a_blurred_text_is_illegible)  | Misc          | x          | ?      | Easy       |
-| [NoSpaces.](Misc/No_space)                                       | Misc          | Processus Thief| ?  |Easy        |
 | [DansTonChattr](Misc/dans_ton_chattr)                            | Misc          | Processus Thief| ?  |Easy        |
 | [Look more closely](OSINT/look_more_closely)                     | OSINT         | ToRr0aN    | ?      |Easy        |
 | [Will the big wheel](OSINT/Will_the_big_wheel)                   | OSINT         | A0d3n      | ?      |Easy        |
@@ -61,10 +60,8 @@ Github  : https://github.com/MidnightFlag
 | [Sur Écoute](Forensic/Sur_écoute_Réseau_Abyss_Watcher)           | Forensic      | Abyss Watcher| ?    |Hard        |
 | [Trousse social](Android/Trousse_social)                         | Android       | ToRr0aN    | ?      |  Easy      |
 | [Admin panel](Android/Admin_panel)                               | Android       | Arathor    | ?      |  Easy      |
-| [The man from space](Steganographie/the_man_from_space)          | Steganography | x          | ?      |Easy        |
 | [sPoNs0r PaGe](Steganographie/sPoNs0r_PaGe)                      | Steganography | x          | ?      |Easy        |
 | [Nothing is classified](Steganographie/nothing_is_classified)    | Steganography | x          | ?      |Easy        |
 | [Biohacker](Steganographie/biohacker)                            | Steganography | SeulAParis | ?      |Easy/Medium |  
 | [Can you hear me?](Steganographie/Can_You_Hear_Me)               | Steganography | A0d3n      | ?      |Easy/Medium |
-| [Summer is beautiful](Steganographie/summer_is_beautiful)        | Steganography | x          | ?      |Medium      |
 | [Too well hidden for you](Steganographie/Too_well_hidden_for_you)| Steganography | Arathor    | ?      |Medium      |
