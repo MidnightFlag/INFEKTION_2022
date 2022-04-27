@@ -12,15 +12,15 @@ le flag est sous la forme MCTF{}
 
 ```
 
-Nous n'avons pas beaucoup de possibilité avec cette application, seul la création de compte est possible mais pas terminé.
+Nous n'avons pas beaucoup de possibilités avec cette application, seule la création de compte est possible mais pas terminée.
 
 De plus la création de compte semble vulnérable. 
 
-après la création du compte on est rediriger vers un endpoint nous informant de l'indisponibilité du site 
+après la création du compte on est redirigé vers un endpoint nous informants de l'indisponibilité du site 
 
 ![Pasted image 20220404231904.png]
 
-Pour y voir plus claire, il est nécessaire de capturer la requête.
+Pour y voir plus clair, il est nécessaire de capturer la requête.
 
 ![[Pasted image 20220404190139.png]]
 
