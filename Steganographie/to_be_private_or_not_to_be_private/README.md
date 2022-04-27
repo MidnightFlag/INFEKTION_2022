@@ -1,7 +1,7 @@
 # **To be private or not to be private ?**.
 ## <u>**Catégorie**</u>
 
-CATEGORIE : Stéganographie
+Stéganographie
 
 ## <u>**Description**</u> :
 
