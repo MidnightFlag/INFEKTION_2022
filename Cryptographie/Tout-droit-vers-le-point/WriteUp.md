@@ -8,8 +8,8 @@ Catégorie : Cryptographie
 
 ## Ennoncé
 
-Un espion americain infiltré en Russie vous a contacté en morse pour vous transmettre 2 messages. A vous des les déchiffrer.
-Auparavant il vous a transmis une suite de charactère incompréhensible et une grille mais incomplète, à quoi peut-elle bien servir ?
+Un espion americain infiltré en Russie vous a contacté en morse pour vous transmettre 2 messages. A vous de les déchiffrer.
+Auparavant il vous a transmis une suite de caractères incompréhensibles et une grille mais incomplète, à quoi peut-elle bien servir ?
 
 - Message chiffré : GGGGXGVGAFFAFFDDDDFDFAAGVGDAVDFXDXADVXFDVVFDFFVDGGGGFVAAAFDGAAGFFFFAFAAXVGAVVVDDXDXGAVFDAAADGVGXAVXGAAXFGVGVVDVAXFXVAVAAFXVVXX
 - Grille incomplète : L5BWRD.C7UAFH3.XE6O2S.1VIN4G0.TQ9Z8.
@@ -17,7 +17,7 @@ Auparavant il vous a transmis une suite de charactère incompréhensible et une 
 
 ## Solve
 
-Tout d'abord, on commence par faire des recherches pour attribuer le message chiffré à une méthode de chiffrement particulière. L'utilisation exclusives des lettres ADFGVX nous mène au **Chiffre ADFGVX**. En lisant de la documentation, on s'aperçoit que c'est un algorithme qui associe une **substitution** insipiré du **carré de Polybe** et d'une **transposition**.
+Tout d'abord, on commence par faire des recherches pour attribuer le message chiffré à une méthode de chiffrement particulière. L'utilisation exclusive des lettres ADFGVX nous mène au **Chiffre ADFGVX**. En lisant de la documentation, on s'aperçoit que c'est un algorithme qui associe une **substitution** insipirée du **carré de Polybe** et d'une **transposition**.
 
 Pour déchiffrer le message, il faut donc une grille et une clé.
 
@@ -27,9 +27,9 @@ En écoutant les fichiers, on comprend vite que le langage utilisé est le morse
 
 Pour décoder le morse, 2 techniques sont possibles : 
 
-- écouter le morse, traduire en point et en trait puis traduire en lettre à l'aide de documentation
+- écouter le morse, traduire en points et en trait puis traduire en lettres à l'aide de documentation
 
-- mettre le fichier audio dans audacity et mettre en spectogramme la piste, traduire en point et en trait puis traduire en lettre à l'aide de documentation
+- mettre le fichier audio dans audacity et mettre en spectrogramme la piste, traduire en points et en trait puis traduire en lettres à l'aide de documentation
 
 #### Audio 1 - La clé
 
