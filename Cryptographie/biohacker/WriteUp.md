@@ -23,7 +23,7 @@ SeulAParis
 
 Une protéine est faite d'une séquence d'acides aminés.
 
-Chaque acide aminé est codifié par une lettre de l'alphabet, afin de pouvoir décrire de manière assez succinte la séquence d'une protéine.
+Chaque acide aminé est codifié par une lettre de l'alphabet, afin de pouvoir décrire de manière assez succincte la séquence d'une protéine.
 
 Il suffit de trouver une table qui fasse la correspondance entre la formule d'un acide aminé et sa lettre pour traduire le flag.
 
