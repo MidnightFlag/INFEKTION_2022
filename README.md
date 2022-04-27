@@ -17,13 +17,13 @@ Github  : https://github.com/MidnightFlag
 
 | Name                                                             | Category      | Author     | Difficulty |
 |------------------------------------------------------------------|:-------------:|:----------:|:----------:|
-| [Something hidden](Cryptographie/Something_hidden)               | Crypto        | 0xSysr3ll  |Easy        |
 | [Weird base message](Cryptographie/weird_base_message)           | Crypto        | 0xSysr3ll  |Easy        |
 | [Tout droit vers le point](Cryptographie/Tout-droit-vers-le-point)| Crypto       | ZarKyo     |Easy        |
 | [Weird encrpytion](Cryptographie/weird_encryption)               | Crypto        | Arathor    |Easy        |
+| [C'est carré](Cryptographie/c'est_carré)                         | Crypto        | Moumou     |Easy        |
+| [Crypto easy](Cryptographie/crypto-easy)                         | Crypto        | KODA       |Easy        |  
 | [Leakeyd](Cryptographie/Leakeyd)                                 | Crypto        | Arathor    |Medium      |
-| [C'est carré](Cryptographie/c'est_carré)                         | Crypto        | Moumou     |?           |
-| [Crypto easy](Cryptographie/crypto-easy)                         | Crypto        | KODA       |?           |  
+| [Something hidden](Cryptographie/Something_hidden)               | Crypto        | 0xSysr3ll  |Medium      |
 | [Encoded strings](Misc/encoded_strings)                          | Misc          | x          |Easy        |
 | [A blurred text is illegible](Misc/a_blurred_text_is_illegible)  | Misc          | x          | Easy       |
 | [Infiltration au KGB 1/4](Misc/infiltration_au_kgb_1-4)          | Misc          | Lyior/CrZ  | Easy       |
@@ -40,20 +40,20 @@ Github  : https://github.com/MidnightFlag
 | [From Russia with love](OSINT/from_russia_with_love)             | OSINT         | x          |Hard        |
 | [Escape route](OSINT/escape_route)                               | OSINT         | x          |Hard        | 
 | [To be private or not to be private](Web/to_be_private_or_not_to_be_private)| Web| Spownark   |Easy        |      
-| [Bien plus qu'une simpe gallerie](Web/Bien_plus%20qu_une_simpe_gallerie)  | Web  | 0xSysr3ll  |Easy?       |
 | [Unfinished intranet](Web/unfinished_intranet)                   | Web           | .Yo0x      |Easy        | 
-| [Infektion_api](Web/Infektion_api)                               | Web           | .Yo0x      |?           | 
-| [TV23](Web/TV23)                                                 | Web           | SpawnZii   |?           |   
+| [Infektion_api](Web/Infektion_api)                               | Web           | .Yo0x      | Medium     |
+| [Bien plus qu'une simpe gallerie](Web/Bien_plus%20qu_une_simpe_gallerie)  | Web  | 0xSysr3ll  |Medium      |
+| [TV23](Web/TV23)                                                 | Web           | SpawnZii   |Medium      |   
 | [BGK](Web/BGK)                                                   | Web           | SpawnZii   |Hard        |           
 | [Le jeton de Catwoman](Reseau/le_jeton_de_catwoman)              | Network       | Processus Thief|Easy    |
 | [Private network isn't safe](Reseau/private_network_isnt_safe)   | Network       | x          |Easy        |
 | [Unencrypted communication](Reseau/unencrypted_communication)    | Network       | x          |Easy        |
 | [Exfiltration d'agent](Reseau/exflitration_d'agent)              | Network       | 0xSysr3ll  |Easy        |
+| [Rocket launch validator](Reverse/rocket_launch_validator)       | Reverse       | SeulAParis |Easy        |
 | [Not that hard](Reverse/Not_that_hard)                           | Reverse       | ToRr0aN    |Medium      |
 | [Le stagiaire](Reverse/Le_stagiaire)                             | Reverse       | ToRr0aN    |Medium      |
-| [Rocket launch validator](Reverse/rocket_launch_validator)       | Reverse       | SeulAParis |Easy        |
-| [Challenge de recrutement au KGB](Reverse/challenge_recrutement_kgb) | Reverse   | SeulAParis |?           |
-| [Corruption](Reverse/corruption)                                 | Reverse       | SeulAParis |?           |
+| [Challenge de recrutement au KGB](Reverse/challenge_recrutement_kgb) | Reverse   | SeulAParis | Medium     |
+| [Corruption](Reverse/corruption)                                 | Reverse       | SeulAParis |Hard        |
 | [Dizzy dev](Forensic/Dizzy_Dev)                                  | Forensic      | Alpine     | Easy       |
 | [It remembers everything 1/3](/Forensic/it_remembers_everything_1-3)| Forensic   | x          |  Easy      |
 | [It remembers everything 2/3](/Forensic/it_remembers_everything_2-3)| Forensic   | x          |  Easy      |
