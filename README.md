@@ -41,7 +41,7 @@ Github  : https://github.com/MidnightFlag
 | [Escape route](OSINT/escape_route)                               | OSINT         | x          | ?      |Hard        | 
 | [Ret2Liberty](Pwn/Ret2Liberty)                                   | Pwn           | Processus Thief | ? |Easy/medium |
 | [To be private or not to be private](Web/to_be_private_or_not_to_be_private)| Web| Spownark   | ?      |Easy        |      
-| [Bien plus qu'une simpe gallerie](Web/Bien_plus%20qu_une_simpe_gallerie)  | Web  | 0xSysr3ll??| ?      |Easy?       |
+| [Bien plus qu'une simpe gallerie](Web/Bien_plus%20qu_une_simpe_gallerie)  | Web  | 0xSysr3ll  | ?      |Easy?       |
 | [Unfinished intranet](Web/unfinished_intranet)                   | Web           | .Yo0x      | ?      |Easy        | 
 | [Infektion_api](Web/Infektion_api)                               | Web           | .Yo0x      | ?      |?           | 
 | [TV23](Web/TV23)                                                 | Web           | SpawnZii   | ?      |?           |   
