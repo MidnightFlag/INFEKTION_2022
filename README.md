@@ -57,7 +57,6 @@ Github  : https://github.com/MidnightFlag
 | [Dizzy dev](Forensic/Dizzy_Dev)                                  | Forensic      | Alpine     | Easy       |
 | [It remembers everything 1/3](/Forensic/it_remembers_everything_1-3)| Forensic   | x          |  Easy      |
 | [It remembers everything 2/3](/Forensic/it_remembers_everything_2-3)| Forensic   | x          |  Easy      |
-| [ResolveMe](Forensic/ResolveME)                                  | Forensic      | N3oWind    |  Easy      |
 | [Sur Écoute](Forensic/Sur_écoute_Réseau_Abyss_Watcher)           | Forensic      | Abyss Watcher|Hard      |
 | [Trousse social](Android/Trousse_social)                         | Android       | ToRr0aN    |  Easy      |
 | [Admin panel](Android/Admin_panel)                               | Android       | Arathor    |  Easy      |
