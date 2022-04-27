@@ -5,17 +5,12 @@ CATEGORIE : Stéganographie
 
 ## <u>**Description**</u> :
 
-
-DESCRIPTION DU CHALL
-
 Au sein de vos locaux un employé vous semble suspicieux et pourrait envoyé des informations importante à une organisation, vous savez qu'il utilise souvent un cloud est ce que tout cela est lié ?
 
 FORMAT DU FLAG : MCTF{flag}
 
 
 ## <u>Hints</u> 
-
-aucun HINTS pour l'instant
 
 ## <u>Auteur</u> 
 
