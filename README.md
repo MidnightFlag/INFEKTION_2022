@@ -26,6 +26,11 @@ Github  : https://github.com/MidnightFlag
 | [Crypto easy](Cryptographie/crypto-easy)                         | Crypto        | KODA       | ?      |?           |  
 | [Encoded strings](Misc/encoded_strings)                          | Misc          | x          | ?      |Easy        |
 | [A blurred text is illegible](Misc/a_blurred_text_is_illegible)  | Misc          | x          | ?      | Easy       |
+| [Infiltration au KGB 1/4](Misc/infiltration_au_kgb_1-4)          | Misc          | Lyior/CrZ  | ?      | Easy       |
+| [Infiltration au KGB 2/4](Misc/infiltration_au_kgb_2-4)          | Misc          | Lyior/CrZ  | ?      | Easy       |
+| [Infiltration au KGB 3/4](Misc/infiltration_au_kgb_3-4)          | Misc          | Lyior/CrZ  | ?      | Easy       |
+| [Infiltration au KGB 4/4](Misc/infiltration_au_kgb_4-4)          | Misc          | Lyior/CrZ  | ?      | Medium     |
+| [Крузенштерн](Misc/Крузенштерн)                                  | Misc          | Morpheus   | ?      | Medium     |
 | [Look more closely](OSINT/look_more_closely)                     | OSINT         | ToRr0aN    | ?      |Easy        |
 | [Will the big wheel](OSINT/Will_the_big_wheel)                   | OSINT         | A0d3n      | ?      |Easy        |
 | [T'es dans ta jalousie, je suis dans mon Jacque Houzit 1/3.](OSINT/Tes_dans_ta_jalousie_je_suis_dans_mon_Jacque_Houzit/Challenge_n°1)| OSINT | Kazuno|?|Medium|
