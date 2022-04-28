@@ -62,6 +62,6 @@ Github  : https://github.com/MidnightFlag
 | [Admin panel](Android/Admin_panel)                               | Android       | Arathor    |  Easy      |
 | [sPoNs0r PaGe](Steganographie/sPoNs0r_PaGe)                      | Steganography | x          |Easy        |
 | [Nothing is classified](Steganographie/nothing_is_classified)    | Steganography | x          |Easy        |
-| [Biohacker](Steganographie/biohacker)                            | Steganography | SeulAParis |Easy/Medium |  
 | [Can you hear me?](Steganographie/Can_You_Hear_Me)               | Steganography | A0d3n      |Easy/Medium |
 | [Too well hidden for you](Steganographie/Too_well_hidden_for_you)| Steganography | Arathor    |Medium      |
+| [Biohacker](Steganographie/biohacker)                            | Steganography | SeulAParis |Medium      |  
