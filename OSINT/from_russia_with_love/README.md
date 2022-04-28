@@ -26,13 +26,13 @@ x
 
 On commence avec le reddit de l'utilisateur magojo__ (https://www.reddit.com/user/magojo__)
 
-![](./photos/reddit.png)
+![](./photos/reddit2.png)
 
 Le reddit étant vide, on remarque rapidement la mention “time traveler”, faisant penser à la WaybackMachine.
 
 En utilisant cet outil (https://archive.org/web/), on retrouve un post qui nous redirige vers son twitter (https://twitter.com/johnmago12) sur lequel il y a un tweet avec une photo.
 
-![](./photos/twitter.png)
+![](./photos/twitter2.png)
 
 À partir de cette photo, qui, d'après le tweet, vient d'être prise, on va essayer de retrouver l'endroit.
 
