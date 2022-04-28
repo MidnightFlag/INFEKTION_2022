@@ -11,6 +11,8 @@ Retrouvez le nom de l'utilisateur ainsi que celui de la machine.
 
 Format : MCTF{nomutilisateur:nommachine}
 
+Dump : https://wormhole.app/Nm9RD#8jEuOOJL1ZHzaqj7OUvEfg
+
 ## <u>**Hints**</u> :
 
 x
