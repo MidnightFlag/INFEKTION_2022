@@ -1,0 +1,30 @@
+<HTML><HEAD>
+<TITLE>December 1999 Java Solutions/The Java 2 Collections -- Finally, Some News You Can Use/Figure 12</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 12: The Iterator and ListIterator interfaces</A></h4>
+<pre>
+Interface Iterator
+{
+    boolean     hasNext();
+    Object      next();
+    void        remove();
+}
+
+Interface ListIterator
+{
+    void        add(Object o);
+    boolean     hasNext();
+    boolean     hasPrevious();
+    Object      next();
+    int         nextIndex();
+    Object      previous();
+    int         previousIndex();
+    void        remove();
+    void        set(Object o);
+}
+
+</pre>
+</BODY>
+</HTML>

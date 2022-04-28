@@ -1,0 +1,46 @@
+<HTML><HEAD>
+<TITLE>November 2000/import java.*/Listing 3</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 3: File SequenceInputTest.java &#151; processes three files as one</A></h4>
+<pre>
+import java.io.*;
+import java.util.*;
+
+class SequenceInputTest
+{
+    public static void main(String[] args)
+        throws IOException
+    {
+        // Join 3 files into a Sequence:
+        ArrayList files = new ArrayList();
+        files.add(new FileInputStream("log1.txt"));
+        files.add(new FileInputStream("log2.txt"));
+        files.add(new FileInputStream("log3.txt"));
+        Enumeration e =
+            Collections.enumeration(files);
+        SequenceInputStream seq =
+            new SequenceInputStream(e);
+
+        // Print the sequence:
+        int b;
+        while ((b = seq.read()) != -1)
+            System.out.write(b);
+
+        seq.close();
+    }
+}
+
+/* Output:
+line 1,1
+line 1,2
+line 1,3
+line 2,1
+line 2,2
+line 3,1
+line 3,2
+line 3,3
+line 3,4
+*/
+</pre></body></html>

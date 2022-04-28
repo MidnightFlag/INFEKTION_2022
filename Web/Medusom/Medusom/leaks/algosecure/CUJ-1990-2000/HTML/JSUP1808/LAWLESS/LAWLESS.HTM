@@ -1,0 +1,133 @@
+<HTML>   
+     <HEAD>
+<TITLE>August 2000 Java Solutions/Using the Java Core Reflection API</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocjaug.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   Java Solutions</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Using the Java Core Reflection API</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Jim Lawless</FONT></H3>
+
+<BLOCKQUOTE>
+<p>Java may be a compiled language like C and C++, but it also lets you do things at run time undreamed of by C programmers.</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+
+<p>The Java programming language provides an interesting mechanism which allows a Java program to dynamically load and inspect any given Java class. The collection of classes and methods supporting this mechanism is known as the Java Core Reflection API, or simply the Reflection API.</p>
+<p>The classes that comprise the Reflection API are as follows:</p>
+
+<UL><LI>   <B>java.lang.Class</B> &#151; This class is used to represent class constructs.
+<LI>   <B>java.lang.reflect.Constructor</B> &#151; A special class for inspecting any of a class's constructor methods.
+<LI>   <B>java.lang.reflect.Method</B> &#151; This class provides an abstract means of invoking a Java method from a given class or object.
+<LI>   <B>java.lang.reflect.Modifier</B> &#151; The <B>Modifier</B> class is used to determine whether special access modifiers (such as <B>private</B>, <B>public</B>, or <B>protected</B>) have been applied to a method or attribute.
+<LI>   <B>java.lang.reflect.Array</B> &#151; This class is used as an abstract representation of array objects.
+<LI>   <B>java.lang.reflect.Field</B> &#151; This class is used to represent an attribute field.</UL>
+
+<p>In working with the JDBC (Java Database Connectivity) API I became curious to understand the APIs used to dynamically load JDBC drivers. I decided to investigate the Core Reflection API after I'd seen some seemingly arcane Java JDBC code.</p>
+<p>In this article I introduce the Core Reflection API by using a single class to assist in constructing a dynamically loadable driver. The second software project I present, a primitive scripting language, involves more of the supporting classes.</p>
+
+<H4><FONT COLOR="#000080">A Note about the Coding Style</FONT></H4>
+
+<p>I have purposely avoided implementing <B>try/catch</B> blocks in various places throughout the code. Alternatively, I've just implemented a <B>throws</B> clause in each method definition. I have also opted not to use the JavaDoc commenting standard prior to each method.</p>
+<p>My goal in coding the Java programs in this style is to enhance their clarity, by keeping the actual coding density to a minimum. I have also assumed that all example classes are in the same logical package. Thus, I've developed them all in the same directory.</p>
+
+<H4><FONT COLOR="#000080">A Dynamic Driver Project</FONT></H4>
+
+<p>The dynamic driver will simply provide a mechanism to convey an error message to a user. A given application will be able to determine which error message driver to use based on a configuration file entry.</p>
+<p>As a starting point, I define an abstract base class for the driver called <B>ErrorBase</B>. This Java component defines one abstract method called <B>display</B>:</p>
+
+<pre>
+public abstract class ErrorBase {
+   public abstract void display(String s);
+}
+</pre>
+
+<p>Next, I define two subclasses of <B>ErrorBase</B>. The first subclass, <B>ConError</B>, displays the given error message to the character-based console output screen.</p>
+
+<pre>
+public class ConError extends ErrorBase {
+   public void display(String s) {
+      System.out.println("Error: " + s );
+   }
+}</pre>
+
+<p>The second subclass, <B>GUIError</B>, displays the error message in a GUI message dialog.</p>
+
+<pre>
+import javax.swing.*;
+
+public class GUIError extends ErrorBase {
+   public void display(String s) {
+      JOptionPane.showMessageDialog(null,
+          "Error: " + s);
+   }
+}
+</pre>
+
+<p>The first sample program that uses the two classes is called <B>ErrTest.java</B> (<a href="list1.htm">Listing 1</a>). It simply instantiates objects of each class type and invokes the <B>display</B> method from each. The behavior of these objects is determined at compile time. When this program is invoked, the message <B>"Error: This is a console message."</B> should appear on the console screen. A message dialog should also appear containing the text <B>"Error: This is a GUI message."</B>.</p>
+<p>Consider the program <B>DynTest.java</B> (<a href="list2.htm">Listing 2</a>). This program reads a property file to determine which kind of error message it should display. Granted, this functionality could be accomplished with a specified property code and a <B>switch-case</B> construct in the main program, but for the sake of illustration this program dynamically loads the appropriate class based on input. In fact, newer subclasses that derive from <B>ErrorBase</B> can be constructed and utilized in <B>DynError.java</B> without ever having to recompile the program again!</p>
+<p>The first section of <B>DynTest.java</B> loads the properties file <B>"DynTest.prop"</B> from the current directory. The contents of the properties file are as follows:</p>
+
+<pre>
+ErrorDriver=ConError
+# ErrorDriver=GUIError
+</pre>
+
+<p>A pound symbol (<B>#</B>) starting a line represents a comment. The name of the error message driver (in this case, <B>ConError</B>) is then retrieved into <B>String</B> variable <B>s</B> via the <B>get</B> method.</p>
+<p>The expression <B>Class.forname(s).newInstance()</B> actually instantiates the object. It first dynamically loads the class specified in <B>s</B> by calling the static method <B>Class.forname</B>. The object returned from the <B>Class.forName</B> call is actually an object of type <B>Class</B>. Once that object is returned, the <B>newInstance</B> method is called to invoke the specified <B>ErrorBase</B>-derived object.</p>
+<p>Assuming that no exceptions are thrown, the <B>ErrorBase</B> reference variable <B>e</B> can be used to invoke the <B>display</B> method. To alter the behavior of the program, uncomment the active option of the properties file <B>DynTest.prop</B> and comment out the alternate option using a pound symbol.</p>
+<p>As new methods of displaying errors become necessary, the programmer can simply write a new class as a subclass of <B>ErrorBase</B> and include the driver name in the <B>DynTest.prop</B> file.</p>
+<p>The above example demonstrates the luxury of defining the class architecture in the base class <B>ErrorBase</B> early in the design process. After dynamically loading the class and instantiating an object of that class type, the virtual <B>display</B> method is bound dynamically to reference variable <B>e</B>.</p>
+<p>This technique lends itself to the "plug-in" metaphor enjoyed by many software packages today. By leveraging this technique, programmers could define plug-in architectures for their own applications, allowing for extensions by users.</p>
+
+<H4><FONT COLOR="#000080">Methods and Fields</FONT></H4>
+
+<p>The prior example demonstrated a test program that exhibited dynamic behavior as defined by an <B>ErrorBase</B> object. The goal of the next example will to leverage the Core Reflection API to implement a simple scripting system. While a full scripting system could utilize the Reflection API to manipulate and control all facets of a given Java program, this scripting system will be used to provide dynamically selected debugging information. Before I attempt to implement the scripting system as a whole, I provide a look at a few other classes from the Core Reflection API: <B>Class</B>, <B>Method</B>, and <B>Field</B>.</p>
+<p><B>Class</B> provides a means of examining and utilizing Java class features dynamically. <B>Method</B> is a class that represents a Java class method or a Java object method. After a <B>Method</B> object is instantiated, a program can then invoke its counterpart Java method dynamically. <B>Field</B> is a class that represents a member attribute of a given Java class or object. A program can utilize <B>Field</B> objects to dynamically read or change member attribute values.</p>
+<p>The program <B>ReflectTest.java</B> (<a href="list3.htm">Listing 3</a>) illustrates a technique of dynamically invoking Java methods using the <B>Method</B> class. <B>ReflectTest</B> first instantiates an object of type <B>ReflectTest</B> in method <B>main</B> and invokes the <B>go</B> method. A <B>Class</B> object is then obtained via the <B>getClass</B> method.</p>
+<p>The next step in the process is to obtain a <B>Method</B> object representing the method we want to call. The first method to be invoked is called <B>test</B> &#151; as a matter of fact, so is the second. The <B>test</B> method is overloaded. The two methods can be distinguished only by their parameter signatures.</p>
+<p>The first of the two <B>test</B> methods accepts no parameters. To obtain a <B>Method</B> object representing this method, the program calls the <B>Class</B> object's <B>getMethod</B> method, passing it a <B>String</B> containing the method name and a null value for the array of parameter descriptions. Passing null as the second parameter indicates that the method to be invoked accepts no parameters.</p>
+<p>After instantiating this <B>Method</B> object, the program can call the method it represents via its <B>invoke</B> method. <B>invoke</B> accepts two parameters: the object reference (or <B>null</B> if the method happened to be static) and an array of parameter objects.</p>
+<p>Since this method accepts no parameters, the program passes <B>null</B> as the second parameter to the <B>invoke</B> method. At this time, the <B>test()</B> method is dynamically invoked, causing the phrase <B>"Hello, world!"</B> to appear on the console screen.</p>
+<p>To invoke the second <B>test</B> method, the program must tell <B>getMethod</B> to find a version of <B>test</B> that accepts a <B>String</B> object and an <B>int</B> scalar. When a program uses any of the Java primitive data types, it uses a special constant defined in that type's counterpart wrapper class for the information needed in <B>getMethod</B>.</p>
+<p>The second parameter to <B>getMethod</B> is an anonymous array of <B>Class</B> objects. The first array element is a <B>Class</B> object representing type <B>String</B>. The second <B>Class</B> object is a constant representing the <B>int</B> scalar type.</p>
+<p>To call the method via the <B>Method</B> object just created, the program must now supply a list of objects as the second parameter to the <B>invoke</B> method.</p>
+<p>Again the program creates an anonymous array to contain the parameters. The first object in the array is a <B>String</B> object; the second is an <B>Integer</B> object, which is appropriately translated to the scalar <B>int</B> type when the method is called. The final segment of <B>ReflectTest</B> inspects the value of the member attribute <B>testVar</B> using a <B>Field</B> object.</p>
+<p>The <B>Field</B> object is first instantiated via the <B>Class</B> object's <B>getField</B> method. The program passes the field by name to <B>getClass</B>. Once the program has an instantiated field object, it retrieves <B>testVar</B>'s value by calling <B>getInt</B>. The <B>Field</B> class provides methods for retrieving values from each of the scalar data types and the <B>String</B> object. For each of these "get" methods, a counterpart "set" method is provided as a means to alter the given attribute.</p>
+
+<H4><FONT COLOR="#000080">A Simple Scripting System</FONT></H4>
+
+<p>Using the <B>Method</B> and <B>Field</B> classes, I can now implement a new class called <B>Script</B> (<a href="list4.htm">Listing 4</a>), which provides a simple debugging scripting mechanism.</p>
+<p>The scripts that the <B>Script</B> object reads will be standard Java property files. The scripting engine will be based on programmer-defined hook names. Each line of script code associated with a particular hook will appear with the hook name followed by a period followed by a sequential number beginning with <B>1</B>.</p>
+<p>The <B>Script</B> class supports six script commands, as follows:</p>
+
+<UL><LI>   <B>print</B> <I>string-literal</I> &#151; Displays a <I>string-literal</I> and newline.
+<LI>   <B>printVar</B> <I>varname</I> &#151; Displays a variable.
+<LI>   <B>callMethod</B> <I>methodName</I> &#151; Invokes a method.
+<LI>   <B>setInt</B> <I>varName value</I> &#151; Sets <B>int</B> variable to literal value.
+<LI>   <B>setString</B> <I>varName value</I> &#151; Sets <B>String</B> object to literal value.
+<LI>   <B>setBoolean</B> <I>varName value</I> Sets boolean variable to literal value.</UL>
+
+<p>To demonstrate the scripting class, I have created a simple game that requires the user to guess a random number in the range of 1 to 100 inclusive. If you examine the source code to <B>Guess.java</B> (<a href="list5.htm">Listing 5</a>), you can see that early in the program's code, a <B>Script</B> object is instantiated. The first argument to the constructor for the <B>Script</B> object is the reference to the current <B>Guess</B> class. This reference is used in all commands that refer to <B>Field</B> objects or <B>Method</B> objects.</p>
+<p>Note also that there are several calls to <B>doHook</B> peppered throughout the code in <B>Guess.java</B>. These calls are places where the programmer has determined that scripting might be important in debugging a problem.</p>
+<p>If you invoke <B>Guess</B> without the property file present, it behaves just as you might expect &#151; all calls to <B>doHook</B> return immediately. The program randomly determines a number and repeatedly allows the user to guess the number. After users have been successful in guessing the number, they are asked to start a new game.</p>
+<p>If you invoke <B>Guess</B> with the file <B>scr.prop</B> (<a href="fig1.htm">Figure 1</a>) in the same directory, it behaves differently. When the <B>doHook</B> method is called with an argument of <B>"AfterInit"</B>, the <B>AfterInit</B> section of the <B>scr.prop</B> is interpreted and executed.</p>
+<p>The first <B>AfterInit</B> script line simply displays a console message indicating that initialization has been completed. The second <B>AfterInit</B> script line changes the title <B>String</B> object, which is displayed to the user in each dialog box. The title change is done so that users understand they are executing in a debugging mode. The third <B>AfterInit</B> script line changes the formerly random number to 27. Suppose the user had noted problematic behavior when the generated random number value was 27. Using this script, she can force the number to a fixed value for debugging purposes.</p>
+<p>The next hook is invoked after the user has entered her guess. The <B>UserInit</B> section of the property file is then interpreted. The two lines of code in the <B>UserInit</B> section simply indicate what number the user had guessed.</p>
+<p>The final hook invoked is the <B>PlayAgain</B> section. In this case, repeated play is not desired, so the script engine invokes the <B>Guess</B> object's <B>terminate</B> method. This closes the application without asking the user to continue playing.</p>
+<p>While the above example may not be entirely useful in a real-world situation, it does show how to dynamically convey variable values. This feature alone could be very beneficial in analyzing peculiar program behavior. In addition, the scripting example shows how to modify attributes of a given class to forcibly control the program flow. Again, this feature could be beneficial when trying to debug a problem. Finally, the scripting engine provides the ability to invoke methods from the <B>Guess</B> object itself.</p>
+<p>A fully developed script language might give a user the ability to dynamically assemble the program's complete behavior from a set of exposed methods and attributes.</p>
+
+<H4><FONT COLOR="#000080">Closing</FONT></H4>
+
+<p>As I have demonstrated, the Java Core Reflection API can be a useful tool in providing dynamically changeable behavior to statically compiled code.</p>
+
+<p><i><B>Jim Lawless</B> is a senior software architect for a major midwestern financial institution. He welcomes your correspondence at <B>jimbo@radiks.net</B>.</i></p>
+
+<h4><a href="../../../source/2000/jaug00/lawless.zip">Get Article Source Code</a></h4>
+
+
+</blockquote></body></html>

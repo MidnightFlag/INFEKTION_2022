@@ -1,0 +1,202 @@
+<HTML><HEAD>
+<TITLE>November 2000/Secure Web-Based Licensing/Listing 1</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 1: LSystemApp.cpp &#151; The client program for the License Granting Authority system</A></h4>
+<pre>
+#include "stdafx.h"
+#include &lt;windows.h&gt;    //For registry functions
+#include &lt;iostream.h&gt;   //For cout
+#include &lt;time.h&gt;       //For time()
+#include "Crypto.h"     //For Encrypt, Decrypt, and ComputeCRC
+
+#define REG_PATH    "SOFTWARE\\LicenseDemo"
+
+bool CheckLicenseTime(HKEY MyKey);
+bool CheckCurrentTime(HKEY MyKey);
+bool SetCurrentTime(HKEY MyKey);
+void GetCookie(char *cookie);
+
+int main(int argc, char* argv[])
+{
+    char cookie[64];
+    ZeroMemory(cookie,64);
+    char value[64];
+    ZeroMemory(value,64);
+
+    //Create or open the LicenseDemo registry key
+    HKEY MyKey;
+    if(RegCreateKeyEx(HKEY_LOCAL_MACHINE, REG_PATH, (DWORD) 0,
+        NULL, 0, KEY_ALL_ACCESS, NULL, &amp;MyKey,NULL)
+        != ERROR_SUCCESS)
+    {
+        return -1;
+    }
+
+    cout &lt;&lt; "Checking license\n";
+
+    if (!CheckLicenseTime(MyKey) || !CheckCurrentTime(MyKey))
+    {
+        cout &lt;&lt; "Your license has expired!\n";
+        cout &lt;&lt; "Visit the LGA to obtain a new license\n";
+
+        GetCookie(cookie);
+
+        cout &lt;&lt; "Your cookie is " &lt;&lt; cookie &lt;&lt; "\n\n";
+        cout &lt;&lt; "Please input your new license:";
+
+        cin &gt;&gt; value;
+
+        //Set the LICENSE_TIME registry key
+        if(RegSetValueEx(MyKey, "LICENSE_TIME", (DWORD) 0,
+            REG_SZ, (LPBYTE) value, 64) != ERROR_SUCCESS)
+        {
+            RegCloseKey (MyKey);
+            return -1;
+        }
+
+        cout &lt;&lt; "Set LICENSE_TIME\n";
+
+        //Set the CURRENT_TIME registry key
+        if (!SetCurrentTime(MyKey))
+            return -1;
+
+        cout &lt;&lt; "Set CURRENT_TIME\n";
+
+        RegCloseKey (MyKey);
+
+        //Recursively call main to check the new license
+        main(0,NULL);
+
+        return 0;
+    }
+
+    cout &lt;&lt; "License validated\n";
+
+    //Set CURRENT_TIME to prevent back clocking
+    if (!SetCurrentTime(MyKey))
+        return -1;
+
+    cout &lt;&lt; "Set CURRENT_TIME\n";
+
+    RegCloseKey (MyKey);
+
+    return 0;
+}
+
+//Verifies the license by checking LICENSE_TIME
+bool CheckLicenseTime(HKEY MyKey)
+{
+    long lTime = time(NULL);
+    long lLicenseTime = 0;
+    unsigned short crc = 0;
+    char szReg[64];
+    ZeroMemory(szReg,64);
+    char szLicense[64];
+    ZeroMemory(szLicense,64);
+    unsigned long length = 64;
+    DWORD type = REG_SZ;
+
+    //Query the LICENSE_TIME registry key
+    if(RegQueryValueEx(MyKey, "LICENSE_TIME", NULL, &amp;type, 
+        (unsigned char *)szReg, &amp;length) != ERROR_SUCCESS)
+        return false;
+
+    //Decrypt the license
+    if (!Decrypt(szReg,"UnbreakableKey",szLicense,64))
+        return false;
+
+    sscanf(szLicense,"%08X%04X",&amp;lLicenseTime,&amp;crc);
+
+    //Validate the crc
+    if (ComputeCRC(lLicenseTime) != crc)
+    {
+        cout &lt;&lt; "Error: LICENSE_TIME crc is invalid\n";
+        return false;
+    }
+        
+    if (lTime &gt; lLicenseTime)
+        return false;
+
+    return true;
+}
+
+//Verifies the license by checking CURRENT_TIME
+bool CheckCurrentTime(HKEY MyKey)
+{
+    long lTime = time(NULL);
+    long lCurrentTime = 0;
+    unsigned short crc = 0;
+    char szReg[64];
+    ZeroMemory(szReg,64);
+    char szCurrent[64];
+    ZeroMemory(szCurrent,64);
+    unsigned long length = 64;
+    DWORD type = REG_SZ;
+
+    //Query the CURRENT_TIME registry key
+    if(RegQueryValueEx(MyKey, "CURRENT_TIME", NULL, &amp;type,
+        (unsigned char *)szReg, &amp;length) != ERROR_SUCCESS)
+        return false;
+    
+    //Decrypt the license
+    if (!Decrypt(szReg,"UnbreakableKey",szCurrent,64))
+        return false;
+
+    sscanf(szCurrent,"%08X%04X",&amp;lCurrentTime,&amp;crc);
+
+    //Validate the crc
+    if (ComputeCRC(lCurrentTime) != crc)
+    {
+        cout &lt;&lt; "Error: CURRENT_TIME crc is invalid\n";
+        return false;
+    }
+
+    if (lTime &lt; lCurrentTime)
+        return false;
+
+    return true;
+}
+
+bool SetCurrentTime(HKEY MyKey)
+{
+    long lTime = time(NULL);
+    char szReg[64];
+    ZeroMemory(szReg,64);
+    char szCrypt[64];
+    ZeroMemory(szCrypt,64);
+    DWORD type = REG_SZ;
+
+    //Append a CRC to the current system time
+    sprintf(szCrypt,"%08X%04X",lTime,ComputeCRC(lTime));
+
+    //Encrypt the current system time
+    if (!Encrypt(szCrypt,"UnbreakableKey",szReg,64))
+        return false;
+
+    //Set the CURRENT_TIME
+    if(RegSetValueEx(MyKey, "CURRENT_TIME", (DWORD) 0, REG_SZ,
+        (LPBYTE) szReg, 64) != ERROR_SUCCESS)
+    {
+        RegCloseKey (MyKey);
+        cout &lt;&lt; "Error: RegSetValueEx failed on CURRENT_TIME\n";
+        return false;
+    }
+
+    return true;
+}
+
+void GetCookie(char *cookie)
+{
+    long lTime = time(NULL);
+    char szCrypt[64];
+    ZeroMemory(szCrypt,64);
+
+    //Append a CRC to the current system time
+    sprintf(szCrypt,"%08X%04X",lTime,ComputeCRC(lTime));
+
+    //Encrypt the current system time
+    Encrypt(szCrypt,"UnbreakableKey",cookie,64);
+}
+</pre></body></html>

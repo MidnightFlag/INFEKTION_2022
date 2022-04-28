@@ -1,0 +1,89 @@
+<HTML>   
+     <HEAD>
+<TITLE>December 2000/Effective Contour Creation with OpenGL Texture Mapping</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocdec.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   Graphics</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Effective Contour Creation with OpenGL Texture Mapping</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Wenfei Wu</FONT></H3>
+
+<BLOCKQUOTE>
+<p>In graphics applications, "let the hardware do it" is generally good advice. Today's graphics hardware keeps getting better and better, and OpenGL knows how to exploit its capabilities. Even producing contour plots can be a fairly painless operation.</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+
+<H4><FONT COLOR="#000080">Introduction</FONT></H4>
+
+<p>Contour images are widely used for the visualization of information. This article presents an approach to creating contour plots using the one-dimensional texture mapping feature of OpenGL [<a href="#1">1</a>, <a href="#2">2</a>]. In this approach, a 1-D <I>texture image</I> is first created based on the colors and number of bands required in the contour plot. The texture mapping operation then maps this image to the geometry <a href="#3">[3]</a> in the 3-D coordinates.</p>
+<p>I present an example in this article that demonstrates the efficiency of this approach. Specifically, the example demonstrates how OpenGL enables you to shift work to hardware to achieve high run-time speed. OpenGL is an API that provides access to graphics hardware for the rendering of high-quality 3-D images. This powerful 3-D graphics library is well known for its performance and portability.</p>
+<p>I'll start with a description of one-dimensional texture mapping. Then I'll guide you through the key points of this approach. You will learn how to create 1-D texture objects to represent data, and how to map the texture to triangles to create contours. Once you know how to create a contour plot, you should get a feeling for the efficiency. The example also shows how to apply lighting and alpha blending to contours to enhance the visual effects.</p>
+<p>A side note: I used MFC in this example, but only to develop the GUI portion of the code. Texture mapping has nothing to do with MFC; you can use other GUI APIs, or you can implement texture mapping solely with OpenGL.</p>
+
+<H4><FONT COLOR="#000080">One-Dimensional Texture Mapping</FONT></H4>
+
+<p>The technology of texture mapping has been around for a long time. To obtain better performance, this technique has been converted from a software-based to a hardware-supported feature. It was not until low-cost hardware support and high quality APIs became available that texture mapping began to be more widely used. The method discussed in the article takes advantage of wide availability of texture mapping as a hardware capability.</p>
+<p>A 1-D texture image is a one-dimensional array of pixels, also called texels. You can imagine a 1-D texture as a picture having width only, and a height of just one pixel &#151; or vice versa. You can define the color of each pixel to represent the color of a contour band. Usually, the color of the first pixel denotes the minimum value of the data, and the last pixel represents the maximum value. The coordinate system of a texture image defines the first pixel's coordinate at 0.0 and the last pixel's at 1.0. In rendering routines, a coordinate between 0.0 and 1.0 is used to select a color from the texture image.</p>
+<p>A texture can be mapped to primitive objects, triangles, and higher order polygons. To perform a texture mapping, you specify a texture coordinate for each vertex in the object, besides the geometrical coordinates. This causes vertices to be rendered in the colors corresponding to the texture coordinates. Between vertices, the face of the object is rendered with the colors corresponding to a "stretched" texture image. More specifically, the result depends on a magnification filter, which defines how the texels in the texture occupy the position between vertexes. One of the commonly used magnification filters in contour plotting is the nearest-neighbor filter. In this mode, the pixels between vertices display the color of the closest texel in the texture image. Therefore, contours are rendered with distinct boundaries. Another useful filter is the linear filter, which linearly interpolates the colors of the closest texture pixels on each side of the pixel. The result is a continuous color ramp. All of the work is done before the geometry is rendered to the screen or buffer.</p>
+<p>The procedure for creating contours using texture mapping can be described in four steps:</p>
+
+<OL><LI>Create a texture image.
+<LI>Enable texture mapping.
+<LI>Normalize the data to be represented.
+<LI>Render geometric objects with texture mapping.</OL>
+
+<p>The objective in this example is to map a 1-D texture image to triangles in 3-D space to create a contour plot with eight color bands.</p>
+
+<H4><FONT COLOR="#000080">Creating a Texture Image</FONT></H4>
+
+<p>There is nothing special about my approach to creating a texture image. I elected to use an OpenGL <I>texture object.</I> The routine that creates a texture object is shown in <a href="list1.htm">Listing 1</a>.</p>
+<p>The <B>CreateTextureObject</B> routine starts by defining a texture image. The color of a texel is basically composed of red, green, and blue components, known as RGB values. A texture image's width must be a power of two. I use eight texels to hold eight colors.</p>
+<p>The <B>glPixelStorei</B> function sets the pixel storage mode. You can find information on how to use this and the following OpenGL commands in many references [<a href="#1">1</a>, <a href="#2">2</a>, <a href="#4">4</a>, <a href="#5">5</a>]. I will not repeat the instructions in this article.</p>
+<p>The <B>glGenTextures</B> function generates a texture object name.</p>
+<p><B>CreateTextureObject</B> then calls the <B>glBindTexture</B> function to create a 1-D texture object using the given name. This function also sets the newly created texture object as <I>current</I> &#151; the one which will be applied in subsequent rendering operations. If you create more than one texture object, the last one created will be current. You may need to call this command again to set the current texture <a href="#6">[6]</a>.</p>
+<p>The <B>glTexParameteri</B> call tells OpenGL how to map the texture to geometry. The first <B>glTexParameteri</B> function call tells OpenGL I want to use 1-D texture mapping with a nearest-neighbor filter when the texture image is larger than the geometry in terms of pixels. The second states that I want to use the same thing when the texture image is smaller than the geometry.</p>
+<p>The <B>glTexImage1D</B> call specifies the 1-D texture based on the defined texture image. This command loads the texture into hardware. Thus, all subsequent lookups into the texture image take place in graphics hardware, rather than in the application software. This capability significantly increases the performance.</p>
+<p>It is common to need to modify a texture after creating it. The <B>glTexSubImage1D</B> function allows the user to change a specific pixel in the texture image. Modifying an existing texture is less computationally expensive than creating one. However, you can't specify pixels outside the range of the existing texture &#151; in other words, you can't increase the size of the texture.</p>
+
+<H4><FONT COLOR="#000080">Enabling Texture Mapping</FONT></H4>
+
+<p>Enabling and disabling 1-D texture mapping capability is easy. Just call OpenGL state functions <B>glEnable</B> and <B>glDisable</B> with argument <B>GL_TEXTURE_1D</B>. In addition, you can call the <B> glIsEnabled</B> function to detect the current state. Once you disable the texture mapping, you can still render the geometry, but it is displayed without texture. Working with various OpenGL graphics capabilities, these three state functions also enable you to toggle graphics capabilities without disturbing the rendering scenario.</p>
+
+<H4><FONT COLOR="#000080">Normalizing Data to be Represented</FONT></H4>
+
+<p>The coordinates of a texture image range from 0.0 to 1.0, while the data to be represented can fall in any arbitrary range. Thus, the raw data must be <I>normalized</I> so that it can be mapped to the texture image. Normalization consists of scaling and offsetting the data values so that they all fall within the range 0.0 to 1.0. Once the data has been normalized, it can be used to lookup the corresponding texture color.</p>
+
+<H4><FONT COLOR="#000080">Rendering Geometry with Texture Mapping</FONT></H4>
+
+<p>Mapping the texture image onto a triangle is straightforward. All you need to do is to set the texture coordinate for each vertex. This process is shown in <a href="list2.htm">Listing 2</a>. The code between the calls to <B>glBegin</B> and <B>glEnd</B> creates a single triangle. For each vertex of the triangle, the call to <B>glTexCoord1f</B> sets the current texture coordinate; then the call to <B>glVertex3d</B> specifies the geometrical coordinates of the vertex. In <a href="list2.htm">Listing 2</a>, the texture coordinates at each of the triangle's vertices are 0.1, 0.7, and 1.0 respectively. The geometrical coordinates of the vertices are (-1.0, -1.0, 0.0), (-1.-, 1.0, 0.0), and (1.0, 0.8, 0.0) respectively. When an object is defined in this way, OpenGL modifies the pixel information after the shading operations are completed. Note that the dimensionality of texture has nothing to do with the dimensionality of the geometry.</p>
+<p>The rendering result is a triangle with color contours as illustrated in <a href="fig1.htm">Figure 1</a>. The color at the vertex is modified with the corresponding color from the texture image. The colors between vertices depend on the specified magnification filter.</p>
+<p>This approach provides two important benefits here: 1) the interpolation between vertices takes place in texture space and it is done in hardware, as opposed to the interpolation taking place in color space and being done in software; 2) only one value is used to specify the texture coordinate, in contrast to three values that would be required if working in color space. OpenGL handles the interpolation and all of the dirty work, and it works very fast.</p>
+<p>However, if I render a simulated curved surface composed of a group of triangles, the surface may not be rendered smoothly. To render a curved surface smoothly, I must tell OpenGL the <I>vertex normal</I> at each vertex <a href="#7">[7]</a>. Recall that a normal to a planar surface is a vector that is at 90 degrees to the plane. A vertex normal is the mean value of the normals of the adjacent polygons. In the sample code (available at <B>www.cuj.com/code</B>) the normal at each vertex is set via a call to <B>glNormal3fv</B>. When the triangles are rendered, this produces a smooth surface contour plot as shown in <a href="fig2.htm">Figure 2</a>.</p>
+<p>OpenGL treats higher-order polygons as groups of triangles. It divides a polygon into a group of triangles based on vertex order, as shown in <a href="fig3.htm">Figure 3</a>. Thus, mapping a 1-D texture image to a high-order polygon is equivalent to mapping to a group of triangles.</p>
+
+<H4><FONT COLOR="#000080">Adding Light and Semi-Transparency</FONT></H4>
+
+<p>The texture mapping approach to contour generation makes it easy to add other visual effects. In fact, in an OpenGL application, there is nothing different in principle between texture mapping and adding lighting or alpha blending (for semi-transparency effects). The example source code demonstrates how to achieve this. Frequently some geometry objects need to be rendered with light or alpha blending while others do not. For example, you may not want a graph legend to be affected by blending and lighting. You can easily call <B>glDisable</B> to temporally turn off the blending and lighting capabilities before rendering the legend, and call <B>glEnable</B> to turn them on afterwards. <a href="fig4.htm">Figures 4</a> and <a href="fig5.htm">5</a> shows three-dimensional contours with lighting and alpha-blending.</p>
+
+<H4><FONT COLOR="#000080">Conclusion</FONT></H4>
+
+<p>Creating contours with texture mapping is efficient and flexible. Compared with explicit interpolation methods, the texture mapping method requires much shorter code, and achieves higher run-time speed. It is also flexible when adding other features, such as lighting, and semi-transparency. Once you master the concept and technique, you can easily modify the given example for your requirements.</p>
+<p>To take it a step further, a texture object can be defined as a special memory segment, which holds more information than just an image. Mapping this information to geometry can create more sophisticated applications. That is beyond the scope of this article.</p>
+
+<H4><FONT COLOR="#000080">Notes and References</FONT></H4>
+
+<p><a name="1"></a>[1]  Mason Woo, Jackie Neider, Tom Davis, Dave Shriner, and the OpenGL Architectural Review Board. <I>OpenGL 1.2 Programming Guide, Third Edition: The Official Guide to Learning OpenGL, Version 1.2</I> (Addison-Wesley, 1999).</p>
+<p><a name="2"></a>[2]  Dave Shreiner (Editor), and the OpenGL Architectural Review Board. <I>OpenGL Reference Manual Third Edition: The Official Reference Document to OpenGL, Version 1.2</I> (Addison-Wesley, 1999).</p>
+<p><a name="3"></a>[3]  "Geometry" refers to a set of renderable objects, such as triangles or polygons.</p>
+<p><a name="4"></a>[4]  Richard S. Wright, Jr., and Michael Sweet. <I>OpenGL SuperBible, Second Edition</I> (Waite Group, 1999).</p>
+<p><a name="5"></a>[5]  Ron Fosner. <I>OpenGL Programming for Windows 95 and Windows NT</I> (Addison-Wesley, 1996).</p>
+<p><a name="6"></a>[6]  Like many graphics APIs, OpenGL does not assign properties, such as texture, to individual objects; rather, when it renders an object it uses a set of current system properties, which are global in scope.</p>
+<p><a name="7"></a>[7]  This is not a texture mapping issue per se; it is a computer graphics issue.</p>
+
+<p><i><B>Wenfei Wu</B> is a software development professional with extensive experience in GUI and 3-D graphics. He is an R&amp;D Engineer at ADINA R&amp;D, Inc. He holds a Master's degree in engineering from McMaster University, Canada. He can be reached at <B>wwu@hotvoice.com</B>.</i></p>
+
+<h4><a href="../../../source/2000/dec00/wu.zip">Get Article Source Code</a></h4>
+</blockquote></body></html>

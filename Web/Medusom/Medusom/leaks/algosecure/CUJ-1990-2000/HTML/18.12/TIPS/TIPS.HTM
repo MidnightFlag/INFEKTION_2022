@@ -1,0 +1,105 @@
+<HTML>   
+     <HEAD>
+<TITLE>December 2000/C/C++ Tip #4: Self Destructing Threads</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocdec.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   C/C++ Tips</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">C/C++ Tip #4: Self Destructing Threads</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Mark Peterson</FONT></H3>
+
+
+<HR>
+<BLOCKQUOTE>
+<p>I really enjoyed Charles Calkins article, "Integrating Threads with Template Classes" in the May 2000 issue of <I>CUJ.</I> I had been struggling with designing thread objects that had the ability to clean up after themselves, as this would remove the requirement for a "thread manager" object. Charles' article brought everything into focus.</p>
+<p>Charles mentioned at the end of his article that he thought there might be better solution. The code below implements a small shift in perspective, where instead of "wrapping" the class in a template that launches the thread, it may be better to implement a thread base class that supports launching a thread object and cleaning up after the thread terminates.</p>
+<p>I wrote the thread base class with a <B>launch</B> function that can be used for thread objects created either on the stack or via dynamic allocation. Readers should remember that when using stack allocation they need to wait until the thread(s) completes before leaving the current scope. Things get rather ugly when the data vanishes from underneath a running thread! If you launch a thread object allocated out of the heap, then you need to either set <B>bAutoDelete</B> to <B>true</B> or delete the thread object manually after the thread terminates and you have extracted any relevant data.</p>
+<p>Also note that this is a sample implementation for one platform, Windows. The platform-specific nature of the implementation generally doesn't affect the interface, though, except for addition of the <B>handle</B> accessor function. Also, VC++ will emit a diagnostic with an "undeclared identifier" on <B>_beginthread</B> if you have not specified multithreaded code generation. VC++ readers using a project need to set code generation in the C++ Project tab to either Multithread or Debug Multithread. Readers using a make file should set either the <B>/MTd</B> or <B>/MT</B> compiler option instead of <B>/MLd</B> or <B>/ML</B>.</p>
+
+<pre>
+#include &lt;windows.h&gt;
+#include &lt;process.h&gt;
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;assert.h&gt;
+
+using namespace std;
+
+// Thread Base Class
+class CThread
+{
+private:
+    HANDLE hThread;
+    size_t stackSize;
+    bool bAutoDelete;
+
+    virtual void run() = 0;
+    static void _cdecl threadFnct(void *pVoid)
+    {
+        CThread *pData = static_cast&lt;CThread*&gt;(pVoid);
+        if(pData != NULL)
+        {
+            pData-&gt;run();
+            if(pData-&gt;bAutoDelete)
+                delete(pData);
+        }
+    }
+
+protected:
+    void setStackSize( size_t s ) { stackSize = s; }
+
+public:
+    virtual ~CThread() { }
+    CThread()
+    {
+        hThread = NULL;
+        bAutoDelete = false;
+        stackSize = 0;
+    }
+    HANDLE launch(bool bAutoDelete)
+    {
+        assert(hThread == NULL);
+        this-&gt;bAutoDelete = bAutoDelete;
+        return hThread =
+           (HANDLE)_beginthread(threadFnct, stackSize, this);
+    }
+    HANDLE handle() { return hThread; }
+};
+
+// Test by subclassing the thread base class
+class CHelloWorld : public CThread
+{
+protected:
+    virtual void run()
+    {
+        for(int n = 1; n &lt; 10; n++)
+        {
+            cout &lt;&lt; (10 - n) &lt;&lt; " . ";
+            Sleep(1000);
+        }
+        cout &lt;&lt; endl &lt;&lt; "Hello, World!" &lt;&lt; endl;
+    }
+};
+
+int main()
+{
+    vector&lt;HANDLE&gt; threads;
+
+    // Test heap allocation
+    CHelloWorld *pHello1 = new CHelloWorld;
+    threads.push_back( pHello1-&gt;launch(true) );
+
+    // Test stack allocation
+    CHelloWorld Hello2;
+    threads.push_back( Hello2.launch(false) );
+
+    // Wait until both threads terminate
+    WaitForMultipleObjects(threads.size(),
+        threads.begin(), TRUE, INFINITE);
+}
+</pre>
+
+<h4><a href="../../../source/2000/dec00/peterson.zip">Get Article Source Code</a></h4>
+
+</BLOCKQUOTE></body></html>

@@ -1,0 +1,43 @@
+<HTML><HEAD>
+<TITLE>December 1999 Java Solutions/The Java 2 Collections -- Finally, Some News You Can Use/Figure 11</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 11: The algorithms in java.util.Collections</A></h4>
+<pre>
+class Collections
+{
+    static int binarySearch(List list, Object key);
+    static int binarySearch(List list, Object key, Comparator c);
+    static void copy(List dest, List src);
+    static Enumeration enumeration(Collection c);
+    static void fill(List list, Object o);
+    static Object max(Collection coll);
+    static Object max(Collection coll, Comparator comp);
+    static Object min(Collection coll);
+    static Object min(Collection coll, Comparator comp);
+    static List nCopies(int n, Object o);
+    static void reverse(List l);
+    static Comparator reverseOrder();
+    static void shuffle(List list);
+    static void shuffle(List list, Random rnd);
+    static Set singleton(Object o);
+    static void sort(List list);
+    static void sort(List list, Comparator c);
+    static Collection synchronizedCollection(Collection c);
+    static List synchronizedList(List list);
+    static Map synchronizedMap(Map m);
+    static Set synchronizedSet(Set s);
+    static SortedMap synchronizedSortedMap(SortedMap m);
+    static SortedSet synchronizedSortedSet(SortedSet s);
+    static Collection unmodifiableCollection(Collection c);
+    static List unmodifiableList(List list);
+    static Map unmodifiableMap(Map m);
+    static Set unmodifiableSet(Set s);
+    static SortedMap unmodifiableSortedMap(SortedMap m);
+    static SortedSet unmodifiableSortedSet(SortedSet s);
+}
+
+</pre>
+</BODY>
+</HTML>

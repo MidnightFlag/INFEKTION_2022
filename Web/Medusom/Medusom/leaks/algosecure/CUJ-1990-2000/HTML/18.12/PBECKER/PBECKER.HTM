@@ -1,0 +1,340 @@
+<HTML>   
+     <HEAD>
+<TITLE>December 2000/The Journeyman's Shop</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocdec.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   C/C++ Contributing Editors</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">The Journeyman's Shop:<br>Trap Handlers, Sticky Bits, and Floating-Point Comparisons</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Pete Becker</FONT></H3>
+
+<BLOCKQUOTE>
+<p>Pete wraps up his series on practical floating-point math.</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+
+<p>I said in October that one of the things we'd look at this month would be the support provided for floating-point math in the recent revision to the C Standard <a href="#1">[1]</a>. But that's a large subject and deserves a column or two of its own, so I've decided to put if off for a while. This month we'll wrap up our examination of floating-point math by looking at trap handlers and sticky bits, and then, coming back to roughly where we started, we'll look at techniques for comparing floating-point values.</p>
+
+<H4><FONT COLOR="#000080">Trap Handlers</FONT></H4>
+
+<p>In October, we looked at the five types of floating-point exceptions defined by the IEEE-754 standard: invalid operation, division by zero, overflow, underflow, and inexact. We also looked at what an IEEE-754 conforming floating-point implementation should do when any of these exceptions occurs. The default exception handling specified by IEEE-754 is suitable for most of what most of us do most of the time. If you're in a situation where the default behavior isn't suitable, though, you can change what happens when any particular exception occurs by installing a trap handler for that exception. A trap handler is simply a function that you write. You install it by calling a function that tells the floating-point package to call your handler whenever an exception of the corresponding type occurs. In our emulator, trap handlers are managed by the member functions <B>set_handler</B> and <B>get_handler</B>. The code for <B>set_handler</B> looks like this:</p>
+
+<pre>
+fp::exc_hnd fp::set_handler(
+   fp::fp_exception except, 
+   fp::exc_hnd hnd)
+   {       // install user-specified exception handler
+   fpx exc = to_fpx(except);
+   exc_hnd prev = exc_hndlrs[exc];
+   exc_hndlrs[exc] = 
+      hnd ? hnd : def_hndlrs[exc];
+   return prev == 
+      def_hndlrs[exc] ? 0 : prev;
+   }
+</pre>
+
+<p>It takes two arguments. The type of the first is an enumeration, defined in the class <B>fp</B>, named <B>fp_exception</B>:</p>
+
+<pre>
+enum fp_exception
+   {       // bit flags to identify exceptions
+   div_by_zero     = 0x01,
+   exp_underflow   = 0x02,
+   exp_overflow    = 0x04,
+   inexact         = 0x08,
+   invalid         = 0x10
+   };
+</pre>
+
+<p>The second is a pointer to a handler. Passing a null pointer for this argument tells the floating-point package to use the default handling for the specified exception. Otherwise, the pointer must point to a function whose signature matches the typedef <B>fp::exc_hnd</B>:</p>
+
+<pre>
+typedef fp (*exc_hnd)(fp_exception, fp);
+</pre>
+
+<p>The <B>fp_exception</B> value passed to <B>set_handler</B> is translated into an array index by the function <B>to_fpx</B>:</p>
+
+<pre>
+static inline fp::fpx 
+fp::to_fpx(fp::fp_exception except)
+   {       // translate exception bit flag to table index
+   return except &amp; div_by_zero ? dbz
+      : except &amp; exp_underflow ? exu
+      : except &amp; exp_overflow ? exo
+      : except &amp; inexact ? ine
+      : inv;
+   }
+</pre>
+
+<p>The resulting index is used to retrieve the address of the current handler for that exception from the handler table and store it in the variable <B>prev</B>. If the caller passed a null pointer as the pointer to the new handler, then the address of the default handler is stored in the handler table. Otherwise, the address of the new handler is stored. The function returns the address of the previous handler, or a null pointer if there was no user-installed handler.</p>
+<p>The function <B>get_handler</B> takes a single argument of type <B>fp_exception</B>. It returns a pointer to the installed handler for the specified exception, or a null pointer if there is no user-installed handler.</p>
+
+<pre>
+fp::exc_hnd 
+fp::get_handler(fp_exception except)
+   { // return pointer to user-specified exception handler
+   fpx exc = to_fpx(except);
+   return exc_hndlrs[exc] ==
+      def_hndlrs[exc]
+      ? 0 : exc_hndlrs[exc];
+   }
+</pre>
+
+<p>Internally, when a floating-point exception occurs, the emulator calls the private member function <B>exception</B> and passes an argument of type <B>fpx</B>, which serves as an index into the handler table, and an argument of type <B>fp</B>, whose value is determined according to the rules for the particular exception. We'll look at those rules a little later. The function <B>exception</B> is straightforward:</p>
+
+<pre>
+fp fp::exception(fpx exc, fp arg)
+   {       // handle floating point exceptions
+   return exc_hndlrs[exc](
+      (fp_exception)(1 &lt;&lt; exc), arg);
+   }
+</pre>
+
+<p>Note that the function translates the table index into a value corresponding to an enumerator of type <B>fp_exception</B> in order to call the trap handler.</p>
+
+<H4><FONT COLOR="#000080">Using Trap Handlers</FONT></H4>
+
+<p>Now that we have a mechanism for installing trap handlers, you may be asking what they can be used for. I suggested earlier that they're useful when the default handling of floating-point exceptions isn't what you need. For example, if you don't want your computation to continue if any of these exceptional conditions occurs, you can install your own trap handler for each of the five exception types. In that handler, you'd print a message and terminate the program:</p>
+
+<pre>
+fp handle_exceptions(fp::fp_exception except, fp)
+{
+std::cout &lt;&lt; "Floating point error: "
+          &lt;&lt; (except == fp::div_by_zero ? "divide by zero"
+                : except == fp::exp_underflow ? "underflow"
+                : except == fp::exp_overflow ? "overflow"
+                : except == fp::inexact ? "inexact"
+                : "invalid operation") &lt;&lt; '\n';
+exit(EXIT_FAILURE);
+}
+</pre>
+
+<p>You'd then install this handler for each of the five exception types:</p>
+
+<pre>
+int main()
+{
+fp::set_handler(fp::div_by_zero, handle_exceptions);
+fp::set_handler(fp::exp_underflow, handle_exceptions);
+fp::set_handler(fp::exp_overflow, handle_exceptions);
+fp::set_handler(fp::inexact, handle_exceptions);
+fp::set_handler(fp::invalid, handle_exceptions);
+// do the floating point computation
+return 0;
+}
+</pre>
+
+<p>This sort of brute force approach may not be appropriate in some cases. You can leave the default behavior in place for any of the exception types by not installing a handler. You can also provide a more sophisticated handler than this one that returns a value to be used as the result of the operation that caused the exception. That's what the default handlers in the emulator do: they compute an appropriate replacement value and return it. For example, when an invalid operation exception occurs, the IEEE-754 specification says that the result should be a NaN. The default handler for this exception does that substitution through a layer of indirection. The trap handler that is installed by default for an invalid operation exception looks like this:</p>
+
+<pre>
+static fp def_inv(fp::fp_exception except, fp arg)
+   {       // default handler for invalid exception
+   return fp::ex_inv(except, arg);
+   }
+</pre>
+
+<p>The member function <B>fp::ex_inv</B> is responsible for actually handling the exception. It looks like this:</p>
+
+<pre>
+fp fp::ex_inv(fp::fp_exception except, fp)
+   {       // handle invalid exception
+   set_flag(except);
+   return qnan;
+   }
+</pre>
+
+<p>It first sets the internal flag that indicates that an invalid operation exception occurred and then returns a NaN.</p>
+
+<H4><FONT COLOR="#000080">The Value Passed to the Trap Handler</FONT></H4>
+
+<p>Under the IEEE-754 specification, the trap handlers for overflow and underflow are called with a floating-point value with the fraction and sign that the result would have had and an exponent that is adjusted to be within the valid range for exponents in the particular floating-point representation being used. For example, in our emulator, when an overflow exception occurs, the function <B>exception</B> is called with a floating-point value whose exponent is 192 less than the result would have been. If we try to multiply a value whose fraction is 1/2 and whose exponent is 120 by itself, we'd expect a result whose fraction is 1/4 and whose exponent is 240. After normalization, this value would have a fraction of 1/2 and an exponent of 239. But 239 is too large an exponent in our representation, so the multiplication causes an exception. The value passed as the second argument to the function <B>exception</B> has a fraction of 1/2 and an exponent of 239 - 192, or 47. That way, if we need to know in our trap handler what the value would have been, we can figure it out. The default handlers for overflow and underflow both use this information to compute the replacement value that they return. In the case of overflow, the result has to be suitably rounded. For example, if we're rounding toward zero, an overflow results in the largest positive representable value or the largest negative representable value, depending on the sign of the value that overflowed. The code that picks the appropriate overflowed value looks like this:</p>
+
+<pre>
+fp fp::ex_exo(fp::fp_exception except, fp arg)
+   {       // handle overflow exception
+   set_flag(except);
+   return rm == rm_nearest
+          ? arg.is_neg ? ninf : pinf
+      : rm == rm_zero
+          ? arg.is_neg ? nmax : pmax
+      : rm == rm_down
+          ? arg.is_neg ? ninf : pmax
+          : arg.is_neg ? nmax : pinf;
+   }
+</pre>
+
+<p>For an underflow exception, the computed value has to be turned into a suitable denormalized representation. That's done by this code:</p>
+
+<pre>
+fp fp::ex_exu(fp::fp_exception except, fp arg)
+   {       // handle underflow exception
+   set_flag(except);
+   int ex = arg.exp - BIAS - 192;
+   int fr = arg.frac;
+   while (ex &lt; 0)
+      {       // denormalize
+      ++ex;
+      fr /= 2;
+      }
+   return fp(ex - BIAS, fr, arg.is_neg);
+   }
+</pre>
+
+<p>Note that it determines the value of the actual signed exponent by subtracting the exponent bias and then subtracting 192 to offset the adjustment that was made in order to create a valid floating-point value. Once that has been done, the code simply divides the fraction by two and increases the exponent until the exponent reaches zero.</p>
+
+<H4><FONT COLOR="#000080">Writing Your Own Trap Handler</FONT></H4>
+
+<p>Chances are you won't have much use for trap handlers. But if you do end up using them, make sure you understand how the value that is passed to the handler relates to the computed value. In particular, the exponent adjustment of 192 that we've just looked at is used for the IEEE-754 32-bit floating-point representation. Other representations use other adjustments. Also, IEEE-754 doesn't specify a calling convention for trap handlers, and the convention varies among compiler implementations. Read any appropriate documentation before you write a trap handler.</p>
+
+<H4><FONT COLOR="#000080">Sticky Bits</FONT></H4>
+
+<p>You've probably noticed that all of the default exception handlers begin by calling <B>set_flag(except)</B>. That's because the default behavior for any exception under IEEE-754 is to set a flag to indicate that an exception of that type occurred. These flags are often referred to as "sticky bits" because the floating-point implementation never clears them. If you want them cleared you must do so yourself.</p>
+<p>In our emulator, the sticky bits are accessed through these five member functions:</p>
+
+<pre>
+static void set_flag(fp_exception);
+static bool get_flag(fp_exception);
+static void clear_flags();
+static void set_flags(int);
+static int get_flags();
+</pre>
+
+<p>The class <B>fp</B> has a static member of type <B>int</B> that holds the current flag settings. If you look back at the values of the enumeration <B>fp_exception</B>, you'll see that each enumeration is represented by a value with a single bit set. That means that we can use logical operations to manipulate the flag representation. I won't go through the implementation details; they're pretty simple. Call <B>set_flag</B> to turn on a particular flag and <B>get_flag</B> to test whether a particular flag is on. Call <B>clear_flags</B> to turn all the flags off. Call <B>get_flags</B> to get an <B>int</B> value that represents the state of all the flags. You can manipulate specific flags within this value by using the <B>fp_exception</B> values as masks. You can also set the internal flag values to whatever pattern you want by calling <B>set_flags</B> with an <B>int</B> value having the desired pattern. For example, to turn on the invalid operation flag and the overflow flag and turn all the other flags off, call <B>fp::set_flags(fp::invalid | fp::exp_overflow)</B>.</p>
+
+<H4><FONT COLOR="#000080">NaNs and Infinities in Real Computations</FONT></H4>
+
+<p>In talking about exceptions, we've looked at the immediate results of various operations. If we had to write code that checked for a NaN or an infinity after every operation, we'd end up with code that was unreadable: all the tests would obscure the logic of the computation itself. One of the strengths of the IEEE-754 exception mechanism is that exceptional values propagate sensibly through the computation. NaNs in particular tend to stick around.</p>
+<p>We saw earlier that 0.0/0.0 produces a NaN. Once you have that result, any arithmetic operation that uses it will also produce a NaN. This means that you don't have to check for a NaN after every operation. Instead, you can do some logical chunk of the computation and see if you got a NaN. If you got one, something went astray. If not, you can continue the computation.</p>
+<p>That's actually a bit of an oversimplification. There are situations where NaNs will disappear. For example, the function <B>hypot </B><a href="#2">[2]</a> returns the square root of the sum of the squares of its two arguments. If one of those arguments is infinity, it doesn't matter what the other argument is. The result will always be infinity. So <B>hypot(1.0/0.0, 0.0/0.0)</B> is infinity, even though the second argument is a NaN.</p>
+<p>Infinities, of course, can also disappear, in the obvious way: any finite value divided by infinity produces zero.</p>
+<p>What all this means is that checking for NaNs and infinites won't tell you whether something went wrong in your computation. What it will tell you is that at the point where you checked, your values are probably okay. If you need more assurance than this, you have to check the sticky bits. That's why they're never cleared by the floating-point package: they provide information that could otherwise get lost.</p>
+
+<H4><FONT COLOR="#000080">Comparing Values under IEEE-754</FONT></H4>
+
+<p>Under the IEEE-754 standard, there are four possible relationships between two floating-point values. They can be equal, the first can be less than the second, the first can be greater than the second, and they can be unordered. If any NaNs are involved, the two values are unordered. Further, any comparison that involves a NaN raises an invalid operation exception.</p>
+<p>In order to define meaningful predicates for comparing two floating-point values, we have to take into account the possibility that the values will be unordered. You may have heard the rule that all comparisons involving NaNs are false. That's true as far as it goes: under the IEEE-754 specification, the numerical comparisons that we're used to in C and C++ are all supposed to be false. This leads to the peculiar-looking result that testing for equality of two numbers can return false, and that testing for inequality of the same two numbers can also return false. In order to do meaningful comparisons when NaNs can be involved, we have to expand the range of tests that we can perform. We need to add predicates that explicitly allow for the possibility that two values can be unordered.</p>
+<p>The IEEE-754 specification provides a list of all the meaningful predicates, along with descriptive names for them. <a href="tab1.htm">Table 1</a> is a list of all of the predicates from the IEEE-754 specification, along with their definitions. I've given them names based on the suggested FORTRAN names.</p>
+<p>Implementing these predicates is straightforward. The class <B>fp</B> defines an enumerated type named <B>cmp_res</B> with enumerations for each of the four possible relationships:</p>
+
+<pre>
+enum cmp_res
+{
+cmp_lt,
+cmp_eq,
+cmp_gt,
+cmp_un
+};
+</pre>
+
+<p>The static member function <B>fp::cmp</B> takes two arguments of type <B>fp</B> and compares them, returning the appropriate enumeration:</p>
+
+<pre>
+fp::cmp_res fp::cmp(const fp&amp; f1, const fp&amp; f2)
+   {
+   if (IS_NAN(f1) || IS_NAN(f2))
+      return cmp_un;
+   else if (IS_ZERO(f1) &amp;&amp; IS_ZERO(f2)
+      || f1.is_neg == f2.is_neg
+         &amp;&amp; f1.frac == f2.frac
+         &amp;&amp; f1.exp == f2.exp)
+      return cmp_eq;
+   else if (f1.is_neg != f2.is_neg)
+      return f1.is_neg ? cmp_lt : cmp_gt;
+   else if (f1.exp != f2.exp)
+      return f1.exp &lt; f2.exp != f1.is_neg
+         ? cmp_lt : cmp_gt;
+   else
+      return f1.frac &lt; f2.frac != f1.is_neg
+         ? cmp_lt : cmp_gt;
+   }
+</pre>
+
+<p>Each predicate function calls <B>cmp</B> and returns the appropriate result, in accordance with the definitions in <a href="tab1.htm">Table 1</a>. I won't go through all of them, because they're pretty much the same. Here's the code for <B>ule</B> (unordered or less or equal):</p>
+
+<pre>
+bool fp::ule(const fp&amp; f1, const fp&amp; f2)
+   {
+   cmp_res res = cmp(ARG(f1), ARG(f2));
+   return res == cmp_un
+      || res == cmp_lt
+      || res == cmp_eq;
+   }
+</pre>
+
+<p>In addition, most of these have meaningful negations. I've named the negations with the prefix <B>not_</B>. They all follow the obvious pattern:</p>
+
+<pre>
+inline bool not_ule(const fp&amp; f1, const fp&amp; f2)
+   { return !fp::ule(f1, f2); }
+</pre>
+
+<H4><FONT COLOR="#000080">Comparing Values in Real Life</FONT></H4>
+
+<p>While it's important to know about all of the complications that NaNs can introduce into comparisons, for many everyday applications, it's probably better to simply avoid the possibility of comparing NaNs. Treat a NaN as an error and abandon the computation. That lets you think of comparisons in the way that you're used to, without having to worry about the possibility that two values will be unordered.</p>
+<p>Unfortunately, that doesn't help with the problem that we started out with many months ago, that (1.0/10.0)*10.0 on most systems does not compare equal to 1.0. As we've seen, that's because of rounding in the division. Since one tenth cannot be represented exactly as a binary fraction (it has an infinite expansion, just like one-third as a decimal), some bits get lost. Multiplying by ten cannot restore those lost bits, so the result isn't exactly one. For most purposes, though, it's close enough. We need to be able to express the notion of "close enough" meaningfully.</p>
+<p>Most people's first attempt at the notion of "close enough" is to define an acceptable tolerance and check whether the difference between the two values being compared is less than this tolerance:</p>
+
+<pre>
+if (abs(f1 - f2) &lt; .0001)
+   // close enough
+</pre>
+
+<p>If you've been following the discussion closely enough, you know why this doesn't work: if <B>f1</B> and <B>f2</B> are numbers with large exponents, .0001 is too small to be meaningful. The difference between 1.0001e40 and 1.0000e40 is .0001e40, which is much larger than .0001. For large numbers, the only difference that's smaller than .0001 is zero, and we're right back where we started. This test also fails for small numbers, but in the opposite direction: the difference between .0001 and .00019 is less than .0001, but these two numbers differ by nearly a factor of two. They're close enough under this na&iuml;ve test, but that's almost certainly not what we want.</p>
+<p>The solution is to scale the tolerance according to the magnitude of the numbers that we're dealing with. A simple approach is to divide the difference by one of the numbers:</p>
+
+<pre>
+if (abs((f1 - f2) / f2) &lt; .0001)
+   // close enough
+</pre>
+
+<p>If we're using a floating-point package that conforms to IEEE-754, this will work the way we expect. Some floating-point packages abort execution on division by zero, and for a package like that, we have to check whether <B>f2</B> is zero before doing the division:</p>
+
+<pre>
+if (abs((f1 - f2) / (f2 == 0 ? 1.0 : F2) &lt; .0001)
+   // close enough
+</pre>
+
+<p>This will work the way we expect in almost all the situations we'll run into in ordinary programming. For a floating-point package that doesn't handle overflows gracefully, there's still the possibility that <B>f1</B> will be so much larger than <B>f2</B> that the division will overflow and abort execution. If this is a possibility for the numbers you're dealing with, it's worth adding a check that the exponents are equal. If they're not equal, the number with the greater exponent is greater than the other. If they're equal, the division won't overflow, and the test code above will work reliably.</p>
+<p>There's a more subtle problem, though, in all of these tests. We started out trying to compensate for the effects of rounding on our answers. So the question that we're actually trying to answer is whether two values are close enough together that rounding could account for their difference. The value .0001 has nothing to do with this question. Rather than pick an arbitrary tolerance, we need to use a value that reflects the magnitude of the errors introduced by rounding.</p>
+<p>When we looked at rounding in the July 2000 issue, we saw that each rounding operation affects only one bit of the answer. As we chain operations together, the rounding error propagates, so we can end up with several low bits that aren't particularly meaningful. When we compare two numbers, we ought to use a tolerance that allows us to ignore those low bits. We can't pick a tolerance without knowing details of how floating-point values are represented. But we don't have to figure that out for ourselves. Most programming languages provide a way of getting at the value of epsilon, which is the difference between one and the least value greater than one that is representable in the floating-point type. In C, we have the macros <B>FLT_EPSILON</B> for <B>float</B>s, <B>DBL_EPSILON </B> for <B>double</B>s, and <B>LDBL_EPSILON</B> for <B>long double</B>s. In C++, we have <B>numeric_limits&lt;type&gt;::epsilon</B>. In a binary representation, the least value greater than one that is representable in the floating-point type is the value of 1.0 with its low bit changed to one. That is, its value is 1.0 plus the error introduced by a single rounding error. Subtracting 1.0 from this value gives the value of a single rounding error for results close to 1.0. This gives us a basis for computing a tolerance for floating-point comparisons: we just multiply the expected number of rounding errors by the value of epsilon. So our test for close enough becomes:</p>
+
+<pre>
+if (abs((f1 - f2) / (f2 == 0 ? 1.0 : f2)
+   &lt; NROUNDS * std::numeric_limits&lt;double&gt;::epsilon())
+   // close enough
+</pre>
+
+<p>More generally, rather than hard-code the type of the floating-point value, we can use a template:</p>
+
+<pre>
+template&lt;class FP&gt;
+bool close_enough(FP f1, FP f2, int NROUNDS)
+{
+return abs((f1 - f2) / (f2 == FP(0.0) ? FP(1.0) : f2)
+   &lt; FP(NROUNDS) * std::numeric_limits&lt;FP&gt;::epsilon());
+}
+</pre>
+
+<p>The casts are necessary both to avoid forcing inappropriate type conversions and to enable the template to be used for user-defined types like our class <B>fp</B>. <a href="list1.htm">Listing 1</a> is a short program that demonstrates this template in action.</p>
+<p>Be careful with this template, though. It has some properties that may be surprising. In particular, it is not transitive. That is, for three values <B>f1</B>, <B>f2</B>, and <B>f3</B>, it's possible for <B>close_enough(f1, f2, 1)</B> and <B>close_enough(f2, f3, 1)</B> to both return true and for <B>close_enough(f1, f3, 1)</B> to return false. So don't think of it as an equality test. Think of it as what its name suggests: a way of deciding whether two values are close enough to each other that they can be considered equal.</p>
+
+<H4><FONT COLOR="#000080">Conclusion</FONT></H4>
+
+<p>As usual, the complete code for the final version of the floating-point emulator is available on the <I>CUJ</I> website. It includes all of the code we've looked at in this column, as well as a specialization of <B>std::numeric_limits&lt;fp&gt;</B>.</p>
+<p>My goal in this series of columns has been to present the underlying issues of floating-point math in a way that makes them more understandable to people who don't make their living doing this sort of work. There's a great deal that I've left out, some because I haven't had space, and most because I don't understand it well enough to present it coherently. If you understand what we've looked at in this series, you ought to be able to get good results from floating-point math in many situations and to identify the situations where you need help. Floating-point math can be tricky, and there are times when you need to consult an expert. But there's nothing magic about it, and there's no need to panic when you're faced with a problem that requires accurate floating-point results.</p>
+<p>Next month, we'll look at another topic that is much more subtle than most people realize. I recently spent a few weeks implementing quick sort for Dinkumware's Jcore library and came up with a new wrinkle that I call an inside-out sort. If you want a preview, the inside-out sort is also used in the latest version of the Dinkum C++ library, available for purchase on our website.</p>
+
+<H4><FONT COLOR="#000080">References</FONT></H4>
+
+<p><a name="1"></a>[1]  Formally known as ISO/IEC 9899:1999, Programming Languages - C, and informally known as C99.</p>
+<p><a name="2"></a>[2]  This example comes from a paper by Prof. William Kahan, entitled "Lecture Notes on the Status of IEEE Standard 754 for Binary Floating-Point Arithmetic," available at <B>www.cs.berkeley.edu/~wkahan/ieee754status/ieee754.ps</B>. Kahan was one of the architects of Intel's approach to floating-point math, much of which was incorporated into the IEEE-754 standard.</p>
+
+<h4><a href="tab2.htm">Table 2: Index of floating-point topics</a></h4>
+
+<p><i><B>Pete Becker</B> is Technical Project Leader for Dinkumware, Ltd. He spent eight years in the C++ group at Borland International, both as a developer and manager. He is a member of the ANSI/ISO C++ standardization committee. He can be reached by email at <B>petebecker@acm.org</B>.</i></p>
+
+<h4><a href="../../../source/2000/dec00/pbecker.zip">Get Article Source Code</a></h4>
+</blockquote></body></html>

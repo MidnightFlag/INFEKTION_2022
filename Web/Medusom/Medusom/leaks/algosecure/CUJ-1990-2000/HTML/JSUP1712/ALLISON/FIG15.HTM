@@ -1,0 +1,95 @@
+<HTML><HEAD>
+<TITLE>December 1999 Java Solutions/The Java 2 Collections -- Finally, Some News You Can Use/Figure 15</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 15: Illustrates sets</A></h4>
+<pre>
+import java.util.*;
+
+class SetTest
+{
+    public static void test(Set x)
+    {
+        // Do a search:
+        Person p = new Person("Albert",1901,1,20);
+        if (x.contains(p))
+            System.out.println("Found " + p);
+
+        // Misc:
+        System.out.println("max == " +
+                           Collections.max(x));
+        System.out.println("min == " +
+                           Collections.min(x));
+        iterate(x);
+    }
+
+    public static void iterate(Collection c)
+    {
+        System.out.println("Iterating...");
+        Iterator i = c.iterator();
+        while (i.hasNext())
+            System.out.println(i.next());
+    }
+
+    public static void main(String[] args)
+    {
+        // Build HashSet:
+        HashSet h = new HashSet();
+        h.add(new Person("Horatio", 1835,12,6));
+        h.add(new Person("Charles",1897,3,11));
+        h.add(new Person("Albert",1901,1,20));
+        // The following is ignored:
+        h.add(new Person("Albert",1901,1,20));
+        System.out.println(h);
+        test(h);
+        System.out.println();
+
+        // Build TreeSet:
+        TreeSet t =
+            new TreeSet(Collections.reverseOrder());
+        t.addAll(h);
+        System.out.println(t);
+        test(t);
+
+        // Extra TreeSet stuff:
+        boolean ctest =
+            t.comparator()
+             .equals(Collections.reverseOrder());
+        System.out.println("Comparator test: " + ctest);
+        System.out.println("first = " + t.first());
+        System.out.println("last = " + t.last());
+        Person p = new Person("Charles",1897,3,11);
+        System.out.println("headSet: " + t.headSet(p));
+        System.out.println("tailSet: " + t.tailSet(p));
+    }
+}
+
+/* Output:
+[{Charles,3/11/1897}, {Albert,1/20/1901}, {Horatio,12/6/1835}]
+Found {Albert,1/20/1901}
+max == {Horatio,12/6/1835}
+min == {Albert,1/20/1901}
+Iterating...
+{Charles,3/11/1897}
+{Albert,1/20/1901}
+{Horatio,12/6/1835}
+
+[{Horatio,12/6/1835}, {Charles,3/11/1897}, {Albert,1/20/1901}]
+Found {Albert,1/20/1901}
+max == {Horatio,12/6/1835}
+min == {Albert,1/20/1901}
+Iterating...
+{Horatio,12/6/1835}
+{Charles,3/11/1897}
+{Albert,1/20/1901}
+Comparator test: true
+first = {Horatio,12/6/1835}
+last = {Albert,1/20/1901}
+headSet: [{Horatio,12/6/1835}]
+tailSet: [{Charles,3/11/1897}, {Albert,1/20/1901}]
+*/
+
+</pre>
+</BODY>
+</HTML>

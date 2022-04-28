@@ -1,0 +1,112 @@
+Keywords: Feb2000, C, C++, WinCE, interpolation, encapsulation, backtracking
+
+The code listings for the February 2000 issue of C/C++ Users Journal
+include source code for Kyle Loudon's article, "An Introduction to
+Interpolation," Jean L. Gareau's article, "Tracking Memory Leaks Under
+Windows CE," Douglas Reichard's article, "Shim Classes," and Roger
+Labbe's article, "Solving Combinatorial Problems with STL and
+Backtracking. Also included are listings from P.J. Plauger's column,
+"Standard C/C++," and Dan Saks' column, "C++ Theory and Practice." 
+ 
+*************************  FILE DESCRIPTION **********************************
+
+The following files are included in the disk:
+
+FILENAME		AUTHOR-NAME	    TITLE			       
+(Zip archive/
+subdirectory name)
+-------------------------------------------------------------------------------
+plauger                 P.J. Plauger        Standard C/C++:
+                                            A Singly Linked List
+
+    sliter.h            Figure 1, slist<_Ty, _Alloc>::const_iterator
+    slinsert.h          Figure 2, slist insertions
+    slerase.h           Figure 3, slist erasures
+
+loudon                  Kyle Loudon         An Introduction to Interpolation
+
+    lagrange.c          Listing 1, Interpolation using lagrange polynomials
+    newton.c            Listing 2, Interpolation using Newton polynomials
+    plinear.c           Listing 3, Piecewise linear interpolation
+    pcubherm.c          Listing 4, Piecewise cubic Hermite interpolation
+    interpolate.h       not listed, Defines prototypes for interpolation
+                                    functions
+
+
+gareau                  Jean L. Gareau      Tracking Memory Leaks Under
+                                            Windows CE
+
+    [updated 7 January 2000]
+
+    MemTrack.htm        not listed, Instructions for building project
+    StdAfx.h            not listed
+    MemTrack.clw        not listed
+    MemTrack.cpp        not listed, Memory tracker implementation file
+    MemTrack.dsp        not listed
+    MemTrack.dsw        not listed
+    MemTrack.h          not listed, Memory tracker header file
+    MemTrack.ncb        not listed
+    MemTrack.opt        not listed
+    MemTrack.plg        not listed
+    MemTrack.rc         not listed
+    ReadMe.txt          not listed, VC++ generated documentation
+    Resource.h          not listed
+    StdAfx.cpp          not listed
+    MemTrack.aps        not listed
+
+    Under subdirectory res:
+
+    MemTrack.rc2        not listed
+
+
+reichard                Douglas Reichard    Shim Classes
+
+    problem.h           Figure 1, The problem -- implementation of GetSize
+                                  in derived classes is identical except
+                                  for type of derived class
+    shim.h              Figure 2, Shim class SGetSize implements GetSize
+                                  functionality for derived classes
+    multshim.h          Figure 3, Using multiple shim classes
+    mishim.h            Figure 4, Using shims with multiple inheritance
+
+labbe                   Roger Labbe             Solving Combinatorial
+                                                Problems with STL and
+                                                Backtracking
+
+    backtrack.h         Listing 1, An STL-style backtracking functor
+    fourcolor.cpp       Listing 2, A program that colors a U.S. map
+                                   with four colors, such that no
+                                   adjacent states are the same color
+
+sals                    Dan Saks                C++ Theory and Practice:
+                                                Replacing Character Arrays
+                                                with Strings, Part 2
+
+    xr.cpp              Listing 1, The main source file for the
+                                   cross-reference generator, using
+                                   standard strings for input processing
+    table.h             Listing 2, The cross-reference table class and
+                                   inline member function definitions,
+                                   still using character pointers
+                                   instead of strings
+    table.cpp           Listing 3, The cross-reference table non-inline
+                                   member function definitions, still
+                                   using character pointers instead of
+                                   strings
+    main.cpp            Figure 1,  The main function of the cross-reference
+                                   generator, using a string with reserved
+                                   capacity for input processing
+    add.cpp             Figure 2,  The cross-reference table's add member
+                                   function, using string::compare instead
+                                   of < and >
+    table2.h            Listing 4, The cross-reference table class and
+                                   inline member function definitions,
+                                   using strings
+    table2.cpp          Listing 5, The cross-reference table non-inline
+                                   member function definitions, using
+                                   strings
+    sequence.h          Listing 6, The line number sequence class
+                                   definitions
+    sequence.cpp        Listing 7, The line number sequence non-inline
+                                   member function definitions
+    

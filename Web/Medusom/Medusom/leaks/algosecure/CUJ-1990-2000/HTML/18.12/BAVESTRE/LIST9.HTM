@@ -1,0 +1,66 @@
+<HTML><HEAD>
+<TITLE>December 2000/A Class Template for N-Dimensional Generic Resizable Arrays/Listing 9</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 9: Specifying dimensions</A></h4>
+<pre>
+// Class that encapsulates a const unsigned int (&amp;)[N]
+template &lt;unsigned int N&gt;
+class ArraySize
+{
+   typedef const unsigned int (&amp;UIntArrayN)[N];
+
+   unsigned int m_Dimensions[N];
+
+   ArraySize(const unsigned int (&amp;Dimensions)[N-1],
+             unsigned int dim)
+   {
+      std::copy(&amp;Dimensions[0],&amp;Dimensions[N-1],m_Dimensions);
+      m_Dimensions[N-1]=dim;
+   }
+
+public:
+
+   ArraySize&lt;N+1&gt; operator () (unsigned int dim) 
+   { 
+      return ArraySize&lt;N+1&gt;(m_Dimensions,dim);
+   }
+
+   operator UIntArrayN () const { return m_Dimensions; }
+
+   friend class ArraySizes;
+   friend class ArraySize&lt;N-1&gt;;
+};
+
+// Starting point to build a const unsigned int (&amp;)[N] on the fly
+class ArraySizes
+{
+   unsigned int m_Dimensions[1];   
+
+public:
+      
+   explicit ArraySizes(unsigned int dim) 
+   { 
+      m_Dimensions[0]=dim;
+   }
+
+   ArraySize&lt;2&gt; operator () (unsigned int dim) 
+   { 
+      return ArraySize&lt;2&gt;(m_Dimensions,dim);
+   }
+};
+
+// Using ArraySize to specify Array dimensions type-safely
+int main()
+{
+   Array&lt;double, 3&gt; A3(ArraySizes(10)(20)(30)); // OK
+   //...
+   A3.resize(ArraySizes(30)(40)(50));           // OK
+
+   A3.resize(ArraySizes(10)(20));         // COMPILE-TIME ERROR!
+   A3.resize(ArraySizes(10)(20)(30)(40)); // COMPILE-TIME ERROR!
+
+   return 0;
+}
+</pre></body></html>

@@ -1,0 +1,40 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Google"
+msgstr "Google"
+
+msgid "Baidu"
+msgstr "百度"
+
+msgid "Taobao"
+msgstr "淘寶網"
+
+msgid "Yahoo!"
+msgstr "Yahoo!"
+
+msgid "Bing"
+msgstr "Bing"
+
+msgid "Flickr"
+msgstr "Flickr"
+
+msgid "Wikipedia"
+msgstr "維基百科"
+
+msgid "Twitter"
+msgstr "Twitter"
+
+msgid "YouTube"
+msgstr "YouTube"
+
+msgid "[google, bing, yahoo, flickr, wikipedia, twitter, youtube]"
+msgstr "[google, baidu, bing, yahoo, flickr, wikipedia, twitter, youtube]"
+
+
+msgid "Search Engine"
+msgstr "搜索引擎"

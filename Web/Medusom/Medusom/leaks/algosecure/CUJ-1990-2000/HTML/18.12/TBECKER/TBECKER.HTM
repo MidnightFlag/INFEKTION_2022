@@ -1,0 +1,100 @@
+<HTML>   
+     <HEAD>
+<TITLE>December 2000/STL & Generic Programming</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocdec.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   C/C++ Contributing Editors</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">STL &amp; Generic Programming: Introduction to the STL</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Thomas Becker</FONT></H3>
+
+<BLOCKQUOTE>
+<p>Here's a very brief history of the C++ Standard library, and a call to abandon the naive view that the STL is "just a bunch of containers."</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+
+<H4><FONT COLOR="#000080">A Short History of the C++ Standard Library</FONT></H4>
+
+<p>From the earliest days of C and C++ programming, few programs have ever relied purely on the C or C++ language. C and C++ have always been accompanied by a library of utilities for the programmer to use. This was originally called the C runtime library, or RTL for short. For C++, the traditional runtime library has been greatly expanded, and it has been officially renamed the C++ Standard library, to emphasize the fact that it is part of the language standard. The C++ STL (Standard Template Library) is a subset of the C++ Standard library.</p>
+<p>Before we set our focus on the STL, it is instructive to briefly review the history of the C and C++ runtime libraries. The utilities in the original runtime library can be divided into two categories. On the one hand, there are functions that call into the operating system, such as <B>fopen</B> to open a file. These must be provided specifically for each operating system. On the other hand, there are helpers such as <B>strcmp</B> to compare two character strings. These are provided for convenience, but everybody could write them in pure C or C++.</p>
+<p>C originated in the Unix world, or, more precisely, it evolved together with the Unix operating system. Therefore, early C compilers and their runtime libraries made little or no distinction between functionality that relied on the operating system (so-called system calls in Unix-speak) and system-independent utilities. When C and C++ became widely accepted as programming languages on a variety of operating systems, this created a slightly awkward situation. C/C++ compilers for a non-Unix environment such as Microsoft's Win32 platforms must and will provide runtime library functions such as <B>fopen</B>, because that is part of the Standard. On the other hand, <B>fopen</B> does not really capture Win32's philosophy of file handling. For example, it knows nothing about security attributes. Therefore, compilers that target Win32 platforms will provide <B>fopen</B> in their runtime libraries, but, as part of the Win32 programming interface, they will also provide the function <B>CreateFile</B>, which presents files the way Win32 sees them. Windows programs therefore often contain a hodgepodge of runtime library functions and Win32 functions, a slightly annoying but not exactly dramatic situation.</p>
+<p>Other system-dependent features such as processes and threads vary so much between operating systems that there can be no standard runtime library support to handle them. A Unix programmer may be tempted to think of the <B>fork</B> system call to clone a process as part of the standard runtime library, but it is not. Handling processes and threads is a matter of API calls that are specific to the operating system.</p>
+<p>I said before that the C++ Standard library extends the old C runtime library. One example of these extensions is on page 1 of most C++ books, where they do the "Hello World" program. There, they'll tell you not to use <B>printf</B> to output to the console, but <B>cout</B>. While <B>printf</B> is still available in the C++ Standard library, its use is discouraged in favor of the more object-oriented stream paradigm.</p>
+<p>When C++ became more popular, one of the first things people used it for was to write their own container classes, that is, classes to store objects in the form of arrays, lists, hash tables, what-have-you-not. Containers have always been among the most important basic building blocks of programs, and nothing is more natural than encapsulating them in classes. Moreover, since C++ supports generic programming in the form of polymorphism and templates, there are many ways to design container classes generically, that is, in such a way that the actual type of the objects that are being stored can remain unspecified until compile time or even run time. In other words, you can write your list class once and then use it as a list of strings, <B>int</B>s, or whatever type you want.</p>
+<p>Not surprisingly, several attempts were made to provide comprehensive libraries of container classes. Vendors that have offered such products include Borland, IBM, and RogueWave. The original C++ Standard library had nothing to offer in the way of container classes. In 1994, however, the C++ STL, designed by Alexander Stepanov and Meng Lee at the Hewlett-Packard Laboratories, was made part of the C++ Standard library. I have worked with some of the earlier, commercially available libraries, and I have the utmost respect for these efforts. However, it must be said that the STL takes things on a different plane. As I hope to demonstrate over the next few months, the STL not only standardizes containers and related concepts, it also unleashes the power of generic programming in ways not seen before.</p>
+
+<H4><FONT COLOR="#000080">STL by Example</FONT></H4>
+
+<p>Let us now look at some simple code that uses the STL.</p>
+
+<pre>
+#include&lt;vector&gt;
+std::vector&lt;char&gt; vectInputChars;
+char cIn;
+while( '\r' !=
+   (cIn = ReadCharFromConsole()) )
+{
+   vectInputChars.push_back(cIn);
+}
+</pre>
+
+<p>After including the STL header <B>&lt;vector&gt;</B>, the code declares a variable of type <B>std::vector&lt;char&gt;</B>. All STL code lives in the namespace <B>std</B>. Of course, I could have said</p>
+
+<pre>
+using namespace std;
+</pre>
+
+<p>and then written <B>vector&lt;char&gt;</B> instead of <B>std::vector&lt;char&gt;</B>.</p>
+<p>So what is an STL <B>vector</B>? An STL <B>vector</B> is a container, an object that contains other objects. The class <B>vector</B> has one mandatory template argument, namely, the type of the objects that the container will hold. A <B>vector</B> is the kind of container that you should use by default, whenever there are no specific reasons to use anything else. We will see in due time what those reasons could possibly be.</p>
+<p>But what kind of a container is a <B>vector</B>, why should we use it by default, and what distinguishes it from other, perhaps more familiar containers such as lists? The answer is, a <B>vector</B> is a class that models the concept of a C-style array. Does that mean that a <B>vector</B> is a class that wraps a C-style array and adds some intelligence such as automatic sizing to it? Interestingly, the answer is no. It is true that any STL implementation that I know of implements <B>vector</B> by storing objects in contiguous memory like a C-style array, and I doubt that anybody will ever implement it in a different way. But the important point is that the STL does not specify the <B>vector</B> class, or any class at all, by saying that it must wrap a C-style array, or store its objects in contiguous memory, or anything remotely like that. Instead, STL specifications focus on properties that characterize a concept, without prescribing how this concept must be implemented. In the case of C-style arrays, the characteristic property is efficient access to array elements. An element of a C-style array can be accessed by performing one pointer addition and one pointer dereference. Simplifying only slightly, the STL specification of <B>vector</B> says that it must be a container that guarantees the same kind of element access as a C-style array.</p>
+<p>Let us compare <B>vector</B>s to lists, in which elements sit in arbitrary memory locations and are strung together by pointers to the respective next element. To reach the nth element in such a list, you must start at the beginning of the list and make n hops to the next element. That is clearly more expensive than array-style access. On the other hand, when you think about the cost of inserting and deleting elements, you will see that lists easily win this contest over arrays of contiguous memory. It is now easy to guess what the STL specification of <B>std::list</B> looks like. It does not say that <B>list</B> must store elements linked by pointers. Instead, it requires that insertion and deletion of elements must be possible at a certain very low cost, while element access may incur a greater cost than in an array. In other words, it requires that <B>std::list</B> models the abstract concept of a list.</p>
+<p>Now you can see how generic programming is really more than just programming with C++ templates. Of course the actual type of the elements stored in a container is unspecified in the definition of the STL container classes, and this flexibility is modeled using C++ templates. But generic programming means programming with concepts, in the sense that you focus on abtract properties that you wish to model, without prescribing the structure of the actual implementation at all. As I said in my first column, this is no rocket science. It's just that once you grasp the idea of generic programming, you will find it much easier to make the right decisions about what container classes to use, how to design your own class templates, and the like.</p>
+<p>The next thing that happens in the code snippet above is that we read a raw character from the console until the Enter key is pressed. I have used a fictitious function <B>ReadCharFromConsole</B> here, because the C and C++ runtime libraries do a notoriously poor job of providing raw access to the console. As an aside, <a href="list1.htm">Listing 1</a> shows you how you can write <B>ReadCharFromConsole</B> in Win32. The body of the <B>while</B> loop then simply adds the character that was read from the console to the end of the <B>vector</B>. One of the conveniences that <B>vector</B> offers is automatic resizing. The <B>vector</B> will resize automatically as we add elements. There is a lot more to be said about resizing of <B>vector</B>s, but for now, we're fine knowing that it happens automatically when we call the <B>push_back</B> member function. When the program leaves the loop, the vector <B>vectInputChars</B> contains all input characters in the order that they were entered. Now let us add the following code:</p>
+
+<pre>
+std::vector&lt;char&gt;::iterator beg = vectInputChars.begin();
+std::vector&lt;char&gt;::iterator end = vectInputChars.end();
+
+while( '\r' != (cIn = ReadCharFromConsole()) )
+{
+   if( end != std::find(beg, end, cIn) )
+   {
+      std::cout &lt;&lt; cIn &lt;&lt; " found\n";
+   }
+   else
+   {
+      std::cout &lt;&lt; cIn &lt;&lt; " not found\n";
+   }
+}
+</pre>
+
+<p>The class <B>std::vector</B> has a nested class named <B>iterator</B>. Just as <B>std::vector</B> models the same concept as a C-style array, <B>std::vector::iterator</B> models the same concept as a pointer to an element of an array. The implementation of <B>std::vector::iterator</B> may or may not be an actual C-style pointer. The important thing is that the conceptual behavior of a vector <B>iterator</B> is that of a pointer. In fact, every STL container class has a nested class <B>iterator</B>. They all model the same general concept, namely that of a position in a sequence of elements, regardless of whether this is a linked list of elements, a block of contiguous elements, or even a sequence of elements that are generated on the fly.</p>
+<p>Our code above declares two variables of type <B>std::vector::iterator</B>, and it assigns them to two positions in our vector <B>vectInputChars</B>, namely, the <B>begin</B> and <B>end</B> position. In fact, if there is one thing that is more important in the STL then an iterator, then it's two iterators. A pair of iterators is used to delimit a sequence of elements. Here, the sequence of elements being specified by the two iterators <B>beg</B> and <B>end</B> is the entire vector <B>vectInputChars</B>. Of course, I have to tell you more precisely how two iterators delimit a sequence. The STL consistently uses the understanding depicted in <a href="fig1.htm">Figure 1</a>. The first iterator points to the first element in the intended sequence, whereas the second iterator points to a position one past the last element of the intended sequence. Therefore, our iterator <B>beg</B> now points to the first element of <B>vectInputChars</B>, whereas the iterator <B>end</B> points to a hypothetical position one past the last element of <B>vectInputChars</B>.</p>
+<p>Since all iterators model a concept that is much like a C-style pointer, the syntax of iterators is based on pointer syntax. You can increment a pointer using <B>operator ++</B>, and you may access the element that the iterator points to using <B>*</B>, unless the current position of the iterator is one of those hypothetical positions like that of our end iterator. We will have ample opportunity to discuss these and similar features of iterators. In the code above, I do none of these things explicitly. Instead, I pass the iterators <B>beg</B> and <B>end</B> to a function named <B>std::find</B>. The STL refers to functions such as this as algorithms. <B>std::find</B> is in fact a function template. <a href="list2.htm">Listing 2</a> shows the implementation from a popular version of the STL. You can see that the function iterates through the sequence delimited by the first two arguments, a pair of iterators. It looks at each element, and if it finds the element specified in the third argument, it returns an iterator to that position. If the element is not found anywhere in the sequence, the function returns an iterator that indicates the end of the sequence, that is, the iterator that was passed as the second argument.</p>
+<p>It is now clear what our second <B>while</B> loop does: it asks the user to enter more characters at the console, and for each character, it tells the user if this is one of the characters that were entered earlier.</p>
+
+<H4><FONT COLOR="#000080">The Three Pillars of the STL</FONT></H4>
+
+<p>The code that we just discussed shows you in a nutshell what I call the three pillars of the STL. First, we have a <I>container</I>, an STL <B>vector</B> in our case, and we put some elements into it using a member function. In a second step, we view the container as just a sequence of elements given by a pair of <I>iterators.</I> Finally, we apply an <I>algorithm</I> to this sequence, in this case, an algorithm to find a particular element. It is important to understand the flexibility and extensibility that arises from this three-tier structure of containers, iterators, and algorithms. Containers store elements. Iterators allow us to present containers as sequences of elements. Algorithms operate on any sequence that can be presented as a pair of iterators, and that is pretty much any sequence at all. It can be an STL container, or it can be any sequential data that somehow arises in your program.</p>
+<p>Perhaps the most important advice to give to an STL novice is this: do not view the STL as just a library of container classes. Train your eye to spot places in your program where you can present sequences through your own iterators, which you then pass to STL algorithms. Conversely, if you need to do something with a sequence of elements, and the STL does not have an algorithm that does the job, then write your own STL-style algorithm, like <B>std::find</B> of <a href="list2.htm">Listing 2</a>. That way, you can reuse your algorithm on any kind of sequence in the future. Think generic.</p>
+<p>Again: containers, iterators, algorithms. There you have it, the beauty of STL and generic programming in all its glory.</p>
+
+<H4><FONT COLOR="#000080">STL: Pros and Cons</FONT></H4>
+
+<p>As I said earlier, there were already several commercially available libraries of container classes out there when the STL arrived on the scene. Therefore, there is quite a bit of legacy code out there. I have heard people debate whether they should switch to STL or continue using what they had before, or what is available with the class library that they use anyway, such as MFC. Based on my own personal experience out in the trenches, I very strongly advise every serious C++ programmer or programming team to switch to the STL as soon as possible. You will experience an enormous gain in productivity and conceptual clarity in your code.</p>
+<p>It is true that there is a certain learning curve if you want to use the STL safely and efficiently. It is not a good idea to use the STL as you would the old C runtime library, by just looking up functions in the documentation as the need arises. Using the STL requires more of a conceptual understanding. I feel very strongly that it is worth making this investment.</p>
+<p>People have complained about code that uses the STL being hard to read. This is true. But I have found that it is a very small price to pay in view of what you stand to gain. Also bear in mind that the problem with readability will decrease as you keep using the STL, while the various gains are likely to increase.</p>
+<p>I have heard people say that the STL is not an object-oriented solution because it does not use inheritance. In Section 16.2 of <I>The C++ Programming Language</I> <a href="#1">[1]</a>, Stroustrup gives a thorough discussion of possible container designs. He makes it clear that the template-based solution of the STL is by no means the only possible solution. However, it is the only one that guarantees maximum efficiency, for example, by making it easy for the compiler to inline small functions.</p>
+<p>The emphasis on efficiency is also the reason why the STL does not, as a rule, provide safety mechanisms such as range checks. You can happily advance iterators past the end of containers and then wreak havoc by dereferencing them, just as you can send a C-style pointer off into left field. I believe that this was a good design decision. It means that you can use the STL and maintain the efficiency that has always been the trademark of the C and C++ languages. I do wish that there were more STL implementations out there that used <B>assert</B> to provide range checking and the like in debug mode. But I have also found that when I use the STL, I tend to think more clearly and have a better mental image of my data structures than when I use C-style pointers. Therefore, mistakes such as range errors, memory overwrites, and the like are much less likely to occur.</p>
+
+<H4><FONT COLOR="#000080">Reference</FONT></H4>
+
+<p><a name="1"></a>[1]  Bjarne Stroustrup. <I>The C++ Programming Language, 3rd edition</I> (Addison-Wesley, 1997).</p>
+
+<p><i><B>Thomas Becker</B> works as a senior software engineer for Zephyr Associates, Inc. in Zephyr Cove, NV. He can be reached at <B>thomas@styleadvisor.com</B>.</i></p>
+
+<h4><a href="../../../source/2000/dec00/tbecker.zip">Get Article Source Code</a></h4>
+</blockquote></body></html>

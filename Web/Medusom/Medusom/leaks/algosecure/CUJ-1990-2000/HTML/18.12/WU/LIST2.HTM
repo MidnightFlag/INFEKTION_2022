@@ -1,0 +1,23 @@
+<HTML><HEAD>
+<TITLE>Effective Contour Creation with OpenGL Texture Mapping/Listing 2</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 2: Creating a texture-mapped triangle</A></h4>
+<pre>
+void CContoursDoc::CreateTriangleList(UINT nList)
+{
+    ::glNewList(nList, GL_COMPILE);
+    ::glNormal3f(0.0f, 0.0f, 1.0f);
+
+    ::glBegin(GL_TRIANGLES); 
+        ::glTexCoord1f(0.1f);
+        ::glVertex3d(-1, -1, 0);
+        ::glTexCoord1f(0.7f);
+        ::glVertex3d(-1, 1, 0);
+        ::glTexCoord1f(1.0f);
+        ::glVertex3d( 1, 0.8, 0);
+    ::glEnd();
+    ::glEndList();
+}
+</pre></body></html>

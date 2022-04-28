@@ -1,0 +1,63 @@
+<HTML><HEAD>
+<TITLE>November 2000/Creating Truly Maintainable Class Factories/Listing 4</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 4: Partial listing of class dll_object_ref</A></h4>
+<pre>
+template
+&lt; class object &gt;
+class dll_object_ref
+   {
+      friend class dll_object_ptr&lt; object &gt;;
+
+      // not shown: invariant()
+      ...
+
+   private:
+
+      dll_object_ref
+         ( dll_sentinel&amp;         dll
+         , std::string const&amp; function_name )
+         : m_dll( dll ), m_count( 1 ), m_obj( NULL )
+         {
+         #ifdef _WIN32
+            typedef object* (WINAPI* p_instantiate)( );
+         #elif defined( _DLSYM )
+            typedef object* (* p_instantiate)( );
+         #else
+            #error Unsupported Platform.   Please port me
+         #endif
+
+         void* pvfunc = m_dll.find_func( function_name );
+         if ( !_pvfunc )
+            throw dll_exception
+               ( "Could not find instantiation routine." );
+
+         p_instantiate pfunc = 
+            *reinterpret_cast&lt;p_instantiate*&gt;( &amp;_pvfunc );
+         m_obj = pfunc( );
+
+         assert( invariant() );
+         } 
+
+      virtual ~dll_object_ref( )
+         {
+         assert( invariant() );
+         m_obj-&gt;destroy();
+         m_obj = NULL;
+         } // ~dll_object_ref( )
+
+
+      // not shown: functions ref and unref
+      ...
+
+   private: // data
+
+      dll_sentinel   m_dll;
+      object*          m_obj;
+      unsigned long m_count;
+
+   }; // class dll_object_ref&lt; &gt;
+
+</pre></body></html>

@@ -1,0 +1,7 @@
+{
+    "uuid": "drive-menu@linuxdeepin.com",
+    "name": "Removable Drive Menu",
+    "description": "A status menu for accessing and unmounting removable devices",
+    "shell-version": [ "3.2" ],
+    "url": "http://www.linuxdeepin.com"
+}

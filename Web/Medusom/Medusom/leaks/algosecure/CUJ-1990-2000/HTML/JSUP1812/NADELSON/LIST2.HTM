@@ -1,0 +1,61 @@
+<HTML><HEAD>
+<TITLE>December 2000 Java Solutions/Java Named Semaphores/Listing 2</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 2: The Semaphore class</A></h4>
+<pre>
+package Sem;
+
+public class Semaphore extends Mutex
+{
+   private int value = 0;       // The current value 
+                                // of the semaphore
+   private int maxValue = 0;    // The maximum value 
+                                // of the semaphore
+
+   /** Create a semaphore given an initial value 
+       and a maximum value.
+       If the initial value is greater than 0, 
+       then the semaphore can be locked.         */
+   public Semaphore(int _initialValue, int _maxValue)
+   {
+      value = _initialValue;
+      maxValue = _maxValue;
+   }
+
+   /** Returns the current value of the semaphore */
+   public int getValue() { return value; }
+
+   /** If the semaphore's value is 0, 
+       its underlying Mutex object is locked.
+       Otherwise the semaphore's value is decremented by 1. */
+   public synchronized void lock()
+   {
+      if (value == 0)
+      {
+         super.lock(); // Lock the Mutex
+         value--;
+         if (value &lt; 0)
+            value = 0;
+      }
+      else
+         value--;
+   }
+
+   /** Increments the semaphore's value by 1. 
+       If the semaphore's value is 1, its underlying Mutex object 
+       is unlocked.   The semaphore's value can never be greater 
+       than its maximum value.        */
+   public synchronized void unlock()
+   {
+      if (value == 0)
+      {
+         super.unlock();
+      }
+      value++;
+      if (value &gt; maxValue)
+         value = maxValue;
+   }
+}
+</pre></body></html>

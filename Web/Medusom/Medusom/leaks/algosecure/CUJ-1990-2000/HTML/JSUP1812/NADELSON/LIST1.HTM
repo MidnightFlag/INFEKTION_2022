@@ -1,0 +1,44 @@
+<HTML><HEAD>
+<TITLE>December 2000 Java Solutions/Java Named Semaphores/Listing 1</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 1: The Mutex class</A></h4>
+<pre>
+package Sem;
+
+public class Mutex
+{
+   /** Create a Mutex */
+   public Mutex()
+   {
+   }
+
+   /** Locks the Mutex */
+   public synchronized void lock()
+   {
+      // Loop util the wait returns. If for some reason 
+      // the wait is interrupted, loop again.
+      while(true)
+      {
+         try
+         {
+            wait();
+            break;
+         }
+         catch(InterruptedException ex)
+         {
+         }
+      }
+   }
+
+   /** Unlock the Mutex */
+   public synchronized void unlock()
+   {
+      // Notify all threads waiting on the Mutex 
+      // that they can lock it.
+      notifyAll();
+   }
+}
+
+</pre></body></html>

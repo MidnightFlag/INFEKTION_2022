@@ -1,0 +1,106 @@
+<HTML>   
+     <HEAD>
+<TITLE>November 2000/Standard C++ IOStreams and Locales</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocnov.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   Book Review</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Standard C++ IOStreams and Locales</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">reviewed by Brian Button</FONT></H3>
+
+<HR>
+<BLOCKQUOTE>
+
+<table width=600>
+<tr>
+<td colspan=2><IMG SRC="bookscan.gif"></td>
+</tr>
+<tr>
+<td><B>Title:</B></td>
+<td><i>Standard C++ IOStreams and Locales: Advanced Programer's Guide and Reference</i></td>
+</tr>
+<tr>
+<td><B>Author:</B></td>
+<td>Angelika Langer and Klaus Kreft</td>
+</tr>
+<tr>
+<td><B>Publisher:</B></td>
+<td>Addison-Wesley, 2000</td>
+</tr>
+<tr>
+<td><B>Pages:</B></td>
+<td>672</td>
+</tr>
+<tr>
+<td><B>ISBN:</B></td>
+<td>0-201-183951</td>
+</tr>
+<tr>
+<td><B>Price:</B></td>
+<td>$49.95</td>
+</tr>
+</table>
+
+<H4><FONT COLOR="#000080">Introduction</FONT></H4>
+
+<p>It was fall of 1993, and I was trying to design one of my first real, reusable C++ libraries, a set of <B>SocketStream</B> classes. While you can buy libraries like this now, at that point, you had to invent your own. Not having any idea of how to do this, I started searching for appropriate and useful literature. My first stop was the AT&amp;T class reference manual that came with our cfront compiler. Typical of most reference manuals, the information was there but in an almost unusable format. My search continued...</p>
+<p>Then I found Steven Teale's <I>C++ IOStreams Handbook,</I> and my search was over. After reading this book, I understood how to create my own custom <B>streambuf</B>, <B>istream</B>, <B>ostream</B>, and <B>iostream</B> classes. I wrote my library, and miracle of miracles, it worked!</p>
+<p>Several years have passed since then, and the C++ iostreams library has undergone radical changes. Many of the original concepts still apply, but there are a plethora of new details and ideas that must be understood before the library can be used and extended effectively.</p>
+<p>The book I am reviewing, Langer and Kreft's <I>Standard C++ IOStreams and Locales: Advanced Programmer's Guide and Reference,</I> is an excellent aid to understanding the architecture and uses of the new iostreams library.</p>
+
+<H4><FONT COLOR="#000080">The Book</FONT></H4>
+
+<p>The book itself is 672 pages long, divided into four parts. The first two parts comprise a programmer's guide to iostreams and locales, which covers stream input and output and internationalization. The third part is a reference manual that covers every class, type, and function used in the iostream and locale libraries in Standard C++. The final part is a group of appendices that enhance the information given in the book.</p>
+<p>The discussion of stream input and output is a very thorough explanation of how to use the stream classes. It begins at the lowest level by discussing the difference between the formatting and transport layers of the library, and builds on this by discussing other usage issues like how to do formatted input and output, error detection and handling, and reading and writing from memory and files. This section of the book is a great review of stream topics for a programmer who has some knowledge of both C++ and at least the original iostream library. If you have no background in using streams at all, however, this book might start off a bit too quickly for you.</p>
+<p>In the Architecture portion of Part 1, the authors take a much closer look at the internals of the iostream library. They focus on the responsibilities and collaborations between the various classes of streams and streambufs, rather than the minutiae of each, individual class. The section starts by going through the hierarchy of stream classes, starting at the top with <B>ios_base</B> and <B>basic_ios</B>, and continuing through the rest of the stream class hierarchy, followed by the streambuf classes. The examples given by the authors are well focused and do a good job of illustrating the points made in the text.</p>
+<p>I definitely agree with the authors' focus on the collaborations between the parts rather than concentrating on individual classes. Although the details of each class are interesting and significant, the interactions between streams, streambufs, and locales are what is important. That being said, my favorite part of this section was the excellent explanation of how streambufs work. In my mind, this is one of the most complicated, confusing, and yet important parts of the iostreams library. The interactions between the put and get areas, input and output for various kinds of transports, and locales and facets is fascinating, and this book contains perhaps the best explanation of this topic that I have ever seen.</p>
+<p>After talking about streams and streambufs, the book goes on to describe several topics new to this library: the character type and traits class that have become template parameters to every stream and streambuf template, iterators for streams and streambufs, and how to allocate and manage additional storage allocated for a stream. Each of these topics is developed as completely as streams and streambufs. At the end of this chapter, I definitely had a better understanding of the internals of the iostream library.</p>
+<p>The final section of Part 1 discusses advanced stream usage. This section begins by describing how to do input and output of user-defined types, starting with a very basic inserter and extractor for a <B>Date</B> class. The authors develop these functions exactly as I would have, and then proceed, in the next 30 pages, to show how na&iuml;ve that is and how to do things correctly. User-defined manipulators are discussed next, followed by extension of stream and streambuf functionality through inheritance and aggregation.</p>
+<p>Part 2 focuses on internationalization. I found this part a little harder to understand, undoubtedly due to my inexperience with the topic. In the end, however, I was able to understand and apply the concepts discussed. As above, this section of the book begins with basic material, introducing the concepts of internationalization and localization. Continuing from this introduction, the authors discuss locales, which are the mechanism through which internationalization is implemented, and facets, which are the objects inside locales that do the actual localization work. The explanation of these basic topics builds from the basics to a more advanced level, accompanied by relevant examples throughout.</p>
+<p>This introduction is followed by a section on the architecture of the locale framework. Again the concentration is on the relationships and collaborations involving locales and facets, rather than the individual classes. The final topic covered in this part is user-defined facets; it describes how to add your own facet to an existing facet family, or how to add an entirely new facet family to a locale. Once again, the examples are excellent, adding clarity and detail to the text.</p>
+<p>The reference section of the book follows the programmer's guide. This 220-page section is basically a hard copy of the standard iostreams and internationalization documentation, so it is typically terse, but informative. The material is divided into functional groups &#151; locales, iostreams, traits, stream iterators, and miscellaneous topics. Each group is given its own section that details the class declaration, necessary header files, and base classes, and a description of the class. This is followed by the definition of the class itself and detailed descriptions of the entire public interface, including related free functions and types. I used these reference pages quite extensively in developing a simple facet (which I'll be discussing shortly) and I found them to be pretty useful. I sure would like to have them in HTML form, though, so I could hyperlink between them, do searches, and cut and paste function declarations.</p>
+<p>The final part of the book consists of the appendices. Several of the appendices deal with some of the previously developed topics, just in far greater detail, like how to parse and extract numeric and Boolean values from a stream. More interesting, though, are the appendices that discuss the differences between the classic and the now-standard iostream libraries, and the new features in C++ since the language standard was published. I was pleased that this second appendix was included, since the implementation of streams and locales use many of the newer features of C++, and many programmers are unfamiliar with these language features. In fact, while developing my application, I found that several prominent vendors were seemingly unfamiliar with these same features!</p>
+
+<H4><FONT COLOR="#000080">A Simple Example</FONT></H4>
+
+<p>Although I sat down and read this book from cover to cover, it strikes me that most people won't. They will use it as more of a tutorial and reference when they need to learn about a particular topic. Therefore, its usability as a reference text should really be part of this review as well. So to test this use case for the book, I decided to write a simple application.</p>
+<p>My sample implements a simple ROT-13 algorithm. For those of you who aren't familiar with this algorithm, it simply rotates a letter halfway through the standard English alphabet. For instance, ROT-13 would convert the text below:</p>
+
+<pre>
+#include  &lt;iostream&gt;
+
+int main( int, char ** )
+{
+  std::cout &lt;&lt; "Hello, World!"
+            &lt;&lt; std::endl;
+  return 0;
+}
+</pre>
+
+<p>to the following:</p>
+
+<pre>
+#vapyhqr  &lt;vbfgernz&gt;
+
+vag znva( vag, pune ** )
+{
+  fgq::pbhg &lt;&lt; "Uryyb, Jbeyq!"
+            &lt;&lt; fgq::raqy;
+  erghea 0;
+}
+</pre>
+
+<p>The convenient thing about ROT-13 is that if you apply the same transformation to the second snippet, you get back the text in the first snippet.</p>
+<p>So, I had a problem to solve, and this book was going to teach me how to do it. I knew that I wanted to convert characters from one representation to another, so that led me to believe that I wanted to use a facet. I looked in the Table of Contents for the book, and found the section on facets, then searched through there to find the <B>codecvt</B> facet. I read the section describing <B>codecvt</B> and decided I was on the right track. I then went to the index to find related information on <B>codecvt</B>, which led me to the reference section. Based on the class definition I found in the reference section, it was trivial to write the <B>CaesarRotateFacet</B> header (see <a href="list1.htm">Listing 1</a>). The reference manual gave very explicit directions about which member functions needed to be written and overloaded to implement my facet, leaving only the work of figuring out how to implement my algorithm, as seen in function <B>do_out</B> (<a href="list2.htm">Listing 2</a>).</p>
+<p>As questions and complications came up during the implementation of <B>do_out</B>, I was able to use the index to find the information I needed fairly easily. When it came time to write a mainline for my program (see <a href="list3.htm">Listing 3</a>), I knew I wanted to <I>imbue</I> a stream with my facet, and I was quickly able to look up how that was done.</p>
+
+<H4><FONT COLOR="#000080">Conclusion</FONT></H4>
+
+<p>This is a good book. I think it can be read cover to cover, but it doesn't have to be. It is eminently usable as a reference book, with a good Table of Contents and an excellent index. The authors used tables effectively in the book to present sets of things like options, lists of facets, and flag names and values. I appreciated that Langer and Kreft presented more than just the nominal cases, and spent a lot of time talking about the exceptional cases. It is these cases that are the hardest to handle, and that end up taking up the lion's share of properly written, robust code. The class diagrams that were scattered throughout the book were informative, but not UML. (The introduction claimed that the diagrams were in UML, but it looked a lot more like OMT to me. That being the case, I was still able to read them, so I don't consider this anything more than a nit.)</p>
+
+<p><i><B>Brian Button</B> is a Senior Consultant for Object Mentor, Inc. and can be reached at <B>bbutton@objectmentor.com</B>.</i></p>
+
+<h4><a href="../../../source/2000/nov00/button.zip">Get Article Source Code</a></h4>
+
+</blockquote></body></html>

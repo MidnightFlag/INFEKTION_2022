@@ -1,0 +1,117 @@
+<HTML><HEAD>
+<TITLE>December 1999 Java Solutions/The Java 2 Collections -- Finally, Some News You Can Use/Figure 20</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 20: A cross-reference lister</A></h4>
+<pre>
+// Xref.java:
+//  Generates a token-to-line cross-reference listing
+
+import java.util.*;
+import java.io.*;
+
+class Xref
+{
+    // Comparator to ignore case:
+    static class NoCase implements Comparator
+    {
+        public int compare(Object o1, Object o2)
+        {
+            String s1 = (String) o1;
+            String s2 = (String) o2;
+            return s1.compareToIgnoreCase(s2);
+        }
+    }
+
+    // This method does the work:
+    static void process(BufferedReader r)
+        throws IOException
+    {
+        TreeMap map = new TreeMap(new NoCase());
+        String line;
+        int lineno = 0;
+
+        // Build map, reading a line at a time:
+        while ((line = r.readLine()) != null)
+        {
+            ++lineno;
+
+            // Read each token:
+            String delim =
+                " `~!@#$%^&amp;*()-_=+\\|[{]};:'\",&lt;.&gt;/?"
+              + "0123456789";
+            StringTokenizer tokens =
+                new StringTokenizer(line, delim);
+            while (tokens.hasMoreTokens())
+            {
+                String token = tokens.nextToken();
+
+                if (!map.containsKey(token))
+                {
+                    // Add token and empty list to map:
+                    map.put(token, new LinkedList());
+                }
+
+                // See if this line is in there already:
+                LinkedList lines = (LinkedList) map.get(token);
+                if (lines.isEmpty() ||
+                    ((Integer)lines.getLast()).intValue() != lineno)
+                {
+                    // Add line number to list:
+                    lines.addLast(new Integer(lineno));
+                }
+            }
+        }
+
+        // Output:
+        Iterator p = map.entrySet().iterator();
+        while (p.hasNext())
+        {
+            Map.Entry e = (Map.Entry) p.next();
+            System.out.print(e.getKey() + ": ");
+            LinkedList lines = (LinkedList) e.getValue();
+            Iterator lineIter = lines.iterator();
+            while (lineIter.hasNext())
+            {
+                Integer i = (Integer) lineIter.next();
+                if (i != (Integer) lines.getFirst())
+                {
+                    System.out.print(", ");
+                }
+                System.out.print(i);
+            }
+            System.out.println();
+        }
+    }
+
+    public static void main(String[] args)
+        throws IOException
+    {
+        if (args.length == 0)
+        {
+            // Process standard input:
+            Reader r = new InputStreamReader(System.in);
+            process(new BufferedReader(r));
+        }
+        else
+        {
+            // Process each specified file:
+            for (int i = 0; i &lt; args.length; ++i)
+            {
+                if (i &gt; 0)
+                {
+                    System.out.println();
+                }
+                System.out.println("*** File: " +
+                                   args[i] + " ***");
+                FileReader f = new FileReader(args[i]);
+                process(new BufferedReader(f));
+            }
+        }
+    }
+}
+
+</pre>
+</BODY>
+</HTML>

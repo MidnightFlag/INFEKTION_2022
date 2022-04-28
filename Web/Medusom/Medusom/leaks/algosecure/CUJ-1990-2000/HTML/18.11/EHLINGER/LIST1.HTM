@@ -1,0 +1,52 @@
+<HTML><HEAD>
+<TITLE>November 2000/Creating Truly Maintainable Class Factories/Listing 1</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 1: A macro to define a factory function in a DLL</A></h4>
+<pre>
+/*
+DLLFUNC
+Tells the compiler to export a function
+on _WIN32 platform.
+*/
+#ifdef _WIN32
+  #define DLLFUNC __declspec( dllexport )
+#elif defined( _GNU_C )
+  #define DLLFUNC
+#else
+  #error Unsupported Platform.  Please port me.
+#endif
+
+/*
+DLLCALL
+Tells the compiler which "calling convention"
+to use.
+*/
+#ifdef _WIN32
+  #define DLLCALL __stdcall
+#elif defined( _GNU_C )
+  #define DLLCALL
+#else
+  #error Unsupported Platform.  Please port me.
+#endif
+
+#define EXTERNC extern "C"
+
+/*
+FACTORYFUNC
+ Creates an entry in the DLL function export table
+ for a factory-compatible class instantiation routine.
+
+Parameters:
+ * base      - type of class the factory expects.
+ * the_class - type of class the classid corresponds to.
+ * prefix    - function name prefix.  Can be used to allow
+               multiple factories access to the same DLL.
+ * classid   - class identifier.
+*/
+#define FACTORYFUNC( base , the_class , prefix , classid ) \
+  EXTERNC DLLFUNC base* DLLCALL prefix##classid( void )    \
+    { return new the_class; } 
+
+</pre></body></html>

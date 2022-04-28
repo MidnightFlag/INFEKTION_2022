@@ -1,0 +1,108 @@
+<HTML><HEAD>
+<TITLE>December 2000/Removing Image Noise with Adaptive Filters/Listing 3</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 3: The DW-MTM filter subroutine</A></h4>
+<pre>
+dwmtm(the_image, out_image,
+      rows, cols, 
+      little_size, big_size,
+      noise_sd, k)
+   int    big_size, little_size;
+   float  k, noise_sd;
+   short  **the_image,
+          **out_image;
+   long   rows, cols;
+{
+   float ksd;
+   int   a, b, count, i, j, ss;
+   int   bsd2, bsd2p1, lsd2, lsd2p1;
+   short *elements, 
+         lower_range, 
+         sum, 
+         this_mean, 
+         this_median, 
+         upper_range;
+
+      /**********************************************
+      *
+      *   Allocate the elements array large enough
+      *   to hold little_size*little_size shorts.
+      *
+      **********************************************/
+
+   ss       = little_size*little_size;
+   elements = (short *) malloc(ss * sizeof(short));
+
+   bsd2   = big_size/2;
+   bsd2p1 = bsd2+1;
+   lsd2   = little_size/2;
+   lsd2p1 = lsd2+1;
+   ksd    = k*noise_sd;
+
+      /***************************
+      *
+      *   Loop over image array
+      *
+      ****************************/
+
+   printf("\ndwmtm&gt;");
+   for(i=bsd2; i&lt;rows-bsd2; i++){
+      if( (i%10) == 0) printf("%d ", i);
+      for(j=bsd2; j&lt;cols-bsd2; j++){
+            
+            /************************************
+            *
+            *   Compute the median for the 
+            *   little_size square about 
+            *   the_image[i][j].
+            *
+            ************************************/
+         
+         count = 0;
+         for(a=-lsd2; a&lt;lsd2p1; a++){
+            for(b=-lsd2; b&lt;lsd2p1; b++){
+               elements[count] = the_image[i+a][j+b];
+               count++;
+            }
+         }
+         this_median = median_of(elements, &amp;ss);
+            
+            /************************************
+            *
+            *   Compute the mean for the 
+            *   big_size square about 
+            *   the_image[i][j].  Exclude any
+            *   pixels whose value is "near"
+            *   the median (near means only
+            *   plus or minus ksd).
+            *
+            ************************************/
+
+         lower_range = this_median - (int)(ksd);
+         upper_range = this_median + (int)(ksd);
+         count       = 0;
+         sum         = 0;
+         for(a=-bsd2; a&lt;bsd2p1; a++){
+            for(b=-bsd2; b&lt;bsd2p1; b++){
+               if((the_image[i+a][j+b] &gt; lower_range)  &amp;&amp;
+                  (the_image[i+a][j+b] &lt; upper_range)){
+                  sum = sum + the_image[i+a][j+b];
+                  count++;
+               }  /* ends if in range */
+            }
+         }
+         this_mean = sum/count;
+         out_image[i][j] = this_mean;
+         
+
+      }  /* ends loop over j */
+   }  /* ends loop over i */
+
+   fix_edges(out_image, bsd2, rows-1, cols-1);
+   free(elements);
+
+}  /* ends dwmtm */
+
+</pre></body></html>

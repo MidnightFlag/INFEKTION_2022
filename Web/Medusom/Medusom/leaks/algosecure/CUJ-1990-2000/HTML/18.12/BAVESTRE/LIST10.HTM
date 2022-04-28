@@ -1,0 +1,21 @@
+<HTML><HEAD>
+<TITLE>December 2000/A Class Template for N-Dimensional Generic Resizable Arrays/Listing 10</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 10:	Faster array access</A></h4>
+<pre>
+   Array&lt;long, 3&gt; A3(ArraySizes(10)(20)(30)); // See <a href="list9.htm">listing 9</a>
+   
+   // Traverse Array with nested loops in a faster way
+   for (unsigned int x=0, k=0; x&lt;A3.size(1); x++)
+   {
+      SubArray&lt;long, 2&gt; Z2=A3[x];
+      for (unsigned int y=0; y&lt;A3.size(2); y++)
+      {
+         SubArray&lt;long, 1&gt; Z1=Z2[y];
+         for (unsigned int z=0; z&lt;A3.size(3); z++)
+            Z1[z]=++k;
+      }
+   }
+</pre></body></html>

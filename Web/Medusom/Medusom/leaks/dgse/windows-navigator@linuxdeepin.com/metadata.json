@@ -1,0 +1,8 @@
+{
+    "shell-version": ["3.2"],
+    "uuid": "windows-navigator@linuxdeepin.com",
+    "original-author": "zaspire@rambler.ru",
+    "name": "Window Navigator",
+    "description": "Allow keyboard selection of windows and workspaces in overlay mode",
+    "url": "http://www.linuxdeepin.com"
+}

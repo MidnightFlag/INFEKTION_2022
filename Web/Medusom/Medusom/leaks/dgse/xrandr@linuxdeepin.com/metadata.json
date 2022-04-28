@@ -1,0 +1,8 @@
+{
+    "uuid": "xrandr@linuxdeepin.com",
+    "name": "Monitor Status",
+    "description": "Add a systems status menu for rotating monitors",
+    "shell-version": [ "3.2" ],
+    "localedir": "/usr/share/locale",
+    "url": "http://www.linuxdeepin.com"
+}

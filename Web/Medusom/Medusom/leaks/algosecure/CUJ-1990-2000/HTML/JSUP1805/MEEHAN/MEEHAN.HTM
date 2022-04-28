@@ -1,0 +1,263 @@
+<HTML>   
+     <HEAD>
+<TITLE>May 2000 Java Solutions/Java2D -- Device-Independent Graphics for Java 2</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocjmay.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   Java Solutions</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Java2D &#151; Device-Independent Graphics for Java 2</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Peter Meehan</FONT></H3>
+
+<BLOCKQUOTE>
+<p>If you liked Java's AWT, you'll find even more to like with Java2D.</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+
+<H4><FONT COLOR="#000080">Introduction</FONT></H4>
+
+<p>The Java2D API provides device- and resolution-independent graphics for Java developers. Java2D is part of Java 2 and, while far exceeding the rather limited AWT graphics available in JDK 1.1, Java2D remains backwards compatible with AWT. The features provided by Java2D enable the development of visually rich platform-independent user interfaces, suitable for use in graphically demanding environments such as graphic design and typesetting, as well as a wide range of web-based graphics applications.</p>
+<p>The Java2D API introduces several new packages under <B>java.awt</B>, and adds many classes to <B>java.awt</B> and <B>java.awt.image</B>. The new packages are:</p>
+
+<UL><LI>   <B>java.awt.color</B> &#151; advanced color management, including support for ICC color profiles and color spaces</LI>
+<LI>   <B>java.awt.font</B> &#151; intricate font management</LI>
+<LI>   <B>java.awt.geom</B> &#151; device- and resolution-independent coordinate systems</LI>
+<LI>   <B>java.awt.print</B> &#151; portable device support</LI>
+<LI>   <B>com.sun.image.codec.jpeg</B> &#151; JPEG image reading and writing</LI>
+<LI>   <B>java.awt.image.renderable</B> &#151; support for rendering-independent images</LI></UL>
+
+<p>Java2D also adds classes and interfaces to the following packages:</p>
+
+<UL><LI>   <B>java.awt</B> &#151; Graphics2D drawing context and more</LI>
+<LI>   <B>java.awt.image</B> &#151; support for in-memory images, image processing</LI></UL>
+
+<p>This article presents an overview of the main features of Java2D.</p>
+
+<H4><FONT COLOR="#000080">First Steps in Using Java2D</FONT></H4>
+
+<p>Programmers use Java2D by subclassing a Swing component and overriding the <B>paintComponent(Graphics g)</B> method to make calls to the Java2D API. The following code fragment illustrates a simple Java2D program that draws a filled blue rectangle. The output is illustrated in <a href="fig1.htm">Figure 1</a>.</p>
+
+<pre>
+import java.awt.geom.Rectangle2D;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+
+protected void
+paintComponent(Graphics g) {
+    Graphics2D g2 = (Graphics2D) g;
+
+    g2.setPaint(Color.blue);
+    Rectangle2D rect = new
+       Rectangle2D.Double(40,40,100,50);
+    g2.fill(rect);
+}
+</pre>
+
+<p>The Swing refresh mechanism invokes <B>paintComponent</B> and passes it a <B>java.awt.Graphics2D</B> object. (<B>paintComponent</B> accepts a <B>java.awt.Graphics</B> object to provide backwards compatibility with AWT graphics programs.) The first step in any Java2D <B>paintComponent</B> method is to cast the <B>Graphics</B> object to a <B>Graphics2D</B> object &#151; not a problem since <B>Graphics2D</B> is subclassed from <B>Graphics</B>.</p>
+<p>The <B>Graphics2D</B> object maintains the current drawing context, effectively a collection of attributes applied to any drawing operation. Here I set the <B>Graphics2D</B>'s paint attribute to <B>Color.blue</B>. The paint attribute is used in any subsequent fill operations performed by the <B>Graphics2D</B> object.</p>
+<p>Next I create a rectangle object with double-precision coordinates, with top left corner at (40, 40) and width and height of 100 and 50 respectively.</p>
+<p>Finally I fill the rectangle by calling the <B>Graphics2D</B> <B>fill</B> method.</p>
+
+<H4><FONT COLOR="#000080">Java2D Coordinate Systems</FONT></H4>
+
+<p>The rectangle in Example 1 is placed at (40, 40) in User Space, a device-independent coordinate system with x values increasing to the right and y values increasing downwards. When drawn to a device, such as a computer display or printer, the rectangle coordinates are converted to Device Space. By default, User Space and Device Space are equivalent; however, this can be changed by applying a transformation to the <B>Graphics2D</B> object. Transformations are described by <B>java.awt.geom.AffineTransform</B> objects, and consist of the usual suspects &#151; translation, rotation, and scaling operations &#151; as well as flipping and shearing operations. Affine transformations have the following effects on object geometries:</p>
+
+<UL><LI>   Parallel lines remain parallel.</LI>
+<LI>   Angles between lines remain constant.</LI></UL>
+
+<p>For example, a graphics scene may be zoomed by applying a scaling transformation to the <B>Graphics2D</B> object:</p>
+
+<pre>
+import java.awt.geom.AffineTransform;
+
+// create scale transformation
+AffineTransform zoomTransform =
+AffineTransform.getScaleInstance(2.,2.);
+protected void paint(Graphics g) {
+    Graphics2D g2 = (Graphics)g;
+    // apply transformation
+    g2.setTransform(zoomTransform);
+
+    // from now on all objects are 2x
+    // zoomed in Device Space
+    g2.fill(...)
+}
+</pre>
+
+<p>AffineTransform</B>s can be concatenated to create more complex transformations. For instance, to zoom and rotate User Space relative to Device Space:</p>
+
+<pre>
+AffineTransform concatXForm =
+   new AffineTransform();
+// from Example 2
+concatXForm.setTransform(zoomTransform);
+// 45 degrees
+concatXForm.rotate(Math.PI/4);
+
+protected void paint(Graphics g) {
+    Graphics2D g2 = (Graphics)g;
+    // apply transformation
+    g2.setTransform(concatXForm);
+
+    // from now on all objects are 2x
+    // zoomed in Device Space,
+    // then rotated through 45 degrees
+    g2.fill(...)
+}
+</pre>
+
+<H4><FONT COLOR="#000080">Resolution-Independent Graphics</FONT></H4>
+
+<p>The interfaces and classes defined in <B>java.awt.geom</B> provide a variety of geometric entities that come in single- and double-precision floating-point coordinate varieties. These entities include points, rectangles, lines, quadratic and elliptical curves, arcs, and general paths. A general path includes any combination of other shapes. Java2D's support for floating-point coordinates is one of its fundamental improvements over the integer-only JDK 1.1 AWT graphics support. All the geometric shape classes implement the <B>Shape</B> interface, allowing them to be used for a variety of filling and drawing operations.</p>
+<p>Here are some examples of shapes:</p>
+
+<pre>
+/*
+* Simple shapes
+*/
+// Line segment from (12.34,10.4) to 
+// (23.4,67.019)
+Line2D line1 = new 
+Line2D.Float(12.34f,10.4f,23.4f,67.01f);
+// Line segment from (10,10) to (40,40)
+Line2D line2 = new 
+   Line2D.Double(10.,10.,40.,40.);
+
+/*
+* Complex shape - a shamrock
+*/
+path.moveTo(60f,80f); // start point
+// left side of stem,
+// a quadratic curve
+path.quadTo(70f,70f,73f,60f);
+// left leaf, a Bezier curve
+path.curveTo(30f,100f,30f,10f,70f,50f);
+// top leaf
+path.curveTo(30f,10f,120f,10f,80f,50f);
+// right leaf
+path.curveTo
+   (120f,10f,120f,100f,77f,60f); 
+// right side of stem
+path.quadTo(75f,70f,63f,83f);
+path.closePath(); // base of stem
+</pre>
+
+<p>The shamrock shape is created using a combination of Bezier and quadratic curves. A quadratic curve is defined by a single control point and two end points, while a Bezier curve has two control points and two end points. The path is contructed by first setting the current position using the <B>moveTo</B> method, then adding curves using the <B>curveTo</B> and <B>quadTo</B> methods. Each of these methods takes the appropriate number of control points and one end point as arguments. The path's current position provides the other end point of the curve. After the curve is added the current position is set to the end point provided in the <B>curveTo</B> or <B>quadTo</B> method. The full source code for this example is contained in the file <B>Shamrock.java</B>, available in the online listings on the <I>CUJ</I> ftp site. (See p. 2 for downloading instructions.) The output of this program is shown in <a href="fig2.htm">Figure 2</a>.</p>
+<p>New shapes can also be created by applying <B>AffineTransform</B>s to existing shapes. This User Space to User Space transformation is independent of the role <B>AffineTransform</B>s play in transforming User Space to Device Space. For example, the following code uses an <B>AffineTransform</B> to obtain a rotated copy of an existing line:</p>
+
+<pre>
+// create identity transformation
+AffineTransform rotateTransform = new
+   AffineTransform();
+// set the transform to perform a
+// rotation through 45 degrees
+rotateTransform.setToRotation
+   (Math.PI/4);
+// create line
+Line2D line = new 
+Line2D.Float(12.34f,10.4f,23.4f,67.01f);
+// use the transform to obtain a new 
+// line that is rotated 45 degrees
+// relative to the first line
+Line2D rotatedLine = 
+   rotateTransform.createTransformedShape
+      (line);
+</pre>
+
+<H4><FONT COLOR="#000080">Drawing</FONT></H4>
+
+<p>Shapes are drawn in outline in Java2D using the <B>Graphics2D</B> <B>draw(Shape s)</B> method. The outline is drawn using the current stroke attribute, which is set using the <B>Graphics2D</B> <B>setStroke</B> method. The stroke includes parameters such as line width, line dashing, and cap and join styles. The cap style determines how the end of the line is drawn, while the join style determines how a corner is drawn.</p>
+<p><a href="fig3.htm">Figure 3</a> illustrates several examples of strokes. <B>Strokes.java</B>, from the online listings, contains the code used to create them.</p>
+
+<H4><FONT COLOR="#000080">Effects</FONT></H4>
+
+<p>Java2D provides a variety of fill styles other than the simple solid fill provided by AWT. In Java2D objects are filled with the current paint attribute, set using the <B>Graphics2D</B> <B>setPaint</B> method. Classes that implement the <B>Paint</B> interface include <B>java.awt.Color</B>, <B>java.awt.GradientPaint</B>, and <B>java.awt.TexturePaint</B>.</p>
+
+<H4><FONT COLOR="#000080">GradientPaint</FONT></H4>
+
+<p>A <B>GradientPaint</B> is defined by two colors and two points in User Space, as in:</p>
+
+<pre>
+GradientPaint gradient = new
+GradientPaint(20,20,Color.green,80,20,
+   Color.red));
+</pre>
+
+<p>The paint color changes linearly from the start color to the end color along the line segment joining the start point and end point. All points along the normal to the line segment at a point have the same color as the point on the line. In this case the control points are (20, 20) and (80, 20), so the paint changes color along a line parallel to the x-axis. Gradient paints can be cyclic, meaning the paint continually cycles between the two colors, or non-cyclic, meaning the paint changes color once. <a href="fig4.htm">Figure 4</a> illustrates non-cyclic and cyclic gradient paints created by the code in <B>Gradients.java</B>, from the online listings.</p>
+
+<H4><FONT COLOR="#000080">TexturePaint</FONT></H4>
+
+<p>A <B>TexturedPaint</B> fills a shape with repeating patterns of a <B>java.awt.image.BufferedImage</B> object. <B>Texture.java</B>, from the online listings, illustrates how to fill a <B>Shape</B> with a wood texture to create the image in <a href="fig5.htm">Figure 5</a>. In this case the original image is obtained from an existing texture stored as a jpeg. A <B>java.awt.Image</B> object is created from this file and used to create a <B>BufferedImage</B>. (<B>BufferedImage</B>s are explained in more detail below.) The <B>BufferedImage</B> instance is then passed to the <B>TexturePaint</B> constructor along with an anchor parameter. The anchor determines the top left corner of the first copy of the texture to be painted, and the dimensions of the tile used to replicate the pattern.</p>
+
+<H4><FONT COLOR="#000080">Transparency</FONT></H4>
+
+<p>Java2D provides support for transparency and composite images. Objects can be rendered transparent by setting the current <B>Composite</B> attribute on the <B>Graphics2D</B> object:</p>
+
+<pre>
+import java.awt.AlphaComposite;
+// 50% transparent
+AlphaComposite transparent50 =
+   AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.5f);
+g2.setComposite(transparent50);
+g2.fill(new Rectangle2D.Double(120.,20.,80.,80.));
+</pre>
+
+<p>The composite attribute determines how source pixels (from the object currently being rendered) are combined with destination pixels (what has already been drawn under the current object, including the background, if any). <a href="fig6.htm">Figure 6</a> illustrates the output of <B>Composite.java</B>, from the online listings, which combines the previous examples to draw a general path at 35% transparency over a texture filled circle. The textured circle shows through the partially transparent shape.</p>
+
+<H4><FONT COLOR="#000080">Antialiasing</FONT></H4>
+
+<p><a href="fig7.htm">Figure 7</a> shows two circles produced by the code in <B>Antialias.java</B>, from the online listings. The circle on the left exhibits the jagged edge often found in bitmapped graphics systems, while the one on the right is smooth. The circle on the right is drawn using Java2D's antialiasing support. Antialiasing is used by applying the antialias rendering hint to the graphics context before drawing the second circle:</p>
+
+<pre>
+// draw a circle with antialiasing inactive
+g2.draw(new Arc2D.Double(10,10,50,50,0,360,Arc2D.CHORD));
+
+// activate antialiasing
+RenderingHints hint =
+new RenderingHints(RenderingHints.KEY_ANTIALIASING,
+          RenderingHints.VALUE_ANTIALIAS_ON);
+g2.addRenderingHints(hint);
+// draw a circle with antialiasing active
+g2.draw(new Arc2D.Double(70,10,50,50,0,360,Arc2D.CHORD));
+</pre>
+
+<H4><FONT COLOR="#000080">Text</FONT></H4>
+
+<p>The <B>Graphics2D</B> <B>drawString</B> methods provide the most basic level of text rendering support in Java2D. As <a href="fig8.htm">Figure 8</a> illustrates, rendered text is affected by current <B>Graphics2D</B> attributes such as paint and composite.</p>
+
+<pre>
+g2.setFont(new Font("Bookman Old Style",
+   Font.BOLD|Font.ITALIC,36));
+g2.setPaint(woodPaint); // from texture example
+g2.drawString("Java2D String",120,140);
+</pre>
+
+<p>Java2D's text support goes much further than simple rendering however, and includes detailed support for caret positioning, text selection, kerning, some ligature support, and text layout.</p>
+
+<H4><FONT COLOR="#000080">Images</FONT></H4>
+
+<p>JDK 1.1 has a Producer-Consumer image model; that is, images are delivered on demand to the Consumer by the Producer, but not stored in memory. Java2D added an immediate-mode model, which means that images can now be stored in memory using the <B>java.awt.image.BufferedImage</B> class. <B>BufferedImage</B>s support a variety of in-memory filter operations, including sharpening, blurring, color thresholding, lookup table manipulation, and color space transformation.</p>
+<p><a href="fig9.htm">Figure 9</a> shows, in left-to-right order, the sharpened, original, and blurred versions of the wood texture I've used in the earlier examples. The sharpened and blurred versions were created by filtering the original image with convolution operators, implemented by the <B>java.awt.image.ConvolveOp</B> class. The code for this example is in <B>Convolutions.java</B>, from the online listings.</p>
+<p>A convolution operation calculates the value for each pixel in the destination image based on the value of the corresponding pixel in the source image and some combination of the pixels surrounding the source pixel. The combination is determined by a two-dimensional array of weights called a kernel. The kernel used for the blur operation is based on a 4x4 array where each element is 1/16, meaning that each pixel in the destination image is calculated from the average of the source pixel and the 15 pixels surrounding it in the source image. The kernel for the sharpen filter accentuates the source pixel and reduces the effect of the surrounding pixels by applying negative weights to the surrounding pixels and a positive weight to the corresponding source pixel.</p>
+<p>The kernel can also be used to change the intensity of the destination image relative to the source image. If the sum of the weights in the kernel is greater than one, the destination will have greater intensity than the source, while if less than one the destination will have less intensity.</p>
+
+<H4><FONT COLOR="#000080">Practical Use of Java2D</FONT></H4>
+
+<p>Java2D provides a host of powerful rendering features; however, it remains a low-level API. This becomes clear when Java2D is compared to the Java Foundation Classes/Swing user interface toolkit. Swing components offer three important features that are not provided by Java2D:</p>
+<p>1.   An object model. Swing components are individual Java objects controlled via a collection of properties. For instance a <B>JButton</B> component has foreground and background colors, a label, border width etc. There is no equivalent in Java2D. Properties such as colors, line thicknesses, etc. must be stored by the programmer and applied to the <B>Graphics2D</B> object in the <B>paintComponent</B> method.</p>
+<p>2.   On-screen persistence. Programmers need not concern themselves with painting a Swing component to the screen. Once the component is added to a container, Swing manages all refresh events internally. With a Java2D application, the programmer is responsible for writing the <B>paintComponent</B> method and ensuring objects are correctly and efficiently redrawn when necessary.</p>
+<p>3.   Event listeners. Swing provides an extensive listener model, which allows component behavior to be customized by registering a listener object with each individual component. When an event occurs, such as the user clicking on a <B>JButton</B>, the appropriate listener is invoked automatically by Swing. In Java2D there are no objects to which listeners can be attached, so the programmer is responsible for detecting mouse events, determining which Java2D shape contains the mouse, and invoking the appropriate code.</p>
+<p>While these drawbacks do not by any means preclude the use of Java2D, they do reduce the productivity of programmers using the Java2D API, who have to develop many of these features themselves. However, programmer productivity can be improved by using one of a number of commercial toolkits that provide object models based on Java2D. These toolkits provide an interesting alternative to using raw Java2D.</p>
+
+<H4><FONT COLOR="#000080">Conclusion</FONT></H4>
+
+<p>Java2D is a very powerful 2D graphics rendering API that allows Java developers to develop extremely rich user interfaces and graphics applications, so powerful in fact that access to Java2D is one of the primary advantages of adopting Java 2 for client applications.</p>
+
+<p><i><B>Peter Meehan</B> is President of LOOX Software Inc. in Los Altos, CA, where he is heavily involved with the LOOX range of dynamic graphics development tools. His interests include user interfaces, graphics and distributed computing, and the application of these technologies to supervision and control applications. He holds a B.A.I. in Computer Science and Electronic Engineering and an M.Sc. in Computer Science from Trinity College Dublin, Ireland. He can be contacted at <B>peter@loox.com</B>.</i></p>
+
+<h4><a href="../../../source/2000/jmay00/meehan.zip">Get Article Source Code</a></h4>
+
+</blockquote></body></html>

@@ -1,0 +1,13 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+
+msgid "Shut Down..."
+msgstr "ବନ୍ଦ କରନ୍ତୁ..."
+
+msgid "Hibernate"
+msgstr "ସୁପ୍ତ କରନ୍ତୁ"

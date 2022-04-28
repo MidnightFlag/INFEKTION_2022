@@ -1,0 +1,25 @@
+<HTML><HEAD>
+<TITLE>November 2000 C++ Experts Forum/From Mechanism to Method/Listing 4</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 4:  Smart function pointer copying</A></h4>
+<pre>
+class function_ptr
+{
+public:
+    ...
+    function_ptr(const function_ptr &amp;other)
+      : body(other.body ? other.body-&gt;clone() : 0)
+    {
+    }
+    function_ptr &amp;operator=(const function_ptr &amp;rhs)
+    {
+        callable *old_body = body;
+        body = rhs.body ? rhs.body-&gt;clone() : 0;
+        delete old_body;
+        return *this;
+    }
+    ...
+};</pre>
+</pre></body></html>

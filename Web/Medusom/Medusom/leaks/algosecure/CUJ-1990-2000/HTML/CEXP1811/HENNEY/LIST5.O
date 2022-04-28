@@ -1,0 +1,21 @@
+class function_ptr
+{
+public:
+    ...
+    void operator()() const
+    {
+        if(body)
+            body->call();
+    }
+    function_ptr &operator*()
+    {
+        return *this;
+    }
+    const function_ptr &operator*() const
+    {
+        return *this;
+    }
+    ...
+};
+
+

@@ -1,0 +1,32 @@
+<HTML><HEAD>
+<TITLE>December 2000/Uncaught Exceptions/Listing 1</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 1: Referencing a non-existent object</A></h4>
+<pre>
+#include &lt;stdio.h&gt;
+
+class CFoo
+{
+public:
+    CFoo()
+        {
+        printf("CFoo::CFoo\n");
+        }
+    void Func1()
+        {
+        i = 123;
+        printf("CFoo::Func1\n");
+        }
+private:
+    int i;
+    };
+
+int main()
+    {
+    CFoo *pFoo;
+    pFoo-&gt;Func1();
+    return 0;
+    }
+</pre></body></html>

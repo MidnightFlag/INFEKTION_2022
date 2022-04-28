@@ -1,0 +1,201 @@
+<HTML>   
+     <HEAD>
+<TITLE>December 1999 Java Solutions/The Java 2 Collections -- Finally, Some News You Can Use</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocjsup.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   Java Solutions</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">The Java 2 Collections &#151; Finally, Some News You Can Use</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Chuck Allison</FONT></H3>
+
+<BLOCKQUOTE>
+<p>Inspired by STL, Java 2 adds still more containers and algorithms for your coding enjoyment.</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+
+<p>It's been over 20 years since I first studied data structures. Yes, that was in the days of FORTRAN, COBOL, BASIC, and PL/I, and I am happy to be among the crowd of programmers to have implemented trees in FORTRAN (what fun!). Actually, it was frustrating to learn recursive data structures and algorithms and not be able to implement them directly because of a language that came up short on features. Then along came Pascal and C and we all went crazy writing code that looked like the pseudocode in our textbooks.</p>
+<p>But implementing lists and trees for every new user data type that comes along gets old after a while, not to mention error prone. Two things have come along to change all that: objects and templates. With objects you can write data structures once and for all in terms of some high-level class (like <B>Object</B>), as long as your classes hook into that hierarchy. This is the approach Smalltalk, Java, and some early C++ container libraries took. The C++ STL (Standard Template Library) revolutionized generic programming by defining templates for type-safe containers and algorithms. Whatever approach you take, you can use an existing data structure implementation for virtually any programming task. Hurray!</p>
+<p>But Java containers through version 1.1 of the JDK were a disappointment, to say the least. There were only four containers: <B>Bitset</B>, <B>Hashtable</B>, <B>Vector</B>, and <B>Stack</B>; and they didn't come off as shining examples of object-oriented design. For some reason unknown to mankind, <B>Stack</B> inherited from <B>Vector</B>, instead of just using the latter as an artifact of implementation. And there were no algorithms; you couldn't even sort a <B>Vector</B> without writing your own sort routine!</p>
+<p>With the collections and algorithms in Java 2, you now have a full array (sic) of generic data structures to handle most of the programming tasks that come your way. In this article I illustrate all the key features of the new collections; but first, let's talk about arrays. That's right. Arrays.</p>
+
+<h4><FONT COLOR="#000080">Arrays</FONT></H4>
+
+<p>The array is the quintessential data structure. Just because you have trees and lists at your fingertips doesn't mean that arrays don't matter. In fact, if you need to hold primitive types, arrays are the way to go, since the collection classes can only hold instances of <B>Object</B>. The class <B>java.util.Arrays</B> includes some useful algorithms for processing arrays, namely</p>
+
+<UL><LI>   <B>binarySearch</B> </LI>
+<LI>   <B>equals</B> </LI>
+<LI>   <B>fill</B> </LI>
+<LI>   <B>sort</B></LI></UL>
+
+<p>These algorithms come in the form of overloaded methods that take arrays of <B>Object</B> and also of every primitive data type. The program in <a href="fig1.htm">Figure 1</a> uses all four algorithms on arrays of <B>int</B>. The <B>binarySearch</B> algorithm requires an ordered array, of course, so the first thing I do is call the <B>sort</B> algorithm with the statement</p>
+
+<pre>
+Arrays.sort(array);
+</pre>
+
+<p><B>binarySearch</B> returns the zero-based index of the element you're after, if it's in the array; otherwise it returns</p>
+
+<pre>
+-pos - 1
+</pre>
+
+<p>where <B>pos</B> is the index of the position it should occupy.</p>
+<p>Solving for <B>pos</B> by adding 1 and then changing sign will either give you the location before which the number should be inserted, or <B>array.length</B>, in case it should be appended to the array. Be aware that if the array contains multiple instances of a search object, there is no guarantee as to which one the search algorithm will find.</p>
+<p>Unfortunately, when used with arrays of primitives, <B>Arrays.sort</B> puts things in ascending order only. If you want some other ordering scheme, you have to use arrays of <B>object</B> and pass <B>sort</B> an extra comparator argument.</p>
+<p>A comparator is an object that implements the following interface:</p>
+
+<pre>
+public interface Comparator
+{
+    int compare(Object o1, Object o2);
+}
+</pre>
+
+<p>The <B>compare</B> method must behave like C's <B>strcmp</B> function by returning a negative number if <B>o1</B> precedes <B>o2</B> in your ordering, zero if they are equal, or a positive number otherwise. The program in <a href="fig2.htm">Figure 2</a> sorts an array of <B>Integer</B>s in descending order by using the following comparator:</p>
+
+<pre>
+class Descending implements Comparator
+{
+    public int compare(Object o1, Object o2)
+    {
+        Comparable c1 = (Comparable) o1;
+        Comparable c2 = (Comparable) o2;
+        return -c1.compareTo(c2);
+    }
+}
+</pre>
+
+<p>A <B>Comparable</B> object implements the method <B>int compareTo(Object o)</B>, which also behaves like C's <B>strcmp</B>. <B>String</B>, <B>Date</B>, and all the primitive wrapper classes implement <B>Comparable</B>, and the collections described below can hold <B>Comparable</B> objects. <B>Arrays.sort</B> uses <B>Descending.compare</B> to compare <B>Integer</B>s in <a href="fig2.htm">Figure 2</a>.</p>
+<p>Note that the definition of <B>Descending</B> above is totally generic &#151; you can use it to reverse-sort any collection of objects derived from <B>Comparable</B>. Since this is something you'll want to do quite often, the Java 2 library provides this comparator as the return value of <B>Collections.reverseOrder</B>, so you can replace the definition of <B>desc</B> in <a href="fig2.htm">Figure 2</a> with the following one:</p>
+
+<pre>
+static Comparator desc = Collections.reverseOrder();
+</pre>
+
+<p>Since all Java 2 algorithms process instances of <B>Object</B>, it is easy to handle objects of any class. <a href="fig3.htm">Figure 3</a> defines a <B>Person</B> class. Note that it implements <B>Comparable</B>, in case I want to sort an array of <B>Person</B>s, and so I will also be able to store <B>Person</B> objects in other types of collections later. The fact that <B>Person</B> also implements <B>Cloneable</B> is a coincidence of my test program. I tried to implement <B>hashCode</B> and <B>compareTo</B> to insure that different <B>Person</B> objects will yield distinct results. The program in <a href="fig4.htm">Figure 4</a> searches an array of <B>Person</B>s.</p>
+<p>It is possible to order and search an array by a subset of the objects' fields by defining a suitable comparator. In <a href="fig5.htm">Figure 5</a>, I use a comparator that just looks at a <B>Person</B>'s name. Unfortunately, I have to use a complete <B>Person</B> object as the search key, even though the last three fields are ignored. As far as I can tell, there is no way to define a comparator to use a <B>Person</B> as one argument and a string as the other, as you can with function objects in the Standard C++ library.</p>
+
+<h4><FONT COLOR="#000080">Collections</FONT></H4>
+
+<p>Java 2 provides two families of containers: Collections and Maps. Collections are containers that implement the <B>Collection</B> interface (see <a href="fig6.htm">Figure 6</a>). The <B>Collection</B> interface is further refined into <B>List</B> and <B>Set</B> (see <a href="fig7.htm">Figures 7</a> and <a href="fig8.htm">8</a>). <B>List</B>s are ordered sequences that support direct indexing and bidirectional traversal. Java 2 comes with <B>LinkedList</B> and <B>ArrayList</B> as implementations for <B>List</B>, as shown in <a href="fig9.htm">Figure 9</a>. <B>Vector</B> is also there for historical reasons, but <B>ArrayList</B> is preferred over <B>Vector</B> in new code. <B>LinkedList</B> implements a doubly-linked list, and is optimized for inserting and removing elements anywhere in a list. <B>ArrayList</B> is simply an expandable array, and is preferred when you need to use random access to list elements.</p>
+<p>The program in <a href="fig10.htm">Figure 10</a> puts both <B>ArrayList</B> and <B>LinkedList</B> to the test. The <B>get</B> method returns the object at a particular position, while <B>indexOf</B> performs a linear search to find the index of an element, and returns -1 if it's not present. The <B>subList</B> method is a useful feature of the <B>List</B> interface. It returns a <B>List</B> that is a subset of the original, using an asymmetric range specification, similar to STL ranges, where the first index is inclusive and the second is exclusive. In <a href="fig10.htm">Figure 10</a>, for example, the statements</p>
+
+<pre>
+LinkedList list = new LinkedList(array);
+List view = list.subList(1,3);
+</pre>
+
+<p>define <B>view</B> as containing the second and third elements of <B>list</B> (i.e., indexes 1 and 2), where <B>list</B> is itself a copy of <B>array</B>. Since <B>view</B> is just a wrapper for a subset of <B>list</B>, any operations on <B>view</B> affect <B>list</B>. Appending <B>Gregory</B>'s instance to <B>view</B>, therefore, inserts it after <B>James</B>, not <B>Charles</B>, the latter being outside of <B>view</B>.</p>
+<p><a href="fig10.htm">Figure 10</a> also illustrates various algorithms found in the <B>java.util.Collections</B> class, such as <B>sort</B>, <B>binarySearch</B>, <B>max</B>, <B>min</B>, and <B>reverse</B>. These are similar in spirit to those in <B>java.util.Arrays</B>, but apply only to collections. The complete listing of algorithms in <B>java.util.Collections</B> is in <a href="fig11.htm">Figure 11</a>. Notice the methods containing the prefixes <B>unmodifiable</B> and <B>synchronized</B>. These methods act as wrappers for existing collections and restrict their use. If you call <B>unmodifiableCollection</B> on an existing collection, for example, the object returned will throw an <B>UnsupportedOperationException</B> if you try to call any of the <B>Collection</B> methods that modify a collection.</p>
+<p>The synchronized methods return objects that are thread safe. Using these methods is the only way to use collections in multithreaded situations, since for efficiency none of the <B>Collection</B> methods are synchronized. The wrappers act as a synchronized view into the original collection. If you want to iterate through a synchronized collection you need to synchronize on the collection to preserve thread safety, as in:</p>
+
+<pre>
+Collection coll =
+    Collections.synchronizedCollection(aCollection);
+...
+synchronized(coll)
+{
+    Iterator iter = coll.iterator();
+    while (iter.hasNext())
+}
+</pre>
+
+<p>You may have noticed the glaring omission of some popular data structures, such as queue, stack, and deque. Although they're not there explicitly, you can use <B>LinkedList</B> to achieve the desired effect. <B>LinkedList</B> includes the following methods, among others:</p>
+
+<pre>
+// Some LinkedList methods:
+void addFirst(Object o); // push_front()
+void addLast(Object o);  // push_back()
+Object getFirst();       // front()
+Object getLast();        // back()
+Object removeFirst();    // pop_front()
+Object removeLast();     // pop_back()
+</pre>
+
+<p>For the STL-aware I have included the names of the equivalent C++ functions in the comments above. To implement a queue, all you have to do is use <B>LinkedList</B>'s <B>addFirst</B> and <B>removeLast</B> methods, as follows:</p>
+
+<pre>
+class Queue
+{
+    private LinkedList data;
+    
+    public Queue()
+    {
+        data = new LinkedList();
+    }
+    public void put(Object o)
+    {
+        data.addFirst(o);
+    }
+    public Object get()
+        throws NoSuchElementException
+    {
+        return data.removeLast();
+    }
+    public int size()
+    {
+        return data.size();
+    }
+}
+</pre>
+
+<p>For a stack, just replace <B>removeLast</B> with <B>removeFirst</B>. For a deque, which allows insertions and removals at both ends, just use <B>LinkedList</B> as it is.</p>
+
+<h4><FONT COLOR="#000080">Iterators</FONT></H4>
+
+<p>Iterators, like Enumerations, are objects that facilitate traversing through an ordered sequence (see <a href="fig12.htm">Figure 12</a>). Unlike Enumerations, you can remove elements via an iterator. All collections support iterators, but the order of the traversal depends on the collection itself. For lists, you visit objects in the order they are stored. For sets (discussed below), objects appear in no particular order unless the set is ordered. The <B>ListIterator</B> interface, also in <a href="fig12.htm">Figure 12</a>, lets you update an object through an iterator, as shown in <a href="fig13.htm">Figure 13</a>. All the iterators returned by the Java 2 collections are <I>fail-fast</I>, which means that if the underlying structure changes during the lifetime of an iterator, other than through operations performed through the iterator itself, the iterator becomes invalid. Any attempted use of it thereafter will result in a <B>ConcurrentModificationException</B>.</p>
+
+<h4><FONT COLOR="#000080">Sets</FONT></H4>
+
+<p>The <B>Set</B> interface conforms to the usual notion of a mathematical set, which basically is just an unordered receptacle for elements, and provides operations for insertion, removal, and testing of membership. Since these are already part of the Collections interface, the <B>Set</B> interface is identical to <B>Collection</B>, with the added specification that duplicates are not allowed. The <B>SortedSet</B> interface adds methods useful for processing a set ordered by comparator (see <a href="fig14.htm">Figure 14</a>). The <B>HashSet</B> class implements <B>Set</B>, and <B>TreeSet</B> implements <B>SortedSet</B>. <B>HashSet</B>s are more efficient, since they use hashing algorithms; but if order is important, <B>TreeSet</B>s at least provide logarithmic-time algorithms, since they store objects in balanced tree structures. As you can see in <a href="fig15.htm">Figure 15</a>, any attempts to insert duplicates into a set are ignored. For <B>TreeSet</B>s, <B>headSet</B> returns a view from the beginning up to but not including the specified element and <B>tailSet</B> comprises the rest of the sequence.</p>
+
+<h4><FONT COLOR="#000080">Maps</FONT></H4>
+
+<p>A map is a dictionary, or associative array. A map stores pairs, treating the first element of the pair as a key, and the second as its associated value. Maps provide fast search times for keys, and duplicate keys are not allowed. Like Sets, there are <B>HashMap</B>s and <B>TreeMap</B>s, the former being faster and unordered while instances of the latter are ordered. For some reason maps are in no way related to collections in Java 2; they have their own interface and implementation hierarchies (see <a href="fig16.htm">Figures 16</a> and <a href="fig17.htm">17</a>). A <B>WeakHashMap</B> stores keys as <I>weak references</I>, which means that if the only reference to the key object is the key in the map, then that object can be garbage-collected, whereupon the entry is removed from the map. How's that for easy caching?</p>
+<p>The key methods of the <B>Map</B> interface are <B>put</B> and <B>get</B> (see <a href="fig18.htm">Figure 18</a> for the complete specification). The <B>put</B> method stores a pair of objects in the map, and <B>get</B> retrieves the value for the given key. If you want to just see the keys, <B>keySet</B> returns them as a <B>Set</B> view, and the <B>values</B> method returns the values as a <B>Collection</B>. If you want to iterate through the pairs, you can call <B>entrySet</B>, which returns the pairs as a <B>Set</B> of instances of <B>Map.EntrySet</B>, which also appears in <a href="fig18.htm">Figure 18</a>. All the above is illustrated in the program in <a href="fig19.htm">Figure 19</a>. Note that calling <B>put</B> a second time with the same key replaces its associated value.</p>
+
+<h4><FONT COLOR="#000080">An Application</FONT></H4>
+
+<p>Let's finish by doing something useful. The program in <a href="fig20.htm">Figure 20</a> implements a typical cross-reference lister, which prints each word from a text file with the line numbers where it appears. Applying <a href="fig20.htm">Figure 20</a> to its own text produces the output:</p>
+
+<pre>
+a: 2, 28
+Add: 45, 68
+addLast: 69
+already: 49
+and: 45
+args: 95, 98, 107, 114, 115
+at: 28
+boolean: 51
+BufferedReader: 21, 102, 116
+(etc.)
+</pre>
+
+<p>This program uses a <B>Map</B> that associates a token with a list of line numbers. Since I want the tokens to appear in alphabetical order, I use a <B>TreeMap</B> with the default comparator. I want to ignore case in comparisons, so I define a comparator, called <B>NoCase</B>, that calls on <B>String.compareToIgnoreCase</B> to do the job. Before inserting a new pair, I first check to see if it is already in the map. If not, I insert it with the statement:</p>
+
+<pre>
+map.put(token, new ArrayList());
+</pre>
+
+<p>Then I retrieve the list of lines with</p>
+
+<pre>
+ArrayList lines = (ArrayList) map.get(token);
+</pre>
+
+<p>I then check to see if the current line number has already been added to the list; if not, I append it. It would have been simpler to just use a <B>TreeSet</B>, but the constant re-balancing of the tree would degrade performance, and since the lines are entered in the correct order, a list suffices.</p>
+
+<h4><FONT COLOR="#000080">Conclusion</FONT></H4>
+
+<p>I hope you'll agree that Java has finally come of age as far as data structures and algorithms are concerned. The Arrays and Collections classes have useful algorithms for arrays and collections, respectively; and the families of <B>Collection</B> and <B>Map</B> implementations provide virtually everything you need in the way of data structures. As a C++ programmer, I must admit that I miss function objects a little, but only a little. I must also confess that I find the Java 2 collections easier to use than STL. Although my C++ version of the cross-reference program was 13 lines shorter than the Java version, it took me longer to get it right. It's hard to imagine a situation that the Java 2 collections wouldn't handle, but if you need something more specialized, you have a nice hierarchy to plug into and algorithms ready to use. Finally, news you can use! o</p>
+
+<p><i><B>Chuck Allison</B> is Consulting Editor and a columnist with <I>CUJ</I>. He is the owner of Fresh Sources, a company specializing in object-oriented software development, training, and mentoring. He has been a contributing member of J16, the C++ Standards Committee, since 1991, and is the author of <I>C and C++ Code Capsules: A Guide for Practitioners</I>, Prentice-Hall, 1998. You can email Chuck at <B>cda@freshsources.com</B>.</i></p>
+
+<h4><a href="../../../source/1999/jsup99/allison.zip">Get Article Source Code</a></h4>
+
+</BLOCKQUOTE>
+</BODY>
+</HTML>

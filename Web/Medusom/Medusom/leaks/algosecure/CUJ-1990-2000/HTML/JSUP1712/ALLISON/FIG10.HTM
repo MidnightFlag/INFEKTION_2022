@@ -1,0 +1,118 @@
+<HTML><HEAD>
+<TITLE>December 1999 Java Solutions/The Java 2 Collections -- Finally, Some News You Can Use/Figure 10</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 10: Illustrates ArrayList and LinkedList</A></h4>
+<pre>
+import java.util.*;
+
+class ListTest
+{
+    public static void test(List x)
+    {
+        // Do a search:
+        Object p = x.get(2);
+        if (x.contains(p))
+            System.out.println("Found " + p);
+           
+        // Do another:
+        int index = x.indexOf(p);
+        if (index != -1)
+            System.out.println("Found " + p +
+                               " in position "
+                               + index);
+
+        // Do a binary search:
+        Collections.sort(x);
+        System.out.println(x);
+        index = Collections.binarySearch(x, p);
+        if (index &gt;= 0)
+            System.out.println("Found " +
+                               p + " in position "
+                               + index);
+
+        // Misc:
+        System.out.println("max == " +
+                           Collections.max(x));
+        System.out.println("min == " +
+                           Collections.min(x));
+        Comparator desc = Collections.reverseOrder();
+        System.out.println("max (desc) == " +
+                           Collections.max(x, desc));
+        System.out.println("min (desc) == " +
+                           Collections.min(x, desc));
+        Collections.shuffle(x);
+        iterate(x);
+    }
+
+    public static void iterate(Collection c)
+    {
+        System.out.println("Iterating...");
+        Iterator i = c.iterator();
+        while (i.hasNext())
+            System.out.println(i.next());
+    }
+    
+    public static void main(String[] args)
+    {
+        // Build ArrayList:
+        ArrayList array = new ArrayList();
+        array.add(new Person("Horatio", 1835,12,6));
+        array.add(new Person("Charles",1897,3,11));
+        array.add(new Person("Albert",1901,1,20));
+        System.out.println(array);
+        test(array);
+        array.add(new Person("James", 1976, 8, 13));
+        System.out.println(array);
+        System.out.println();
+
+        // Build LinkedList:
+        LinkedList list = new LinkedList(array);
+        List view = list.subList(1,3);
+        view.add(new Person("Gregory", 1582, 10, 15));
+        Collections.reverse(view);
+        System.out.println(list);
+        test(list);
+    }
+}
+
+/* Output:
+[{Horatio,12/6/1835}, {Charles,3/11/1897}, {Albert,1/20/1901}]
+Found {Albert,1/20/1901}
+Found {Albert,1/20/1901} in position 2
+[{Albert,1/20/1901}, {Charles,3/11/1897}, {Horatio,12/6/1835}]
+Found {Albert,1/20/1901} in position 0
+max == {Horatio,12/6/1835}
+min == {Albert,1/20/1901}
+max (desc) == {Albert,1/20/1901}
+min (desc) == {Horatio,12/6/1835}
+Iterating...
+{Horatio,12/6/1835}
+{Albert,1/20/1901}
+{Charles,3/11/1897}
+[{Horatio,12/6/1835}, {Albert,1/20/1901}, {Charles,3/11/1897}, 
+ {James,8/13/1976}]
+
+[{Horatio,12/6/1835}, {Gregory,10/15/1582}, {Charles,3/11/1897}, 
+ {Albert,1/20/1901}, 
+{James,8/13/1976}]
+Found {Charles,3/11/1897}
+Found {Charles,3/11/1897} in position 2
+[{Albert,1/20/1901}, {Charles,3/11/1897}, {Gregory,10/15/1582}, 
+{Horatio,12/6/1835}, {James,8/13/1976}]
+Found {Charles,3/11/1897} in position 1
+max == {James,8/13/1976}
+min == {Albert,1/20/1901}
+max (desc) == {Albert,1/20/1901}
+min (desc) == {James,8/13/1976}
+Iterating...
+{James,8/13/1976}
+{Gregory,10/15/1582}
+{Charles,3/11/1897}
+{Horatio,12/6/1835}
+{Albert,1/20/1901}
+*/
+</pre>
+</BODY>
+</HTML>

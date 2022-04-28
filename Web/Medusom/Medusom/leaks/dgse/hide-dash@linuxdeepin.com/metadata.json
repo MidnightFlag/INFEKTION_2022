@@ -1,0 +1,7 @@
+{
+    "shell-version": ["3.2.1"], 
+    "uuid": "hide-dash@linuxdeepin.com", 
+    "name": "Hide Dash", 
+    "description": "Hide favourite dash in overview mode",
+    "url": "http://www.linuxdeepin.com"
+}

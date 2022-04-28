@@ -1,0 +1,86 @@
+/* Panel */
+.dock-app {
+    transition-duration: 200;
+}
+
+.dock-app.running {
+    background-image: url("running.png");
+}
+
+.dock-app.focused {
+    background-image: url("current.png");
+}
+
+.dock-app:hover {
+    background-image: url("hover.png");
+}
+
+.dock-app:active {
+    background-image: url("press.png");
+}
+
+.dock-menu {
+    font-size: 12px
+}
+
+.dock-thumbnail-icon {
+    padding: 10px 10px 10px 10px;
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0);
+}
+
+.dock-thumbnail-icon:hover {
+    background-gradient-direction: vertical;
+    background-gradient-start: rgba(255,255,255,0.2);
+    background-gradient-end: rgba(255,255,255,0.5);
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.4);
+    color: rgba(0,0,0,0.8);
+    box-shadow: inset 0px 1px 0px 0px rgba(255,255,255,0.4);
+}
+
+.dock-thumbnail-icon-font {
+    color: rgba(255,255,255,0.8);
+    font-weight: normal;
+    font-size: 15px;
+    text-shadow: rgba(255,255,255,0.7) 0px 1px 0px;
+}
+
+.dock-popup-menu-item {
+    color: rgba(0,0,0,0.8);
+    font-size: 8.5pt;
+    font-weight: bold;
+    padding: 10px 0px 0px 6px;
+    text-shadow: rgba(255,255,255,0.35) 0px 1px 0px;
+}
+
+.dock-appname-tooltip {
+    font-size: 14px;
+    color: #FFFFFF;
+}
+
+.dock-appname-tooltip-item {
+    color: rgba(0,0,0,0.8);
+    font-size: 8.5pt;
+    font-weight: bold;
+    padding: 0px 6px 0px 6px;
+    text-shadow: rgba(255,255,255,0.35) 0px 1px 0px;
+}
+
+.dock-thumbnail-window {
+    background-gradient-direction: vertical;
+    background-gradient-start: rgba(0,0,0,0.6);
+    background-gradient-end: rgba(0,0,0,0.4);
+    border-radius: 4px;
+    border: 1px solid rgba(125,125,125,1);
+}
+
+.dock-tooltip-window {
+    background-gradient-direction: vertical;
+    background-gradient-start: rgba(0,0,0,0.6);
+    background-gradient-end: rgba(0,0,0,0.4);
+    border-radius: 4px;
+    border: 1px solid rgba(125,125,125,1);
+    padding: 6px 0px 6px 0px;
+}
+

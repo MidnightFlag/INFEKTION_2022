@@ -1,0 +1,36 @@
+<HTML><HEAD>
+<TITLE>May 2000 Java Solutions/Understanding JavaBeans/Figure 11</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 11: The timer bean's init method</A></h4>
+<pre>
+// used to start up a timer
+public synchronized void init() { 
+    if (firstTime) {
+            runner.start();
+            firstTime = false;
+        }
+    setSuspended(false);
+}    
+
+// Causes the thread to fall out of the 
+// bottom of the run method, thereby
+// terminating the thread
+public synchronized void destroy() {
+    running = false;
+}
+
+// The heart of the thread
+public void run() {
+    while (running) {
+        checkIfSuspended();
+        try {
+            Thread.sleep(theInterval);  
+            theCount++;
+            notifyFired();
+        } catch(InterruptedException e) {
+            System.out.println(e);
+    }
+}
+</pre></body></html>

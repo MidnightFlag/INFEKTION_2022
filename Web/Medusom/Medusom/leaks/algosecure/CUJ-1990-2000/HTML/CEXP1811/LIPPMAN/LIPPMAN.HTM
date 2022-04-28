@@ -1,0 +1,59 @@
+<HTML>   
+     <HEAD>
+<TITLE>November 2000 C++ Experts Forum/Book Review: Exceptional C++</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../18.11/tocnov.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   C++ Experts Forum</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Book Review: Exceptional C++</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">reviewed by Stanley Lippman</FONT></H3>
+
+
+<HR>
+<BLOCKQUOTE>
+
+<table widht=600>
+<tr><td colspan=2><IMG SRC="cover.jpg"></td></tr>
+<tr><td><B>Title:</B></td><td><I>Exceptional C++: 47 Engineering Puzzles, Programming Problems, and Solutions</I></td></tr>
+<tr><td><B>Author:</B></td><td>Herb Sutter</td></tr>
+<tr><td><B>Publisher:</B></td><td>Addison-Wesley, 2000</td></tr>
+<tr><td><B>Pages:</B></td><td>208</td></tr>
+<tr><td><B>ISBN:</B></td><td>0201615622</td></tr>
+<tr><td><B>Price:</B></td><td>$33.95</td></tr>
+</table>
+
+<P><I>Exceptional</I> <I>C++</I> by Herb Sutter is a volume in Bjarne Stroustrup’s <I>C++</I> <I>In</I>-<I>Depth</I> <I>Series</I> published by Addison-Wesley. It provides 47 items divided into eight categories, including Generic Programming, Exception Safety, Class Design and Inheritance, Memory Management, and the infamous Miscellaneous Topics. Each item is presented in the form of a coding or design problem followed by a discussion of its solution. The items are primarily reworked and expanded versions of Herb’s (<i>Guru of the Week</i>), which Herb regularly posts on comp.lang.c++.moderated. Many of the items form a multipart sequence, a kind of theme and variation that provide a multifaceted look at the initial problem. The book’s treatment of exception safety alone makes it an invaluable addition to every C++ programmer’s bookshelf.<P>
+<P>In general, each item presents a programming or design problem, usually coupled with one or more philosophical asides. For example, item 2 requires us to <P>
+<P><I>Write a <B>ci_string</B> class that is identical to the <B>std::string</B> class but that is case-insensitive in the same way as the commonly provided extension <B>stricmp()</B>. A <B>ci_string</B> should be usable as follows...</I><P>
+<P>and gives us a series of uses of the class that our implementation needs to support. To put the solution in context, he adds two questions to the problem:<P>
+
+<UL>
+<LI>What does "case insensitive" mean?
+<LI>Is making case sensitivity a property of the object a good idea?
+</UL>
+
+<P>The point of the first question is to underscore that our solution is context sensitive &#151; that is, if we would like a solution that can be applied to languages other than English. The second question raises the interesting issue of whether the case sensitivity should be contained within the implementation of the class or be a characteristic of the comparison operator. <P>
+<P>The actual solution to the problem is both quite ingenious and rather obvious. Or rather, it is obvious once one understands the solution. Rather than re-implement the standard library string class, a different character trait is derived and passed to the existing class! It didn’t even occur to me, although it’s an obvious and quite wonderful solution.<P>
+<P>Prior to this material, the best treatment of traits that I am aware of is the <I>C++ Report</I> article, "A New and Useful Template Technique: 'Traits'" by Nathan Myers. In it, Nathan explains the motivation behind its introduction in the standard library and illustrates its implementation. There is an enthusiasm in Nathan’s article that is quite wonderful. A similar zest often informs Herb’s writing. Items 2 and 3 provide an excellent addition to the treatment of traits.<P>
+<P>The core of the book is a 10-sequence treatment of exception safety. Back in 1994, Thomas Cargill, as the C++ Gadfly columnist for the <I>C++ Report</I>, wrote an article in which he pointed out in a column a number of exception-unsafe conditions of a Stack template class that neither the author (nor myself as editor) had recognized. Tom began his article as follows,<P>
+<P><I>I suspect that most members of the C++ community vastly underestimate the skills needed to program with exceptions and therefore underestimate the true cost of their use. The popular belief is that exceptions provide a straightforward mechanism for adding reliable error handling to our programs. On the contrary, I see exceptions as a mechanism that may cause more ills than it cures. Without extraordinary care, the addition of exceptions to most software is likely to diminish overall reliability and impede the software development process.</I><P>
+<P>Tom concludes his article with the following challenge to the C++ community with regard programming in an exception-safe manner:<P>
+<P><I>Although I can see how to correct many of the faults in Stack [the example class is a Stack], I am not confident that I can produce an exception-correct version. Quite simply, I don’t think that I understand all the exception-related interactions against which [the class implementation] must defend itself. Rather, I ... encourage others to think exhaustively about the issues and perhaps uncover situations that I have missed.</I><P>
+<P>This 10-item sequence, which iteratively walks through the implementation of a Stack, provides the most exhaustive treatment of programming exception-safe C++ that I am aware of &#151; Jack Reeves has also done good work responding to Cargill’s challenge in a series of articles a few years back in the <I>C++ Report</I>. I don’t see how a project attempting to program in the presence of exceptions can proceed without at least being familiar with this material.<P>
+<P>Probably the hardest area of C++ to write about without become either tedious or arcane is that of name lookup. The four-item sequence, "Name Lookup, Namespaces &amp; the Interface Principle," does a remarkably good job of walking us through the minefield of name resolution rules in Standard C++. <P>
+<P>There are parts of the text I take exception to, of course. "The Interface Principle," for example, is over generalized.  A literal application of this principle, for example, results in treating every non-member function that takes a vector parameter as being considered logically part of the vector class and to form part of the vector interface. While that may be true in a broad sense, it is too broad to be helpful. <P>
+<P>Other issues are primarily matters of opinion. For example, I have always felt embarrassed by the standard library <B>auto_ptr</B> class. The book chooses to celebrate it, although it adds, "But beware: Never use <B>auto_ptr</B>s except in one of the ways I’ve just described. I have seen many programmers try to use <B>auto_ptr</B>s in other ways...." Etc. and so on.<P>
+<P>These are minor criticisms for what is otherwise a major achievement. <I>Exceptional C++</I> is not a book for the beginning C++ programmer, however. Rather, it is for the working programmer looking for ways to use C++ more effectively (and who among us isn’t?) &#151; in particular, the Standard C++ language features and libraries. It’s interesting to interpolate the author’s own assessment of the book’s difficulty. Each item comes ranked with a difficulty ranking, from 1 to 10. The math is revealing: The book’s average difficulty level as rated by the author is 6.4! 44.6 percent of the book is rated at a difficulty level of  7 or above. In fact, the "easy" items tend to be statements of principle rather than actual problems (for example, see item 25, "Object-Oriented Programming (4)" or item 35, "Memory Management, Part 1 (3)"). I can’t imagine anyone reading this book and not learning something new. I know I did. <P>
+
+<H4><FONT COLOR="#000080">References</FONT></H4>
+
+[1] Nathan Myers. "A New and Useful Template Technique: 'Traits'," <I>C++ Gems</I>, edited by Stan Lippman (Cambridge University Press, 1996).<P>
+[2] Thomas Cargill. "Exception Handling, A False Sense of Security," <I>C++ Gems</I>, edited by Stan Lippman (Cambridge University Press, 1996).<P>
+
+   
+<p><i><b>Stanley Lippman</b> was the software Technical Director for the Firebird segment of Disney's Fantasia 2000. He was recently technical lead on the ToonShooter image capture and playback system under Linux for DreamWorks Feature Animation and consulted with the Jet Propulsion Laboratory. He is currently IT Training Program Chair for You-niversity.com, an e-learning training company. He can be reached at <b>stanleyl@you-niversity</b>, <b>www.you-niversity.com</b>, and <b>www.objectwrite.com</b>.
+</BLOCKQUOTE>
+</body></html>
+
+

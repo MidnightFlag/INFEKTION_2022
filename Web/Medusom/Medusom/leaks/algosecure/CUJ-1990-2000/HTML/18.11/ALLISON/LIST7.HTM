@@ -1,0 +1,49 @@
+<HTML><HEAD>
+<TITLE>November 2000/import java.*/Listing 7</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 7: File DataStreamTest.java &#151; serializes primitive types</A></h4>
+<pre>
+import java.io.*;
+
+class DataStreamTest
+{
+    public static void main(String[] args)
+        throws IOException
+    {
+        DataOutputStream out =
+            new DataOutputStream(
+                new FileOutputStream("data.dat")
+                );
+        out.writeBoolean(false);
+        out.writeByte(65);
+        out.writeChar('A');
+        out.writeUTF("hello");
+        out.writeFloat(1.0f);
+        out.writeInt(1);
+        out.close();
+
+        DataInputStream in =
+            new DataInputStream(
+                new FileInputStream("data.dat")
+                );
+        System.out.println(in.readBoolean());
+        System.out.println(in.readByte());
+        System.out.println(in.readChar());
+        System.out.println(in.readUTF());
+        System.out.println(in.readFloat());
+        System.out.println(in.readInt());
+        in.close();
+    }
+}
+
+/* Output:
+false
+65
+A
+hello
+1.0
+1
+*/
+</pre></body></html>

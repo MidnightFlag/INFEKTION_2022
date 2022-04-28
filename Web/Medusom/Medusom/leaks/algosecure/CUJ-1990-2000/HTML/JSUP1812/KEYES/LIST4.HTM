@@ -1,0 +1,38 @@
+<HTML><HEAD>
+<TITLE>December 2000 Java Solutions/Increasing Java Performance/Listing 4</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 4: A Logger class with a configurable logging level</A></h4>
+<pre>
+public class Logger {
+  ...
+  // this is the controller for info messages
+  public static final int CAN_INFO = 1;
+
+  // this is the controller for debug messages
+  public static final int CAN_DEBUG = 2;
+
+  // the logging level -- default setting is for info messages
+  public int LOG_LEVEL = 1;
+  ...
+  public void setLogLevel(int level) {
+    if(level &gt;= 0) { LOG_LEVEL = level; }
+  }
+
+  /** Returns true if the CAN_INFO bit is set */
+  public boolean canInfo() {
+    if((LOG_LEVEL &amp; CAN_INFO) == CAN_INFO) { return true; }
+    return false;
+  }
+
+  /** Returns true if the CAN_DEBUG bit is set */
+  public boolean canDebug() {
+    if((LOG_LEVEL &amp; CAN_DEBUG) == CAN_DEBUG) { return true; }
+    return false;
+  }
+
+  public void debugMsg(String msg) { System.out.println(msg); }
+  public void infoMsg(String msg) { System.out.println(msg); }
+}
+</pre></body></html>

@@ -1,0 +1,216 @@
+<HTML><HEAD>
+<TITLE>December 2000 Java Solutions/Developing for the PalmOS Platform using J2ME/Listing 4</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 4: The ImageViewer spotlet</A></h4>
+<pre>
+/* @author Peter Meehan  Copyright(c) 2000 */
+
+import com.sun.kjava.*;
+import javax.microedition.io.*;
+import java.io.*;
+
+/* Spotlet that requests a camera image from a dedicated server,
+ * retrieves that image from the server and displays it to the 
+ * screen. */
+public class ImageViewer extends Spotlet implements Runnable {
+
+    /* Image server protocol */
+    static final String 
+    STATUS_CONNECTING = "Connecting to server...";
+
+    ...
+
+    static final String HOSTNAME = "localhost";
+    static final int IMAGE_SERVER_PORT = 4443;
+
+    // for max image width 2048 pixels
+    static final int BUFFER_SIZE = 256; 
+    
+    /* Display constants */
+    public static final int SCREEN_WIDTH = 160;
+    public static final int SCREEN_HEIGHT = 160;
+    Graphics g = Graphics.getGraphics();
+
+    /* On request the spotlet returns control to the
+     * cameraclient passed to it at creation time. */
+    CameraClient master = null; 
+
+    /* Image data */
+    String imageDesc = null;
+    String imageURL = null;
+    int imageWidth = 0;
+    int imageHeight = 0;
+    byte imageWidthBytes = 0;
+    byte imageBuffer[] = null;
+    int imageX,imageY;
+    Bitmap imageBitmap = null;
+
+    /* Store the master spotlet 
+     * @param master Spotlet to which control is returned on exit 
+     */
+    ImageViewer(CameraClient master) { this.master = master; }
+
+    /* Start a thread to communicate with the server, retrieve
+     * the image data and display it
+     * @param desc descriptive label for the image
+     * @param url URL for the image */
+    public void retrieveImage(String desc,String url) {
+        imageDesc = desc;
+        imageURL = url;
+        register(Spotlet.WANT_SYSTEM_KEYS);
+        Thread imageThread = new Thread(this);
+        imageThread.start();
+    }
+
+    /* Display a status message centered on the screen
+     * @param msg the message */
+    public void displayStatus(String msg) {
+        int w = g.getWidth(msg);
+        int h = g.getHeight(msg);
+        g.clearScreen();
+        g.drawString(msg,(SCREEN_WIDTH-w)/2,(SCREEN_HEIGHT-h)/2);
+    }
+
+    /* Display a camera image title centered over the image
+     * @param title the title
+     * @param imageX the x coordinate of the image
+     * @param imageY the y coordinate of the image */
+    public void 
+    displayTitle(String title,int imageX, int imageY) {
+        int w = g.getWidth(title);
+        int h = g.getHeight(title);
+        g.drawString(title.toUpperCase(),
+                     (SCREEN_WIDTH-w)/2,(imageY-h)/2,
+                     Graphics.INVERT);
+    }
+    
+    /* Retrieve the image in a separate thread.
+     *  - create socket and connect to server
+     *  - send get image request
+     *  - wait for result containing image size to be returned
+     *  - read image data from socket 
+     *  - close socket connection
+     *  - draw image centered on screen */
+    public void run() {
+
+        StreamConnection connection = null;
+        InputStream is = null;
+        OutputStream os = null;
+        int nRead = 0;
+        byte buffer[] = new byte[BUFFER_SIZE];
+        /* connect to server */
+        displayStatus(STATUS_CONNECTING);
+        try {
+            connection = 
+               (StreamConnection)
+               Connector.open("socket://localhost:4443");
+        } catch (IllegalArgumentException iae) {
+            displayStatus(STATUS_COMMS_FAILURE);
+            return;
+        } catch (ConnectionNotFoundException cnfe) {
+            displayStatus(STATUS_COMMS_FAILURE);
+            return;
+        } catch (IOException ioe) {
+            displayStatus(STATUS_COMMS_FAILURE);
+            return;
+        }
+        
+        /* Request image */
+        displayStatus(STATUS_REQUESTING_IMAGE);
+        try {
+            os = connection.openOutputStream();
+            os.write((CMD_GET + imageURL).getBytes());
+            os.flush();
+        } catch (IOException ioe) {
+            displayStatus(STATUS_COMMS_FAILURE);
+            return;
+        }
+        
+        /* Await response indicating image size 
+         * zero image size indicates a problem */
+        try {
+            is = connection.openInputStream();
+            displayStatus("Reading...");
+            nRead = is.read(buffer,0,6);
+            displayStatus("Read " + nRead + " bytes");
+            if (nRead &lt;6) 
+                throw new IOException();
+            else {
+                // test for 6 byte reply
+                // bytes 0-3 RSP_IMAGE ("Imag")
+                // byte 4 image width
+                // byte 5 image height
+                if (buffer[0] == 'I' &amp;&amp;
+                    buffer[1] == 'm' &amp;&amp;
+                    buffer[2] == 'a' &amp;&amp;
+                    buffer[3] == 'g') {
+                    // extract image width &amp; height
+                    imageWidth = (buffer[4]&amp;0x00ff);
+                    imageHeight = (buffer[5]&amp;0x00ff);
+                    if (imageHeight &lt;= 0 || imageWidth &lt;= 0 ||
+                        imageWidth &gt;256 || imageHeight &gt;256) {
+                        displayStatus(STATUS_BAD_IMAGE + " " + 
+                                      imageWidth +"x"
+                                      + imageHeight);
+                        os.write(CMD_NAK.getBytes());
+                        connection.close();
+                        return;
+                    }
+                    else {
+                        // allocate space for image
+                        imageWidthBytes = (byte)(imageWidth/8);
+                        if (imageWidth % 8  0)
+                            imageWidthBytes++;
+                        imageBuffer = 
+                           new byte[imageHeight*imageWidthBytes];
+                    }
+                }
+            }
+        } catch (IOException ioe) {
+            displayStatus(STATUS_COMMS_FAILURE);
+            return;
+        }
+            
+        /* Get image data, one row at a time */
+        try {
+            os.write(CMD_ACK.getBytes());
+            int imageBytesRxd = 0;
+            while (imageBytesRxd &lt;imageBuffer.length) {
+                nRead = is.read(imageBuffer, imageBytesRxd,
+                                imageWidthBytes);
+                imageBytesRxd += nRead;
+                displayStatus(STATUS_XFER_IMAGE + 
+                   (imageBytesRxd*100)/imageBuffer.length + "%");
+            }
+            connection.close(); // done
+        } catch (IOException ioe) {
+            displayStatus(STATUS_COMMS_FAILURE);
+            return;
+        }
+
+        /* Display image */
+        displayStatus("Creating bitmap");
+        imageBitmap = new Bitmap(imageWidthBytes,imageBuffer);
+        imageX = (SCREEN_WIDTH-imageWidth)/2;
+        imageY = (SCREEN_HEIGHT-imageHeight)/2;
+        displayStatus("Drawing bitmap");
+        displayTitle(imageDesc,imageX,imageY);
+        g.drawBitmap(imageX,imageY,imageBitmap);
+    }
+
+    /* Handle key and character entry events. On HARD_KEY1 presses 
+     * return control to master if non-null else exit.
+     * @param keycode the key that was pressed or character 
+     * that was entered */
+    public void keyDown(int keycode) {
+        if (keycode == Spotlet.KEY_HARD1) {
+            if (master != null)
+                master.handleViewerDone();
+            else
+                System.exit(0);
+        }
+    }
+}
+</pre></body></html>

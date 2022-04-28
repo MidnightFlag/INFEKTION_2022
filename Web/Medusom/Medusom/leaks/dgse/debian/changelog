@@ -1,0 +1,82 @@
+deepin-gse (1.0.11-1) oneiric; urgency=low
+
+  * Upstream update
+
+ -- Zhang Cheng <zhangcheng@linuxdeepin.com>  Thu, 29 Dec 2011 20:41:10 +0800
+
+deepin-gse (1.0.10-1) oneiric; urgency=low
+
+  * Add Enchanced Search Extension
+  * Add Record Desktop Extension
+  * Remove show-desktop extension
+  * many other upstream updates
+
+ -- Zhang Cheng <zhangcheng@linuxdeepin.com>  Wed, 28 Dec 2011 15:26:56 +0800
+
+deepin-gse (1.0.9-1) oneiric; urgency=low
+
+  * Update dock extension
+
+ -- Zhang Cheng <zhangcheng@linuxdeepin.com>  Fri, 23 Dec 2011 13:32:43 +0800
+
+deepin-gse (1.0.8-1) oneiric; urgency=low
+
+  * merge move-clock and extend-left-box into dock
+  * update dock extension
+  * update drive-menu extension
+  * remove window-list extension
+  * remove panel favourite extension
+
+ -- Zhang Cheng <zhangcheng@linuxdeepin.com>  Fri, 16 Dec 2011 14:04:23 +0800
+
+deepin-gse (1.0.7-1) oneiric; urgency=low
+
+  * Rename uuid of user-theme to original, so it will not bother
+    gnome-tweak-tool
+
+ -- Zhang Cheng <zhangcheng@linuxdeepin.com>  Mon, 12 Dec 2011 18:20:06 +0800
+
+deepin-gse (1.0.6-1) oneiric; urgency=low
+
+  * Update debian/rules to install po/ for system-monitor extension
+
+ -- Zhang Cheng <zhangcheng@linuxdeepin.com>  Mon, 12 Dec 2011 15:23:18 +0800
+
+deepin-gse (1.0.5-1) oneiric; urgency=low
+
+  * Import user-theme extension from gnome-shell-extensions
+
+ -- Zhang Cheng <zhangcheng@linuxdeepin.com>  Mon, 12 Dec 2011 12:25:53 +0800
+
+deepin-gse (1.0.4-1) oneiric; urgency=low
+
+  * Remove smart overview extension
+  * Add show desktop extension
+  * Add dock extension
+  * Modify system-monitor-applet-config.py to use python 2.7
+
+ -- Zhang Cheng <zhangcheng@linuxdeepin.com>  Mon, 12 Dec 2011 11:17:11 +0800
+
+deepin-gse (1.0.3-1) oneiric; urgency=low
+
+  * Fix depends, dgse-system-monitor depends on gir1.2-gtop-2.0
+
+ -- Zhang Cheng <zhangcheng@linuxdeepin.com>  Wed, 07 Dec 2011 18:50:27 +0800
+
+deepin-gse (1.0.2-1) oneiric; urgency=low
+
+  * Import new extensions
+
+ -- Zhang Cheng <zhangcheng@linuxdeepin.com>  Wed, 7 Dec 2011 16:29:10 +0800
+
+deepin-gse (1.0.1-2) oneiric; urgency=low
+
+  * Modify Recommends and Suggests in control file
+
+ -- Zhang Cheng <zhangcheng@linuxdeepin.com>  Tue, 29 Nov 2011 21:59:26 +0800
+
+deepin-gse (1.0.1-1) oneiric; urgency=low
+
+  * Copy mgse to deepin-gse
+
+ -- Zhang Cheng <stephenpcg@gmail.com>  Mon, 21 Nov 2011 10:50:55 +0800

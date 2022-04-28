@@ -1,0 +1,61 @@
+<HTML><HEAD>
+<TITLE>December 2000/Removing Image Noise with Adaptive Filters/Listing 1</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 1: The moments subroutine</A></h4>
+<pre>
+moments(the_image, out_image,
+        rows, cols, 
+        rows_size, cols_size, 
+        il, ie,
+        first_moment, second_moment,
+        variance, sigma)
+   short  il, ie,
+          **the_image,
+          **out_image;
+   long   rows, cols,
+          rows_size, cols_size;
+   float  *first_moment, *second_moment,
+          *sigma, *variance;
+{
+   int      i, j;
+   int      csd2, rsd2;
+   float    mean;
+   unsigned long count, sum1, sum2;
+  
+   char response[80];
+
+   rsd2 = rows_size/2;
+   csd2 = cols_size/2;
+
+   if(((il+rsd2) &gt; rows)   ||
+      ((ie+csd2) &gt; cols)   ||
+      ((il-rsd2) &lt; 0)      ||
+      ((ie-csd2) &lt; 0)) {
+      printf("\nmoments&gt; ERROR: OUT OF BOUNDS");
+      *first_moment  = -1.0;
+      *second_moment = -1.0;
+      *variance      = -1.0;
+      *sigma         = -1.0;
+   }  /* ends too big */
+
+   else{ /* else not out of bounds */
+      sum1  = 0;
+      sum2  = 0;
+      count = 0;
+      for(i=il-rsd2; i&lt;il+rsd2; i++){
+         for(j=ie-csd2; j&lt;ie+csd2; j++){
+            count++;
+            sum1 = sum1 + the_image[i][j];
+            sum2 = sum2 + the_image[i][j]*the_image[i][j];
+         }  /* ends loop over j */
+      }  /* ends loop over i */
+      *first_moment  = (float)(sum1/count);
+      *second_moment = (float)(sum2/count);
+      mean           = *first_moment;
+      *variance      = *second_moment - mean*mean;
+      *sigma         = sqrt(*variance);
+   }  /* ends else not out of bounds */
+}  /* ends moments */
+</pre></body></html>

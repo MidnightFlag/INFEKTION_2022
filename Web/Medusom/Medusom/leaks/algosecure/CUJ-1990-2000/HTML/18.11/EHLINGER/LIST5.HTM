@@ -1,0 +1,33 @@
+<HTML><HEAD>
+<TITLE>November 2000/Creating Truly Maintainable Class Factories/Listing 5</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 5: Partial listing of class dll_object_ptr</A></h4>
+<pre>
+template&lt; class object &gt;
+class dll_object_ptr
+  {
+    typedef dll_object_ref&lt; object &gt; ref_type;
+  public:
+
+    // not shown, default and copy constructors
+    ...
+
+    dll_object_ptr
+      ( dll_sentinel&amp;      dll
+      , std::string const&amp; func_name )
+      : m_obj( new ref_type( dll , func_name ) )
+      { }
+
+    // not shown: functions release, reset, operator-&gt;,
+    // get, and operator*
+    ...
+
+  private: // data
+
+    ref_type*    m_obj;
+
+  }; // class dll_object_ptr&lt; &gt;
+
+</pre></body></html>

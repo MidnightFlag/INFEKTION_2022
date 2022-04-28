@@ -1,0 +1,109 @@
+<HTML>   
+     <HEAD>
+<TITLE>September 2000 C++ Experts Forum/Standard C++ Programming</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../18.09/tocsep.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   C++ Experts Forum</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Standard C++ Programming: Virtual Functions and Inlining</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Jos&eacute;e Lajoie and Stanley Lippman</FONT></H3>
+
+<HR>
+<BLOCKQUOTE>
+	
+<P><I>[This is the last installment of a column that was being published in </I>C++ Report<I> magazine. Since the magazine ceased publication before this installment could be published, Jos&eacute;e Lajoie and Stan Lippman were gracious enough to let us publish it on the </I>CUJ<I> website. &#151; mb]</I>
+<P>At one time, a common question that we used to hear when speaking on C++ was, "Should a virtual function really be declared inline?" These days, we hardly ever hear that question. Rather, what we hear now is  "You shouldn’t have made <B>print</B> inline. It’s wrong to declare a virtual function inline."
+<P>The two primary reasons for taking this position are (1) virtual functions are resolved at run-time while the inline facility is a compile-time mechanism, so there is nothing to be gained by the declaration; and (2) declaring a virtual function inline results in multiple copies of the function being defined within our executable, so we pay a space penalty for a function that can’t be inlined in any case. An obvious no-brainer.
+<P>Only that’s not really true. Let’s take item (1) first: there are many cases in which a virtual function is resolved statically &#151; essentially any time a derived class virtual method invokes the method of its base class(es). Why would one do that? Encapsulation. A good example is the static invocation chain of base class destructors triggered by the virtual resolution of a derived class destructor. All the destructor calls except for the initial resolution are resolved statically. Without making the base class virtual destructors inline, we cannot take advantage of this.  Does it make much of a difference?  If the hierarchy is deep and there are many objects destructed, yes.
+<P>For another example that does not use destructors, imagine that we are designing a library lending material hierarchy. We’ve factored the material’s location into the abstract <B>LibraryMaterial</B> class. While we declare its <B>print</B> function as a pure virtual function, we also provide a definition: it prints out the material’s location. 
+
+<pre>
+class LibraryMaterial {
+private:
+    MaterialLocation _loc; // shared data
+    // ...
+
+public:
+    // declares pure virtual function
+    inline virtual void print( ostream&amp; = cout ) = 0;
+};
+
+// we actually want to encapsulate the handling of the
+// location of the material within a base class
+// LibraryMaterial print() method - we just don’t want it
+// invoked through the virtual interface. That is, it is
+// only to be invoked within a derived class print() method 
+
+inline void 
+LibraryMaterial::
+print( ostream &amp;os ) { os &lt;&lt; _loc; }
+</pre>
+
+<P>Next we introduce a <B>Book</B> class; its <B>print</B> function outputs the title, author, and so on. Before this, it invokes the base class <B>LibraryMaterial::print</B> function to display the location information. For example,
+
+<pre>
+inline void 
+Book::
+print( ostream &amp;os ) 
+{
+      // ok, this is resolved statically, 
+      // and therefore is inline expanded ...
+      LibraryMaterial::print();
+        
+      os &lt;&lt; "title:" &lt;&lt; _title
+         &lt;&lt; "author" &lt;&lt; _author &lt;&lt; endl;
+}
+</pre>
+
+<P>Our <b>AudioBook</b> class, derived from <b>Book</b>, introduces an alternative lending policy, and adds additional information such as narrator, format, and so on. These are displayed in its <b>print</b> function. Before this, it invokes <b>Book::print()</b>, which in turn, etc:
+
+<pre>
+inline void 
+AudioBook::
+print( ostream &amp;os ) 
+{
+      // ok, this is resolved statically, 
+      // and therefore is inline expanded ...
+      Book::print();
+      os &lt;&lt; "narrator:" &lt;&lt; _narrator &lt;&lt; endl;
+}
+</pre>
+
+<P>In both this example and the example of the class destructor, the virtual method of the derived class incrementally expands on the 
+functionality of its base class and involves a chain of invocations where only the initial invocation is resolved virtually. 
+This unnamed hierarchical design pattern is significantly less effective if we never declare a virtual function to be inline.
+<P>What about the potential of code bloat cited in item (2)? Well, let’s think about that. If we write,
+
+<pre>
+LibraryMaterial *p = 
+    new AudioBook( "Mason &amp; Dixon", 
+                   "Thomas Pynchon", "Johnny Depp" );
+// ...
+p-&gt;print();
+</pre>
+
+<P>is this instance of <B>print</B> to be inlined? No, of course not. This has to be resolved at run-time through the virtual mechanism. Okay. Does it cause this instance of <B>print</B> to have its definition laid down? Also no. The call is transformed into something of the form:
+
+<pre>
+// Pseudo C++ Code
+// Possible transformation of p-&gt;print()
+( *p-&gt;_vptr[ 2 ] )( p );
+</pre>
+
+<P>where <B>2</B> represents the location of <B>print</B> within the associated virtual function table. Because this call to <B>print</B> is done through the function pointer <B>_vptr[2]</B>, the compiler cannot statically determine the location of the called function, and the function cannot be inlined.
+<P>Of course the definition of the inline virtual <B>print</B> function must appear somewhere in the executable for the code to run properly. That is, at least one definition is necessary in order for its address to be placed within the virtual table. How does the compiler decide when to generate that definition? One implementation strategy is to generate that definition at the same time the class virtual table is generated. That means that for each virtual table instance generated for a class, an instance of each inline virtual function is also generated. 
+<P>Just how many virtual tables are actually generated within an executable for a class? Ah, well, that’s a good question. The Standard makes requirements on the behavior of virtual functions; it does not make requirements on their implementation. Since the presence of a virtual table is not required by the Standard, obviously the Standard in turn makes no requirements on how the virtual table is handled or how many are generated. The optimal number, of course, is one. Stroustrup’s original <B>cfront</B> implementation, for example, achieved that in most cases through cleverness. (Stan and Andy Koenig described the algorithm in the March 1990 <I>C++ Report</I> article, "Optimizing Virtual Tables in C++ Release 2.0.") 
+<P>Moreover, the C++ Standard now requires that inline functions behave as though only one definition for an inline function exists in the program even though the function may be defined in different files. The new rule is that conforming implementations should behave as though only a single instance is generated. Once this aspect of the Standard is widely implemented, lingering concerns over potential code bloat from inline functions should disappear.
+<P>One of the tensions in the C++ community is the pedagogical need to present a simple checklist set of rules versus the practical need to apply rules judiciously based on the situational context. The former is a response to the complexity of the language; the latter, to the complexity of the solutions we need to construct. The problem of when to declare virtual functions inline is a good illustration of  this tension.
+
+<p><i><B>Stanley Lippman</b> was the software Technical Director for the Firebird segment of Disney's Fantasia 2000. He was recently technical lead on the ToonShooter image capture and playback system under Linux for DreamWorks Feature Animation and consulted with the Jet Propulsion
+Laboratory. He is currently IT Training Program Chair for You-niversity.com, an e-learning training company. He can be reached at <b>stanleyl@you-niversity</b>, <b>www.you-niversity.com</b>, and <b>www.objectwrite.com</b>.</i></p>
+
+<p><i><B>Jos&eacute;e Lajoie</b> is currently doing her Master's degree in Computer Graphics at the University Waterloo. 
+ Previously, she was a member of the C/C++ compiler development team at the IBM Canada Laboratory and was the chair 
+ of the core language working group for the ANSI/ISO C++ Standard Committee. She can be reached at <b>jlajoie@cgl.uwaterloo.ca</b>.</i></p>
+
+</blockquote.</body></html>
+
+

@@ -1,0 +1,17 @@
+<HTML><HEAD>
+<TITLE>December 2000/STL & Generic Programming/Listing 2</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 2:	Implementation of the find algorithm in a popular version of the C++ Standard library</A></h4>
+<pre>
+ // TEMPLATE FUNCTION find
+template&lt;class _II, class _Ty&gt; inline
+_II find(_II _F, _II _L, const _Ty&amp; _V)
+{
+  for (; _F != _L; ++_F)
+    if (*_F == _V)
+      break;
+  return (_F); 
+}
+</pre></body></html>

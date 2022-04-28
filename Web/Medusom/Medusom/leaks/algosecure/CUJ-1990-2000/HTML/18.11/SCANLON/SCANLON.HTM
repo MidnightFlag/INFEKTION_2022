@@ -1,0 +1,104 @@
+<HTML>   
+     <HEAD>
+<TITLE>November 2000/Secure Web-Based Licensing</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocnov.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   Features</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Secure Web-Based Licensing</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Mike Scanlon</FONT></H3>
+
+<BLOCKQUOTE>
+<p>If you want to protect your software from misuse, you have to outsmart potential thieves and still not annoy your legitimate customers. This is not as easy as you might at first think.</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+<p>In the old days, software came in a shrink-wrapped box with a set of arguably useful paper weights called manuals. The distribution of software was fairly difficult, in that the user had to physically obtain it. Distribution control was relatively easy, as the software producer was certain to be paid for every copy, although a bit of piracy was to be expected.</p>
+<p>In today's webbed world things are different. Software packages can be downloaded from anywhere in the world instantly. Many application vendors offer free trial downloads that break after a certain amount of time. Some software houses are even moving to a subscription-based service, where users never own software but rent it for a period of time. This situation presents a new set of problems. How do I allow anyone to download my software, but at the same time control who can use it, and for how long, and in a genuinely secure way? How can I be sure the free trial downloads I publish will break when they are supposed to?</p>
+<p>Using the web and secret-key cryptography, licensing systems that are secure and user friendly can become a reality. This article describes such a licensing system, which offers a solution to this problem.</p>
+
+<H4><FONT COLOR="#000080">Licensing Systems</FONT></H4>
+
+<p>By licensing system, I mean the protocol and algorithms used to create and distribute licenses that control who can use a piece of software and for how long. Although systems will differ greatly in their implementations and resulting level of security, the end goal is the same. A good licensing system has the following three characteristics:</p>
+
+<UL><LI>   Usability: The licensing system must not put an undue burden on the legitimate user, and should be as user friendly as possible.
+<LI>   Security: The licensing system must be genuinely secure. A malicious user should not be able to manufacture licenses, even with a knowledge of the protocols and algorithms involved.
+<LI>   Control: The software publisher should be able to easily control who is granted licenses and for how long.</UL>
+
+<p>When I first set out on what I thought would be a simple task, implementing a licensing system, I was quickly surprised by the depth of the problem. A few quick solutions proved at second glance to be easily breakable, or burdensome on the end user. First I will take a look at the systems that did not work, and why, to illustrate the breadth of the problem.</p>
+
+<H4><FONT COLOR="#000080">First Try &#151; Rediscovering Back Clocking</FONT></H4>
+
+<p>It is surprising how many downloadable software packages take the simplest approach to licensing &#151; hard code a date after which the application is not usable. For instance, when the application is executed after July 10, 2000, a message box informs the user, "This version of <B>BackClockMe.exe</B> cannot be run after July 10, 2000. Please download a new version."</p>
+<p>This weak attempt at security can be broken by back clocking. If I set my system clock back to, say, July 4, 1976, I can use my current versions as long as I like, and also buy myself some time to deal with Y2K problems.</p>
+<p>The system fails in the following respects:</p>
+
+<UL><LI>   It is not secure. The system can easily be broken by the most naive attacker.
+<LI>   It is hard on the legitimate user, who must download and install a new version of the program each time the license runs out.
+<LI>   It is hard on the software developer, who must recompile the software each time the license has to be changed.</UL>
+
+<H4><FONT COLOR="#000080">Second Try &#151; Hide Data in Permanent Storage</FONT></H4>
+
+<p>Two issues are now clear. First of all, a good licensing system must be secure against back clocking. Second, as a software developer, I do not want to have to recompile my program each time the license runs out. Instead of having a hard-coded end date like July 10, 2000, I would like to grant licenses for a period of time, such as one month.</p>
+<p>To accomplish the first of these goals I am going to have to start storing data on the client machine. Storing things on the client machine is risky business, because malicious users can toy with them to their hearts' content, but in this case it cannot be avoided. Later on I will use cryptography to protect these settings. In my example I will write them to the registry, the preferred storage area under Windows NT. On another platform, my code could be changed to use the file system or other permanent storage. An understanding of the security issues is what is important, more than the specific implementation.</p>
+<p>I need an independent mechanism for telling time, which can alert me to back clocking. The system that implements this consists of two pieces of software, the installation program, and the installed application. The installation program saves the current system time at a specified registry key, <B>CURRENT_TIME</B>, and the license end time at another registry key, <B>LICENSE_TIME</B>. When the application runs, it checks the current system time against <B>LICENSE_TIME</B>. If the current system time is greater, the user is notified that their license has expired. Then the application checks the current system time against <B>CURRENT_TIME</B>. If <B>CURRENT_TIME</B> is greater, the system has been back clocked. The application notifies the user that the license has expired, and exits without changing <B>CURRENT_TIME</B>. If the license is valid, the application updates <B>CURRENT_TIME</B> to reflect the current system time.</p>
+<p>Although this system is secure against back clocking, and is a step in the right direction, it has the following shortcomings:</p>
+
+<UL><LI>   It does not solve our second problem. The installation program must be recompiled each time the license date needs to be adjusted. (This problem will be addressed in the following section.)
+<LI>   It is too hard on the user, who has to reinstall the application each time the license runs out. (This will also be addressed in the next section.)
+<LI>   The system is not genuinely secure. A malicious user who is aware of where the registry keys are stored, and how they are encoded, could easily manufacture or extend a license.</UL>
+
+<H4><FONT COLOR="#000080">Third Try &#151; A License Granting Authority</FONT></H4>
+
+<p>As long as I depend on an installation program to grant licenses, I am forced to use a hard-coded license end date. If I choose the alternative of allowing the installation to grant licenses of a certain duration, say one month from the current system time, a malicious user could download the installation program and simply reinstall the program once a month. At the same time, recompiling the installation program each time the license end date passes is out of the question.</p>
+<p>The solution is to create a central LGA (license granting authority). In today's webified world this is simple. If I create a web page which grants licenses, it is immediately available to anyone on the Internet, or my corporate intranet. This has the useful side effect of passing the chore of user identification to the web server. If I want to grant licenses only to a certain list of users, I can notify my web administrator that I want only those users to have access to the page.</p>
+<p>The licensing system now consists of the LGA and the installed application. Each time the application executes it checks <B>CURRENT_TIME</B> and <B>LICENSE_TIME</B> as it did before. If the license has expired, or does not exist, the user is prompted for a new license, and given a cookie to pass to the LGA web page. For now, the cookie is simply the client's current system time. The user inputs this cookie to the LGA, which returns a valid license, which in this example is the current system time plus the license duration. The user inputs this at the installed program's waiting prompt, which stores it at <B>LICENSE_TIME</B>. Note that the license is based on the client's current system time, not the server's. This way all clients will get a license of the same duration, even if their system clocks are out of sync.</p>
+<p>This system kills two birds with one stone. It is no longer necessary for the software developer to recompile when the license changes, and it is no longer necessary for the user to reinstall. There is also no need for an installation program to set keys. If the registry settings do not exist, the user is immediately directed to the LGA.</p>
+
+<H4><FONT COLOR="#000080">Last Try &#151; Protection through Cryptography</FONT></H4>
+
+<p>The casual programmer might be satisfied with this system as is, but in a cryptographic sense it is not very secure at all. This system is vulnerable for two reasons.</p>
+<p>1.  There is no data validation. Even an uninformed attacker could blindly change the keys in the registry or the information transmitted to and from the web page and have a fair chance of defeating the system.</p>
+<p>In order to combat this, a CRC (cyclical redundancy check) will be appended to each piece of data. At every point the data and CRC combination will be communicated together. The receiving party computes its own CRC from the data and compares it to the transmitted CRC. If they are not equal, the data has been tampered with.</p>
+<p>2.  There is no data protection. Informed attackers who know how the data is stored in the registry, or transmitted to and from the web page, could substitute their own data. Even a novice user could locate where the installation program stores the keys in the registry or file system, and attempt to decode the data. Even more dangerous, the attacker may be a former insider who knows exactly how the data is stored.</p>
+<p>Three pieces of data are vulnerable &#151; the data sitting in the registry, the cookie passed to the LGA, and the license input to the program. Each time I read a piece of data I need to be able to verify that I am the party that created that data, either through the installed program or the LGA. The solution to this problem is secret key encryption. Using encryption combined with the CRC for data validation, I can be certain no one can tamper with the data at any point unless they know my secret key, even if they are aware of the protocol and algorithms involved.</p>
+<p>The protocol for this licensing system now works as follows.</p>
+
+<OL><LI>The software developer decides on an encryption algorithm and a secret key. This key will be used by the installed application and the LGA.
+<LI>The application checks <B>CURRENT_TIME</B> and <B>LICENSE_TIME</B> each time it is executed, as before. Each piece of data is decrypted using the secret key, then validated by recalculating the CRC. If the CRC is not valid, the program informs the user their license has expired.
+<LI>If the license is valid, the application updates <B>CURRENT_TIME</B> by encrypting the current system time with a valid CRC.
+<LI>If the license has expired, the program prompts the user as before. Now the cookie consists of the current system time and CRC pair encrypted with the secret key.
+<LI>The LGA decrypts the cookie using the secret key, and validates the data by recomputing the CRC. If the CRC does not match, the LGA notifies the user that the cookie is invalid. If the cookie is valid, the LGA adds the license duration time to the client's current system time, appends a CRC, and encrypts the pair with the secret key.
+<LI>The user inputs the new license to the installed program, which writes it immediately to the registry, updates <B>CURRENT_TIME</B>, and repeats step three.</OL>
+
+<H4><FONT COLOR="#000080">Implementation</FONT></H4>
+
+<p>I developed this system under Windows NT using Visual C++ 6.0, so my implementation may have somewhat of a Microsoft flavor. I did my best to encapsulate the Windows-specific code; you should have no trouble porting the system to another platform.</p>
+<p><a href="list1.htm">Listing 1</a> shows the client program, <B>LSystemApp.cpp</B>, implemented as a console application. The program reads and writes data in the registry using <B>RegQueryValueEx</B> and <B>RegSetValueEx</B>, which are calls to the Windows API. The program makes heavy use of the three functions shown in <a href="list2.htm">Listing 2</a>, <B>ComputeCRC</B>, <B>Encrypt</B>, and <B>Decrypt</B>.</p>
+<p>Computing the CRC is a common method of validating data. This particular implementation is taken from Binstock &amp; Rex <a href="#ref2">[2]</a>. I implemented the <B>encrypt</B> and <B>decrypt</B> functions using the Windows CryptoAPI, although you could substitute your own algorithms easily.</p>
+<p>I implemented the LGA using HTML and COM. <a href="list3.htm">Listing 3</a> displays the code for the web page, which consists of an input for the cookie, an output for the license, and a button to connect the two. The license is created using the <B>GrantLicense</B> method on the COM object. The implementation of this method is shown in <a href="list4.htm">Listing 4</a>. I created the COM object itself using the New ATL Object Wizard in Visual C++.</p>
+
+<H4><FONT COLOR="#000080">Conclusion</FONT></H4>
+
+<p>How successful have I been in achieving my original goals of usability, security, and control?</p>
+
+<UL><LI>   Usability: This system does not place a heavy burden on the legitimate user, who only has to visit a web site and perform a few simple steps to obtain a new license.
+<LI>   Security: It is misleading to say this system is genuinely secure. There are methods by which it can be attacked. However, assuming a good key is chosen, this is as secure a system as can be achieved without a prohibitive amount of interaction with the server.
+<LI>   Control: The developer can control who is granted a license by controlling who has access to the LGA.</UL>
+
+<p>I encourage you to tweak this system to fit your own needs. The system that inspired this article has been extended to grant licenses of different lengths for different applications from the same LGA, and has been deployed for almost a year.</p>
+<p>Implementing a licensing system can be fairly complicated, but a knowledge of the security issues involved can save you from developing an insecure solution.</p>
+
+<H4><FONT COLOR="#000080">References</FONT></H4>
+
+<p>[1]  Bruce Schneier, <I>Applied Cryptography</I> (John Wiley &amp; Sons, 1994).</p>
+<p><a name="ref2">[2]</a>  Andrew Binstock and John Rex, <I>Practical Algorithms for Programmers</I> (Addison-Wesley, 1995).</p>
+<p>[3]  <I>CryptoAPI Documentation,</I> MSDN Library, April, 2000.</p>
+
+<p><i><B>Mike Scanlon</B> is a software engineer working in Murray Hill, New Jersey. After spending some time writing Desktop Apps in MFC, he has spent the last year knee deep in COM and ATL. He welcomes comments, questions, and COM/ATL related rants at <B>mike@scanlonbrothers.com</B>.</i></p>
+
+<h4><a href="../../../source/2000/nov00/scanlon.zip">Get Article Source Code</a></h4>
+
+</blockquote></body></html>

@@ -1,0 +1,53 @@
+<HTML><HEAD>
+<TITLE>December 1999 Java Solutions/The Java 2 Collections -- Finally, Some News You Can Use/Figure 5</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 5: Sorts/searches by a Person's name</A></h4>
+<pre>
+import java.util.*;
+
+class ByName implements Comparator
+{
+    public int compare(Object o1, Object o2)
+    {
+        Person p1 = (Person) o1;
+        Person p2 = (Person) o2;
+        return p1.getName().compareTo(p2.getName());
+    }
+}
+
+class ArraysTest4
+{
+    static ByName comp = new ByName();
+
+    static void search(Object[] a, Object n)
+    {
+        // (as before)
+    }
+    
+    public static void main(String[] args)
+    {
+        // Build Array:
+        Person[] array = new Person[3];
+        array[0] = new Person("Horatio", 1835,12,6);
+        array[1] = new Person("Charles",1897,3,11);
+        array[2] = new Person("Albert",1901,1,20);
+
+        Arrays.sort(array, comp);
+
+        search(array, array[1]);
+        search(array, new Person("Fred",0,0,0));
+        search(array, new Person("Joe",0,0,0));
+    }
+}
+
+/* Output:
+Found {Charles,3/11/1897} in position 1
+Insert {Fred,0/0/0} before {Horatio,12/6/1835}
+Append {Joe,0/0/0} to end of list
+*/
+
+</pre>
+</BODY>
+</HTML>

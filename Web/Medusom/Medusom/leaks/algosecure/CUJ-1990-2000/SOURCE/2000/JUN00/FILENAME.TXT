@@ -1,0 +1,140 @@
+Keywords: Jun2000, C, C++, STL, neural net, metaphone, regular
+expression, reference counting
+
+The code listings for the June 2000 issue of C/C++ Users Journal
+include source code for Joey Rogers' article, "The Self-Organizing
+Neural Network," Michael L. Perry's article, "A Reusable Nonlinear
+System Solver, Part 1," David Berry's article, "Combining Boyer-Moore
+String Search with Regular Expressions, Lawrence Philips' article, "The
+Double Metaphone Search Algorithm," Vladimir Batov's article, "Safe and
+Economical Reference Counting in C++," and Thomas Becker's article,
+"Generic Extensions to the STL." Also included are listings from Chuck
+Allison's column, "import java.*," Pete Becker's column, "The
+Journeyman's Shop," Bobby Schmidt's column, "Uncaught Exceptions," and
+error logging code contributed by Ed Remmel as a letter to the editor.
+
+*************************  FILE DESCRIPTION **********************************
+
+The following files are included in the disk:
+
+FILENAME		AUTHOR-NAME	    TITLE			       
+(Zip archive/
+subdirectory name)
+-------------------------------------------------------------------------------
+rogers                  Joey Rogers         The Self-Organizing Neural
+                                            Network
+
+    son.h               not listed, Supporting functions for self-organizing
+                                    neural networks 
+    son1.c              not listed, Example 1 from article
+    son2.c              not listed, Example 2 from article
+    data1.dat           not listed, Data for examples
+
+perry                   Michael L. Perry    A Reusable Nonlinear System
+                                            Solver, Part 1
+
+    ProbVector.h        Listing 1, Header file for springs and cords
+                                   problem
+    ProbVector.cpp      Listing 2, Implementation file for springs and
+                                   cords problem
+    ProbSpri.cpp        not listed
+    ProbSpri.h          not listed
+    StdHdr.cpp          not listed
+    StdHdr.h            not listed
+    Vector.cpp          not listed
+    Vector.h            not listed
+    LUDecomp.h          not listed
+    LUDecomp.cpp        not listed
+    Main.cpp            not listed
+    Matrix.cpp          not listed
+    Matrix.h            not listed
+    Networks.dsp        not listed
+    Networks.dsw        not listed
+    ProbCord.cpp        not listed
+    ProbCord.h          not listed
+    ProbLatt.cpp        not listed
+    ProbLatt.h          not listed
+    EqSystem.cpp        not listed
+    EqSystem.h          not listed
+    Equation.h          not listed
+
+
+berry                   David Berry         Combining Boyer-Moore String
+                                            Search with Regular Expressions
+
+
+    updated 5/31/2000
+
+    Bms.h               not listed 
+    Bms.cpp             not listed 
+    Makefile            not listed
+    Regex.h             not listed, Header file for CRegEx class
+    Regex.cpp           not listed, Implements CRegEx class
+
+philips                 Lawrence Philips    The Double Metaphone String
+                                            Search Algorithm
+
+    Dmetaph.h           not listed, Header file for MString class
+    Dmetaph.cpp         not listed, Implementation file for MString class
+
+batov                   Vladimir Batov      Safe and Economical Reference
+                                            Counting
+
+    handle.h            Listing 1, The header file for smart pointers
+                                   implementation
+    handle.c            not listed
+    create.h            Listing 2, Include file that specifies create
+                                   interface
+    unofficial.h        Listing 3, Include file that specifies
+                                   constructor-based interface
+    counted.h           Listing 4, The Counted class implementation
+    counter.h           not listed
+
+
+
+tbecker                 Thomas Becker       Generic Extensions to the STL
+
+    stlsuppl.h          not listed, Complete set of utility functions
+                                    mentioned in article, includes code
+                                    shown in Figures 1-4
+    stlsuppl.htm        not listed, HTML documentation of utility functions
+
+allison                 Chuck Allison       import java.*: Strings
+
+    Intern.java         Figure 1, Illustrates string pooling
+    Search2.java        Figure 2, Ignores case while searching for a substring
+    Replace.java        Figure 3, Replaces all occurrences of a substring
+    Palindrome.java     Figure 4, Finds strings that are palindromes
+    Palindrome2.java    Figure 5, Uses StringBuffer to find imperfect
+                                  palindromes
+    SortTokens.java     Figure 6, Sorts input tokens
+    tokens.dat          Figure 7, Data file for SortTokens example
+    SortTokens2.java    Figure 8, Extracts tokens containing only alphanumeric
+                                  characters
+    Vowels.java         Figure 9, Uses StringTokenizer to keep delimiters
+    
+pbecker                 Pete Becker         The Journeyman's Shop:
+                                            Floating-Point Basics
+
+    fp.h                Listing 1, Class definition for floating-point
+                                   class fp
+    fp.cpp              Listing 2, Implementation of class fp
+    4bang.cpp           not listed, Test program for floating-point code
+
+schmidt                 Bobby Schmidt       Uncaught Exceptions:
+                                            Semper Fi
+
+    undefined.txt       Figure 1, Possible undefined behavior
+    fixed.txt           Figure 2, Undefined behavior banished
+
+letters                 Ed Remmell          We Have Mail
+
+    MyLogMgr.cpp        not shown, Reader Ed Remmel's implementation of
+                                   streambuf class for error logging
+    tracelog.h          snippet,   macro definitions of TRACELOG and
+                                   ERRORLOG macros shown in magazine
+
+
+
+
+    

@@ -1,0 +1,194 @@
+<HTML>   
+     <HEAD>
+<TITLE>December 2000 Java Solutions/Increasing Java Performance</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocjdec.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   Java</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Increasing Java Performance</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">John Keyes</FONT></H3>
+
+<BLOCKQUOTE>
+<p>JVMs have gotten a lot better over the years, but you can still dramatically improve performance with a few simple techniques.</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+
+<H4><FONT COLOR="#000080">Introduction</FONT></H4>
+
+<p>The many virtues of Java have been well publicized. In particular, the "Write once, run anywhere" promise has provided developers with the freedom to develop cross-platform applications without the overhead of preprocessor directives. The area in which Java is presumed to be at its weakest is performance.</p>
+<p>This presumption is not automatically true today; there are products that can boost Java performance sufficiently to make it a non-issue in many applications. For example, TowerJ is a post-compiler that transforms Java byte code into highly optimized native executables, and JRockit is an adaptively optimizing server side JVM (Java Virtual Machine) (see Resources section below). Even so, some simple practices can improve the performance of your Java code without the need to buy one of the aforementioned tools. In this article I will demonstrate a few of these practices.</p>
+<p>This discussion will be based mainly on high throughput code (server side). Whereas the main overhead incurred with GUI code involves object creation and re-creation, the significant performance figures in server-side code are the execution times of methods. Thus, for the code examples that are included, I have recorded the average time to execute a method. It is not feasible to record the actual execution time of a single method, so I time a series of executions of that method and calculate the average. This in effect mimics performance-critical code execution.</p>
+<p>Each example is accompanied with pseudocode to explain the byte code operations. The actual byte code produced is available from the <I>CUJ</I> website (see <B>www.cuj.com/code</B>). An explanation of all byte code operations is available from the Javasoft website (see Resources section below).</p>
+
+<H4><FONT COLOR="#000080">Improving String Manipulation Performance</FONT></H4>
+
+<p>As in C++, the Java library defines its own <B>String</B> type. Under the covers, this type is implemented as an array of <B>char</B>s, but you do not need to understand this to use strings. The curse of the <B>NULL</B> character (<B>'\0'</B>) has frustrated many students learning and using C++; Java does not have this added distraction, but allows programmers to concentrate on the application and not the tools needed to build it. There is a downside associated with this worry-free approach to strings, and that is the string concatenation operator <B>'+'</B>.</p>
+<p>This operator appears to be very useful. The majority of applications that write data to streams use <B>'+'</B>. For example:</p>
+
+<pre>
+String name = new String("Joe");
+System.out.println(name + 
+   " is my name.");
+</pre>
+
+<p>In the above snippet, it seems that there is not much that can be changed within the <B>println</B> statement that could improve its execution speed. However, the byte code produced for this statement (represented here in pseudocode) reveals the truth (see <a href="list1.htm">Listing 1</a>).</p>
+<p>This simple piece of code creates five objects <a href="#1">[1]</a>: <B>STR_1</B>, <B>STR_2</B>, <B>STR_3</B>, <B>STR_4</B>, and <B>STR_BUF_1</B>.</p>
+<p>Note that object creation is extremely expensive in relative terms. Heap storage must be allocated for all the instance variables of the class and each of the class's superclasses; all the instance variables must be initialized; and the class's constructor and the constructors of each superclass must be executed. To create efficient code, it is imperative that object creation be limited to what is absolutely necessary.</p>
+<p>So, can the above code be rewritten in a more efficient manner? Consider the following code snippet:</p>
+
+<pre>
+StringBuffer name = 
+   new StringBuffer("Joe");
+System.out.println(name.append(
+   " is my name.").toString());
+</pre>
+
+<p>The equivalent byte code/pseudocode appears in <a href="list2.htm">Listing 2</a>.</p>
+<p>The above code creates only four objects: <B>STR_1</B>, <B>STR_2</B>, <B>STR_3</B>, and <B>STR_BUF_1</B>. You might think that saving the creation of one object is not that much of a saving. However, the following code creates <I>eight</I> objects:</p>
+
+<pre>
+String name = new String("Joe");
+name+=" is my";
+name+=" name.";
+</pre>
+
+<p>whereas this code only creates five:</p>
+
+<pre>
+StringBuffer name = new 
+   StringBuffer("Joe");
+name.append(" is my");
+name.append(" name.").toString();
+</pre>
+
+<p>The second snippet executes more than twice as fast as the first <a href="#2">[2]</a>.</p>
+<p>Conclusion: use <B>StringBuffer</B>s to improve the performance of string processing code. The goal is to minimize the creation of new objects, and this can be achieved by using the <B>append</B> method on <B>StringBuffer</B>s rather than the concatenation operator on <B>String</B>s.</p>
+
+<H4><FONT COLOR="#000080">Faster Logging</FONT></H4>
+
+<p>In every software project I have worked on, there has been a requirement to have a logging mechanism in place. There are many reasons for an application to include a logging facility. The main reason is for easier maintenance. To enable bug reporting in a released application, it is necessary to have some starting point. In many cases the user submits an ambiguous report that details a problem that could be caused by many factors. If there is a mechanism in place for the user to gather additional information about the problem, then the turnaround for problem resolution is reduced dramatically.</p>
+<p>There is no standard means to produce this kind of information. It is generally left up to the developer how this mechanism is put in place. Yet the implementation of the logging mechanism can affect the performance of an application dramatically. The goal should be to have a mechanism that outputs valuable run-time information, but minimizes the effect on run-time performance.</p>
+<p>The most obvious way to avoid run-time overhead is to have no logging built into the application that is released; in other words, if the actual code that performs the logging is not compiled into the application, then there is no performance hit. <a href="list3.htm">Listing 3</a> shows a class that defines such a logging mechanism. It can be configured to omit the logging code from the byte code produced. The class will be a Singleton to avoid unnecessary creation of <B>Logger</B> instances.</p>
+<p>As you can see, this is a very simple class with one type variable, one type constant, two methods, and a constructor. To use this class, simply get the instance of it, check if <B>debug</B> is turned on, and then call <B>debugMsg</B>, as shown below:</p>
+
+<pre>
+...
+Logger myLogger = Logger.getInstance();
+...
+if (Logger.CAN_DEBUG) {
+   myLogger.debugMsg("some debug message");
+}
+...
+</pre>
+
+<p>Suppose <B>Logger.CAN_DEBUG</B> is <B>false</B>. When building the application, dead-code elimination will occur and no byte code will be produced for the conditional. This is because the compiler knows that <B>Logger.CAN_DEBUG</B> will always remain <B>false</B>, since it is a final static variable. If <B>Logger.CAN_DEBUG</B> is <B>true</B>, then the code will be compiled, and byte code for the conditional will be produced. Thus, a build with debug messaging turned on will result in more byte code being produced.</p>
+<p>This idea can be extended to allow more granular handling of the information being produced. For instance, a new static final <B>boolean</B> could be declared as <B>CAN_INFO</B>, and a new method, <B>public void infoMsg(String msg)</B>, could be implemented.</p>
+<p>From a performance point of view, this is the best method to use. A number of different builds can be coordinated to reflect what level of messaging is supported. For instance, you could release a production version and a debug version. If a problem occurs with the production version, then swap it with the debug version to pinpoint where the problem is occurring.</p>
+<p>The major disadvantage of this approach is that it cannot be configured at run time, for example, as a System property.</p>
+<p>The main performance hit in most logging mechanisms is the creation of <B>String</B> objects. Thus, the aim should be to minimize this overhead. The solution will therefore need to include <B>StringBuffer</B>s. The <B>Logger</B> class in <a href="list4.htm">Listing 4</a> provides a configurable logging level.</p>
+<p>The example code provides a two-level approach to logging. It allows the handling of both debug and info messages. This can be easily extended to handle more types. This class provides a solid base for the logging mechanism.</p>
+<p>There are two options available for using this implementation in an application. The first option is to create a base class that will implement a simple API, which the application will extend. The second option is to have the application implement an interface that defines that simple API. The following is an example interface:</p>
+
+<pre>
+public interface LogAPI {
+   public void createMsg();
+   public void appendLog(String str);
+   public void appendLog(int i);
+   public void logDebugMsg();
+   public void logInfoMsg();
+}
+</pre>
+
+<p>In <B>TestLogger.java</B> (<a href="list5.htm">Listing 5</a>) a sample implementation of this interface is provided.</p>
+<p>The reuse of the <B>StringBuffer</B> object is key here. Normally you would write something like the following as a debug message:</p>
+
+<pre>
+debugMsg("Name:" + name + " Age:" + age);
+</pre>
+
+<p>As discussed earlier, this type of <B>String</B> creation is detrimental to performance. If it is rewritten as shown in <B>TestLogger.java</B>, then gains in performance will become visible.</p>
+<p>The log level can now be tailored at run time using the <B>setLogLevel</B> method defined in the <B>Logger</B> class. A good way to do this is with the aid of System properties. You must define your own property; in this case, it is called <B>"app.loglevel"</B>. If the program in question is an application, then you can you can set the <B>"app.loglevel"</B> property using the <B>-D</B> switch to the JVM <a href="#3">[3]</a>. For example:</p>
+
+<pre>
+java -Dapp.loglevel=3 myApp
+</pre>
+
+<p>On the other hand, if your program is an applet, it can be set using the <B>&lt;PARAM&gt;</B> tag:</p>
+
+<pre>
+&lt;PARAM NAME="app.loglevel" VALUE="2"&gt;
+</pre>
+
+<p>Then, to set the log level, all you need do is get the property value and call <B>setLogLevel</B> on the result:</p>
+
+<pre>
+String strLevel = System.getProperty("app.loglevel");
+If(strLevel != null) {
+   int level = Integer.parseInt(strLevel);
+   Logger.getInstance().setLogLevel(level);
+}
+</pre>
+
+<p>The benefits of such an approach are:</p>
+
+<UL><LI>   reduced object creation, that is, objects are reused
+<LI>   a well-defined API, which encourages all developers to follow a standard
+<LI>   extensibility &#151; individual developers can tweak the implementation to suit their own needs.
+<LI>   reduced maintenance cost due to a standard API
+<LI>   a run-time customizable log level</UL>
+
+<H4><FONT COLOR="#000080">Better Performance through Custom Collections</FONT></H4>
+
+<p>When the need arises to store a collection of common objects, the simplest escape route is normally to use <B>java.util.Vector</B>. This class is inefficient in a good deal of the cases in which it is used. There are two main reasons for this inefficiency. The first reason is that <B>Vector</B> is thread safe; therefore, a number of its methods are <B>synchronized</B>. When you always know the application will be single threaded, this synchronization constitutes unnecessary overhead. The second reason why <B>Vector</B> is inefficient is the amount of casting that is used when retrieving objects from it. If all objects stored in the <B>Vector</B> are of the same type, then casting should not be required. Thus, for better performance, we need type-specific single-threaded collections.</p>
+<p><B>StringVector.java</B> (<a href="list6.htm">Listing 6</a>) is an example implementation of a collection for <B>String</B> types. Remember that this class can be tailored for all types of objects.</p>
+<p>Previously where you may have seen code like this:</p>
+
+<pre>
+...
+Vector strings = new Vector();
+strings.add("One");
+strings.add("Two");
+String second = (String)strings.elementAt(1);
+...
+</pre>
+
+<p>it can now be replaced with:</p>
+
+<pre>
+...
+StringVector strings = new StringVector();
+strings.add("One");
+strings.add("Two");
+String second = strings.getStringAt(1);
+...
+</pre>
+
+<p>The result is improved performance. <B>TestCollection.java</B> (<a href="list7.htm">Listing 7</a>) highlights this performance difference. The <B>add</B> method for <B>StringVector</B> requires only 70 percent of the execution time compared to <B>Vector</B>'s <B>add</B> method. The <B>getStringAt</B> method requires only 25 percent of the execution time compared to <B>Vector</B>'s <B>elementAt</B> method.</p>
+<p>This technique can be tailored to meet the requirements of whatever application you are working on. For example, you can create an <B>IntegerVector</B>, an <B>EmployeeVector</B>, etc.</p>
+
+<H4><FONT COLOR="#000080">Conclusion</FONT></H4>
+
+<p>This article is by no means "the Bible" for Java performance. Its purpose is to raise awareness of small changes you can make to your Java code to increase its performance.</p>
+
+<H4><FONT COLOR="#000080">Resources</FONT></H4>
+
+<p>TowerJ: <B>ttp://www.towerj.com</B></p>
+<p>Jrockit: <B>http://www.jrockit.com</B></p>
+<p>Java Virtual Machine Specification: <B>http://java.sun.com/docs/books/vmspec</B></p>
+
+<H4><FONT COLOR="#000080">Notes</FONT></H4>
+<p><a name="1"></a>[1]  As stated at <B>http://java.sun.com/docs/books/vmspec/2nd-edition/html/Concepts.doc.html#19124</B>:</p>
+<BLOCKQUOTE>
+<p>Loading of a class or interface that contains a <B>String</B> literal may create a new <B>String</B> object to represent that literal.</p>
+</BLOCKQUOTE>
+<p>This article assumes that a new <B>String</B> is created to represent the literal.</p>
+<p><a name="2"></a>[2]  Time taken on average to execute Example 3 100,000 times is 578 milliseconds and the time taken on average to execute Example 4 100,000 times is 265 milliseconds (on my machine).</p>
+<p><a name="3"></a>[3]  The <B>-D</B> switch is used by the majority of JVMs that are available. Microsoft's Jview interpreter uses the <B>/d:</B> switch.</p>
+
+<p><i><B>John Keyes</B> is a Senior Developer with Stepping Stone Software Ltd. John worked previously with IONA Technologies. He can be reached at <B>johnkeyes@yahoo.com</B>.</i></p>
+
+<h4><a href="../../../source/2000/jdec00/keyes.zip">Get Article Source Code</a></h4>
+</blockquote></body></html>

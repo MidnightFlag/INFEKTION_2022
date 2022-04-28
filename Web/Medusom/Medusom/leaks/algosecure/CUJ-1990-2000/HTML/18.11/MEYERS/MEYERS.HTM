@@ -1,0 +1,167 @@
+<HTML>   
+     <HEAD>
+<TITLE>November 2000/The New C</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocnov.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   C/C++ Contributing Editors</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">The New C: It All Began with FORTRAN</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Randy Meyers</FONT></H3>
+
+<BLOCKQUOTE>
+<p>Sometimes the best way to improve a language is to make it look more like the one it set out to obsolete 30 years earlier.</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+<p>It all began with FORTRAN.</p>
+<p>In this case, I am not referring to the fact that FORTRAN was the first programming language, but that a disagreement in the 1960s on how to implement parameter passing in FORTRAN accidentally gave FORTRAN a huge performance advantage on supercomputers in the 1970s, and eventually led to a new feature in C99 in the 1990s. The new C99 feature is restricted pointers, and one of the best ways to understand the motivation for restricted pointers is to follow the history of the accident in FORTRAN.</p>
+<p>In FORTRAN, unlike C, if a function assigns a new value to a parameter, the value of the actual argument passed to the function will change, and after the function returns, the caller will see the new value of the argument. Consider the FORTRAN code in Example 1 below. If you call <B>F</B> passing a variable <B>Y</B> as an argument, after <B>F</B> returns, <B>Y</B> will equal 6.</p>
+<P><I>Example 1:</I></p>
+
+<pre>
+SUBROUTINE F(X)
+INTEGER X
+X = 6
+END
+</pre>
+
+<p>Here is where the disagreement came in. Different FORTRAN compilers chose one of two different ways to achieve the FORTRAN semantics for parameter passing. The first way was "by reference" parameter passing, or the way that your typical C programmer would write a function that modifies a variable in its caller. The function is passed the address of the argument and uses indirection everywhere when accessing the parameter. If the FORTRAN compiler produced C code as its output, the result would be something like Example 2.</p>
+
+<p><I>Example 2:</I></p>
+
+<pre>
+void f(int *x)
+   {
+   *x = 6;
+   }
+</pre>
+
+<p>However, on some machines, indirection was fairly expensive compared to directly referencing a local variable. This led to the second way to implement FORTRAN parameter passing. The address of the actual argument is still passed to the function, but the function when entered makes a local copy of the argument, uses the local copy throughout the body of the function, and then copies the local copy back to the original argument before returning. Such a FORTRAN compiler would produce code that looks something like Example 3. While "copy in/copy out" parameter passing adds overhead to entering and returning from a function, if the parameter is referenced just a few times, and the (expensive on some machines) indirection is eliminated, the net result is increased performance (on some machines).</p>
+
+<p><I>Example 3:</I></p>
+
+<pre>
+void f(int *x)
+   {
+   int xcopy = *x;
+   xcopy = 6;
+   *x = xcopy;
+   }
+</pre>
+
+<p>Many times, the details of how a compiler implements a language feature are just "implementation details" in the usual sense. They do not affect the way programmers write programs, and programming language standards committees allow implementations to freely choose among the alternatives. However, FORTRAN programs could produce different results depending on the parameter passing mechanism used. Consider the FORTRAN code in Example 4, and the two different translations of that code into C.</p>
+
+<p><I>Example 4:</I></p>
+
+<pre>
+SUBROUTINE G(X, Y)
+INTEGER X, Y
+X = 1 + X
+Y = 5 + Y
+END
+
+// Translation using "by reference"
+void g(int *x, int *y)
+{
+   *x = 1 + *x;
+   *y = 5 + *y;
+}
+
+// Translation using
+// "copy in/copy out"
+void g(int *x, int *y)
+{
+   int xcopy = *x;
+   int ycopy = *y;
+   xcopy = 1 + xcopy;
+   ycopy = 5 + ycopy;
+   *x = xcopy;
+   *y = ycopy;
+}
+</pre>
+
+<p>The <B>G</B> subroutine adds different constants to both its parameters. If you pass two arguments, variables <B>A</B> and <B>B</B>, to the function <B>G</B>, and before the call <B>A</B> has the value 1 and <B>B</B> had the value 10, then as you would suspect, after the call, <B>A</B> would have the value 2 and <B>B</B> would have the value 15. This would be true regardless of which implementation of FORTRAN parameter passing was used.</p>
+<p>However, consider what happens if you pass <B>A</B> (initial value 1) as both parameters. If "by reference" parameter passing is used, after the call <B>A</B> has the value of 7. <B>A</B> is updated during the assignment to <B>*x</B>, and then again during the assignment to <B>*y</B>, since both <B>x</B> and <B>y</B> point to <B>A</B>. In contrast, if "copy in/copy out" parameter passing is used, then after the call to <B>G</B>, <B>A</B> has the value 6. Distinct copies of <B>A</B> were made inside <B>G</B>, and the additions were made separately to each copy. Both copies were eventually assigned back to <B>A</B>, but the last assignment "won."</p>
+<p>The two alternative parameter passing mechanisms are an example of the types of tradeoffs that the definers of any programming language have to face. Should the language require a particular implementation technique, possibly at the expense of efficiency? Should the language features be changed to avoid some controversy? The FORTRAN definition decided in favor of efficiency to allow either parameter passing mechanism. Once that decision was made, certain types of programs became non-portable, and were "outlawed."</p>
+<p>The FORTRAN 66 standard contained all sorts of rules that seemed completely unmotivated to many programmers. You can pass any one variable to a function at most once in the argument list. If you pass a variable as an argument to a function, that function cannot also reference the variable as a global (FORTRAN <B>COMMON</B>). If you pass a variable to a function, you cannot also pass anything, and the function can not reference anything, that overlaps it in storage (FORTRAN <B>EQUIVALENCE</B>). No program that follows those rules can determine which parameter passing mechanism is used.</p>
+<p>About ten years later, the Cray 1 supercomputer required highly optimizing compilers to allow traditional programs to make use of the machine's vector registers, and thus achieve supercomputer performance. Consider the program in Example 5. The most efficient code for the function is to load the array pointed to by <B>x</B> into a vector register, then load the array pointed to by <B>y</B> into a vector register, and then do a vector add instruction adding the two vector registers together. If the compiler generates vector instructions, rather than a traditional loop accessing the array an element at a time, the code may run an order of magnitude faster.</p>
+
+<p><I>Example 5:</I></p>
+
+<pre>
+void
+vector_add(float *x, float *y,
+   float *result)
+   {
+   int i;
+   for (i = 0; i &lt; 64; ++i)
+      result[i] = x[i] + y[i];
+   }
+</pre>
+
+<p>The optimizer in a compiler can certainly transform a loop into a sequence of vector instructions, but the question is whether the sequence of vector instructions is really equivalent to the original loop. Loading all the <B>x</B> array and the <B>y</B> array into vector registers before doing any stores into the result array works only if you know that the result array is distinct from both <B>x</B> and <B>y</B>. Consider what happens if <B>result</B> points to <B>x[1]</B>. Then <B>result[0]</B> is really <B>x[1]</B>, and <B>result[i]</B> is the same as <B>x[i+1]</B>. Each iteration of the loop stores values referenced in the next iteration. If you load <B>x</B> into a vector register before doing stores into result, the values calculated change. It is at this point the accident in the definition of FORTRAN comes in. In order to avoid requiring a particular parameter passing mechanism, the FORTRAN Standard had exactly the right set of rules to allow a vectorizing compiler to assume that <B>x</B>, <B>y</B>, and <B>result</B> are all distinct, non-overlapping arrays. Thus, by accident, FORTRAN had a major performance advantage on vector machines.</p>
+<p>This performance advantage also carried over into parallel processor machines. The goal for an optimizing compiler for a parallel processor is to divide a loop into several ranges of iterations that can be done by separate processors working independently of each other. Thus, the loop in <B>vector_add</B> might be divided into two ranges: one processor might handle iterations 0 to 31 while another processor simultaneously does iterations 32 to 63. Work can be divided up among different processors only if the compiler knows that the results of the iterations done by one processor are not needed by a different processor working simultaneously. Proving this usually means the compiler needs to determine that different arrays are distinct, non-overlapping objects. Again, the rules in FORTRAN are exactly what a compiler needs in order to prove it can automatically parallelize a program.</p>
+<p>While the FORTRAN performance advantage started out on supercomputers, it is now present on your typical, modern, general-purpose microprocessor. These days, most general-purpose microprocessors have a superscalar design:</p>
+
+<UL><LI>   Instructions have separate stages of execution.
+<LI>   A pipeline allows a small number of instructions to be in the process of execution, each instruction at a different stage in its execution.
+<LI>   Multiple functional units may allow separate operations to overlap, such as an add with a multiply.
+<LI>   The processor runs at a multiple of the memory speed, and typically runs faster than the cache.
+<LI>   Even the registers might not be fast enough. If one instruction stores a value in a register, and the next instruction tries to use that register as an operand, then the machine may have to stall waiting for that result to become available.</UL>
+
+<p>A compiler for a superscalar machine has to carefully schedule the instructions it generates, and interleave instructions from different computations, to achieve maximum performance. For example, loading a memory value into a register takes a long time. If you attempt to use the value in the register before the value from memory arrives, the processor will stall. So, the compiler will try to generate a load instruction, followed by several instructions that do not need the result of the load, followed by the instructions that use the result of the load. This gives the load time to finish, and keeps the processor busy.</p>
+<p>Consider <B>vector_add</B> from Example 5. A typical optimization performed for a superscalar processor is to load <B>x[i+1]</B> and <B>y[i+1]</B> into registers at the start of the iteration for <B>i</B>. This means that each iteration of the loop conveniently has its operands fetched from memory for it by the previous iteration, and thus never has to wait for the slow memory system to provide a value.</p>
+<p>However, this prefetching works only if the results of one iteration of the loop does not affect the operands fetched by the next iteration of the loop. Proving this usually means knowing that the objects operated upon by the loop are distinct and non-overlapping.</p>
+<p>Clearly, C could not concede this performance advantage to FORTRAN forever. Note that FORTRAN's advantage over C comes only because C programs use pointers. A C compiler can perform any of the optimizations discussed when it sees individual objects being operated upon directly. The problem is when objects are operated upon indirectly through pointers. Since, in general, the compiler has no idea which object a pointer is referencing, the compiler cannot prove a pointer references a distinct object.</p>
+<p>One approach used by some C compilers is to provide an optional, "unsafe" level of optimization beyond normal optimization. If unsafe optimization is enabled when the program is compiled, the compiler will assume that all pointers point to distinct objects, and the resulting program will run faster. Unfortunately, if the programmer meant for some pointers to reference the same object, the program will likely also get incorrect results.</p>
+<p>A better solution is to allow the programmer to mark which pointers in the program point to distinct objects. This is the new "restricted pointer" feature in C99. (Some C++ compilers also support restricted pointers; however, they are not part of Standard C++.) C99 has a new keyword, <B>restrict</B>, that is a type-qualifier like <B>const</B> and <B>volatile</B>. Syntactically, <B>restrict</B> can appear wherever <B>const</B> and <B>volatile</B> can. However, semantically, <B>restrict</B> must modify a pointer type. This usually means that <B>restrict</B> follows the <B>*</B> in a pointer declaration. The following snippet shows some examples.</p>
+
+<p><I>Example 6:</I></p>
+
+<pre>
+int *restrict p1;    // OK, p1 is a restricted pointer to int
+restrict int *p2;    // invalid: pointer to restricted int
+typedef int *intptr;
+restrict intptr p3;  //OK, p3 is a restricted pointer to int
+</pre>
+
+<p>C99 also adds a new syntactic spot where any type qualifier can appear: after the <B>[</B> in an array parameter declaration. Remember, a parameter of type array is really a parameter of type pointer. The type qualifiers following the <B>[</B> act as if they followed the <B>*</B> when the parameter's type is rewritten as a pointer type. Thus:</p>
+
+<pre>
+int f(float array[const restrict]);
+</pre>
+
+</B>is the same as:</p>
+
+<pre>
+int f(float *const restrict array);
+</pre>
+
+<p>There's a bug in the C99 Standard &#151; the change to the grammar to allow type qualifiers following the <B>[</B> in an array parameter declaration was made only to the grammar rule when the parameter is named. The change should have also been made for unnamed parameters. I hope that C compilers will accept the unnamed parameter case as a common extension until the C Standard can be corrected:</p>
+
+<pre>
+int f(float [restrict]);  // common extension
+</pre>
+
+<p>As you probably suspect, the rough meaning of a restricted pointer is that it provides a unique way to access a unique, non-overlapping object in the program. In other words, the object accessed through this pointer can be assumed to be unique from any other object being referenced in the code during the lifetime of the restricted pointer, or until the restricted pointer's value changes. This allows an optimizer to safely make the sorts of optimizations discussed above, as well as other optimizations such as avoiding recomputing common (duplicate) subexpressions involving access through pointers.</p>
+<p>There is an exception to the rule that a restricted pointer during its lifetime provides the sole access to an object. If the object is never modified in any fashion during the lifetime of the restricted pointer, then the object may be accessed not only by the restricted pointer but other ways as well. Such access does not interfere with any optimizations.</p>
+<p>In order to understand the "uniqueness" rules of restricted pointers, you might want to think of them in terms of "copy in/copy out" semantics. Pretend that when you assign an address to a restricted pointer, a copy is made of the entire part of the object that is being referenced though the restricted pointer. The restricted pointer then points to the copy instead of the original object. Magically, the restricted pointer remembers the address of the original object, and if you ever change the value of the restricted pointer, or the restricted pointer goes out of scope, then the copy of the object is copied back to the original object referenced. This pretend "copy in/copy out" transformation breaks your program only if the program violates the uniqueness rules of restricted pointers.</p>
+<p>Here are some examples. If someone stores into the original object during the lifetime of the restricted pointer, then accesses through the restricted pointer will fetch the unmodified values from the copy, not the updated values from the original object. If the restricted pointer is used to modify the object, then accesses made not through the restricted pointer during the lifetime of the restricted pointer will see the old values from the original object, not the updated values in the copy. On the other hand, if your program works even if the pretend copy in/copy out transformation was performed, then it is safe to use restricted pointers, and doing so might enable many useful optimizations.</p>
+<p>The lifetime of a restricted pointer is the period of time during the execution of the program that the pointer itself would be allocated. For an automatic variable, it is the block in which it is declared is active. For a parameter, it is until the function body returns. For a file-scope variable, it is until <B>main</B> returns.</p>
+<p>As I stated above, the uniqueness property applies only to the parts of the object actually accessed through the restricted pointer. For example, if <B>vector_add</B> from Example 5 declared all three of its parameters to be restricted pointers, it would be valid to make the call:</p>
+
+<pre>
+float data[192];
+vector_add(&amp;data[0], &amp;data[64], &amp;data[128]);
+</pre>
+
+<p>Since <B>vector_add</B> accesses only 64 elements from any of the arrays pointed to by its parameters, all of the accesses of the data array are unique to one of the three restricted pointer parameters. The data array is really being treated as three, unique, non-overlapping arrays. However, if the second argument was <B>&amp;array[63]</B>, the call would be invalid since the <B>x</B> parameter and the <B>y</B> parameter were both accessing the same storage.</p>
+<p>It is best to confine your use of restricted pointers to code that is fairly straightforward. If you have a hard time following how your pointers are used, there is an increased danger that you are inadvertently making invalid references to the object referenced by the restricted pointer not using the restricted pointer (you have invalid aliasing).</p>
+<p>This brings us to the subject of debugging. If your program doesn't work, or stops working in the future, and you use restricted pointers, you might want to see if the problem is invalid aliasing. Some compilers have an option to merely ignore <B>restrict</B>, which allows you to test if aliasing is the problem. If your compiler lacks such an option, define <B>restrict</B> to be a macro with no body when compiling your program. Since the only meaning of <B>restrict</B> is to permit additional optimization, it can be safely deleted from any program.</p>
+<p>In addition to optimization, you can also use <B>restrict</B> to warn a user of your code that the code just will not work if you pass in pointers to the same or overlapping objects. For example, the C89 standard contained a statement at the beginning of the library section that, unless stated otherwise, you must not pass pointers to the same or overlapping objects to the functions in the standard library. This ruled out lots of silly uses of the library, like calling <B>sprintf</B> with the pointers to the format string and the result string being the same. The C99 Standard still contains that prose prohibition, but emphasizes the requirement by making most of the pointer arguments in the prototypes in the library restricted pointers. The <B>restrict</B> keyword allows the specification in the C Language itself a prohibition that previously required English text.</p>
+<p>There you have it. Thirty-three years of programming language history and a new keyword in C.</p>
+
+<p><i><B>Randy Meyers</B> is consultant providing training and mentoring in C, C++, and Java. He is the current chair of J11, the ANSI C committee, and previously was a member of J16 (ANSI C++) and the ISO Java Study Group. He worked on compilers for Digital Equipment Corporation for 16 years and was Project Architect for DEC C and C++. He can be reached at <B>rmeyers@ix.netcom.com</B>.</i></p>
+</blockquote></body></html>

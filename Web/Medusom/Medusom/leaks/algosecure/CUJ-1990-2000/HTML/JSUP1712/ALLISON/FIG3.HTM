@@ -1,0 +1,85 @@
+<HTML><HEAD>
+<TITLE>December 1999 Java Solutions/The Java 2 Collections -- Finally, Some News You Can Use/Figure 3</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 3: A Person class</A></h4>
+<pre>
+public class Person implements Comparable, Cloneable
+{
+    private String name;
+    private int year;
+    private int month;
+    private int day;
+
+    public Person(String name, int year, int month,
+                  int day)
+    {
+        this.name = new String(name);
+        this.year = year;
+        this.month = month;
+        this.day = day;
+    }
+    public String getName()
+    {
+        return name;
+    }
+
+    // Override Object methods:
+    public Object clone()
+    {
+        try
+        {
+            Person p = (Person) super.clone();
+            p.name = new String(name);
+            return p;
+        }
+        catch (CloneNotSupportedException x)
+        {
+            // Can't happen
+            throw new InternalError(x.toString());
+        }
+    }
+    public boolean equals(Object o)
+    {
+        if (o instanceof Person)
+        {
+            Person p = (Person) o;
+            return name.equals(p.name) &amp;&amp;
+                year == p.year &amp;&amp;
+                month == p.month &amp;&amp;
+                day == p.day;
+        }
+        else
+            return false;
+    }
+    public int hashCode()
+    {
+        int hval = name.hashCode() + year;
+        hval = (hval &lt;&lt; 4) + month;
+        hval = (hval &lt;&lt; 4) + day;
+        return hval;
+    }
+    public String toString()
+    {
+        return '{' + name + ',' + month +
+               '/' + day  + '/' + year  + '}';
+    }
+
+    // Implement Comparable:
+    public int compareTo(Object o)
+    {
+        Person p = (Person)o;
+        int result = name.compareTo(p.name);
+        if (result == 0)
+        {
+            result = (year - p.year);
+            result = result*16 + (month - p.month);
+            result = result*16 + (day - p.day);
+        }
+        return result;
+    }
+}
+</pre>
+</BODY>
+</HTML>

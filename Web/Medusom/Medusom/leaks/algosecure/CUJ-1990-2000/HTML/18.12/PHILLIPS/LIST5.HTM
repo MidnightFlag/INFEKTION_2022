@@ -1,0 +1,146 @@
+<HTML><HEAD>
+<TITLE>December 2000/Removing Image Noise with Adaptive Filters/Listing 5</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 5: A main routine that combines the adaptive filters</A></h4>
+<pre>
+#include "cips.h"
+
+main(argc, argv)
+   int argc;
+   char *argv[];
+{
+   char     name1[MAX_NAME_LENGTH];
+   char     name2[MAX_NAME_LENGTH];
+   char     low_high[MAX_NAME_LENGTH];
+   char     op[MAX_NAME_LENGTH];
+   int      i, j, size, type;
+   int      il, ie, cols_size, rows_size;
+   int      low_pass_type, hi_pass_type;
+   int      big_size, little_size;
+   long     bits_per_pixel, length, width;
+   short    **the_image, **out_image, filter[3][3];
+   short    **high_pass_image, **low_pass_image;
+
+   float  first_moment, k, second_moment, variance, sigma;
+   float  konstant, noise_stddev, noise_variance;
+   
+      /******************************************
+      *
+      *   Ensure the command line is correct.
+      *
+      ******************************************/
+
+
+   if(argc &lt; 3){
+      afilter_usage();
+      exit(-1);
+   }
+
+
+   strcpy(name1, argv[1]);
+   strcpy(name2, argv[2]);
+   strcpy(op,  argv[3]);
+
+   if(does_not_exist(name1)){
+      printf("\nERROR input file %s does not exist",
+             name1);
+      exit(0);
+   }  /* ends if does_not_exist */
+   
+      /******************************************
+      *
+      *   Read the input image header, allocate
+      *   the image arrays, create the output
+      *   image, and read the input image.
+      *
+      ******************************************/
+
+   create_image_file(name1, name2);
+   get_image_size(name1, &amp;length, &amp;width);
+   get_bitsperpixel(name1, &amp;bits_per_pixel);
+   the_image = allocate_image_array(length, width);
+   out_image = allocate_image_array(length, width);
+   read_image_array(name1, the_image);
+   
+      /******************************************
+      *
+      *   Call the proper image filter function
+      *   per the command line.
+      *
+      ******************************************/
+
+      /* moments case */
+   if(op[0] == 'm' || op[0] == 'M'){
+      il        = atoi(argv[4]);
+      ie        = atoi(argv[5]);
+      rows_size = atoi(argv[6]);
+      cols_size = atoi(argv[7]);
+      moments(the_image, out_image,
+              length, width, 
+              rows_size, cols_size,
+              il, ie,
+              &amp;first_moment, &amp;second_moment,
+              &amp;variance, &amp;sigma);
+      printf("\nmean=%f variance=%f sigma=%f",
+      first_moment, variance, sigma);
+   }  /* ends if op */
+
+      /* sam case */
+   if(op[0] == 's' || op[0] == 'S'){
+      low_pass_image  = allocate_image_array(length, width);
+      high_pass_image = allocate_image_array(length, width);
+      variance      = atof(argv[4]);
+      konstant      = atof(argv[5]);
+      size          = atoi(argv[6]);
+      low_pass_type = atoi(argv[7]);
+      hi_pass_type  = atoi(argv[8]);
+      sam(the_image, out_image,
+          low_pass_image, high_pass_image,
+          length, width,
+          variance, konstant,
+          size,
+          low_pass_type, hi_pass_type);
+      free_image_array(low_pass_image, length);
+      free_image_array(high_pass_image, length);
+   }  /* ends if op */
+
+      /* mmse case */
+   if(op[0] == 'e' || op[0] == 'E'){
+      size           = atoi(argv[4]);
+      noise_variance = atof(argv[5]);
+      mmse(the_image, out_image,
+           length, width,
+           size,
+           noise_variance);
+   }  /* ends if op */
+
+      /* dwmtm case */
+   if(op[0] == 'd' || op[0] == 'D'){
+      little_size  = atoi(argv[4]);
+      big_size     = atoi(argv[5]);
+      noise_stddev = atof(argv[6]);
+      k            = atof(argv[7]);
+      dwmtm(the_image, out_image,
+            length, width, 
+            little_size, big_size,
+            noise_stddev, k);
+   }  /* ends if op */
+
+      /******************************************
+      *
+      *   Write the result and free the image
+      *   arrays.
+      *
+      ******************************************/
+   
+   write_image_array(name2, out_image);
+   free_image_array(the_image, length);
+   free_image_array(out_image, length);
+
+}  /* ends main */
+
+/* not shown: function afilter_usage() */
+
+</pre></body></html>

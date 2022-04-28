@@ -1,0 +1,4 @@
+page-doom {
+  @include border-difficulty($doom-color-secondary);
+  @include toolbar-border($doom-color-secondary);
+}

@@ -1,0 +1,144 @@
+<HTML>   
+     <HEAD>
+<TITLE>November 2000/Creating Truly Maintainable Class Factories</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocnov.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   Features</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Creating Truly Maintainable Class Factories</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Early Ehlinger</FONT></H3>
+
+<BLOCKQUOTE>
+<p>It is usually best to recycle code already written, particularly if it's easy to get wrong.</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+
+<H4><FONT COLOR="#000080">The Need for Class Factories</FONT></H4>
+
+<p>As most C++ programmers are aware, C++ enables an object to be allocated on the heap via <B>operator new</B>. However, to use <B>operator new</B>, the compiler needs to know the type of the object to be created. Unfortunately, you cannot always know what class will be necessary at compile time. For example, when importing data from a data format such as XML, the type of each object cannot be known until the data is parsed. What is needed in these situations is the ability to create an object via some identifier that is obtainable at run time, such as the name of its class or of the physical object that the class models.</p>
+<p>A class factory, or simply "factory," fits the bill perfectly. It is an object which takes a class identifier and returns a pointer to a freshly allocated object of that class. All classes that a particular factory are capable of instantiating will derive from some base class. This is because although the client code doesn't know exactly which class it needs, it will know what interface it wants to use to communicate with that class, and this interface is defined in terms of the base class.</p>
+<p>There are any number of ways to implement factories, as I will show. Of course, some solutions are better than others. In this article I present a solution that is easily extensible and maintainable; what's more, it is particularly well suited to creating objects from XML data, which I will show how to do in a subsequent article. As preparation, I want to cover a couple of approaches that are less than satisfactory, and explain why.</p>
+
+<H4><FONT COLOR="#000080">The If-Else Approach</FONT></H4>
+
+<p>Often when you start looking at methods of achieving some goal, the if-else statement comes up as a possible approach. You could implement a simple factory capable of instantiating two classes using if-else, like this:</p>
+
+<pre>
+class foo_factory
+  {
+  public:
+    foo* instantiate
+    (std::string const&amp; req_class_id)
+    throw( exception )
+    {
+    if (req_class_id == "foo1")
+       return new foo1;
+    else if (req_class_id == "foo2")
+       return new foo2;
+    else
+       throw exception;        
+    } // instantiate
+  }; // foo_factory
+</pre>
+
+<p>This approach falls prey to the usual complaints regarding if-else based implementations. If you have more than a few class types, the number of else branches becomes unwieldy. Every time the program needs the <I>last</I> class that the if-else logic checks for, <B>instantiate</B> will compare the requested class identifier against all known class identifiers. This problem can be a serious performance issue if your program spends a lot of its time allocating objects via the factory. If-else statements are also notoriously difficult to maintain. Every time a new class is added, you must hunt down the factory implementation and update the if-else block. As usual, the obvious approach is also the least maintainable.</p>
+
+<H4><FONT COLOR="#000080">Tables and Maps</FONT></H4>
+
+<p>Before I go further, perhaps I should take a little time to more explicitly state the problem definition for a factory. It really boils down to this:</p>
+<p>"Given an identifier, look up the chunk of code that is capable of instantiating the corresponding class."</p>
+<p>It seems to me that when you see the phrase "look up" in a problem definition, the word "table" or "map" should come to mind automatically. If you are willing to place each "chunk of code" into its own function, then you can build a simple two-column table. The first column contains the class identifier; the second contains a pointer to the appropriate function, like this:</p>
+
+<pre>
+struct table_entry
+   {
+   char const* class_id;
+   foo* (*pfn)(void);
+   };
+
+table_entry factory_table[] =
+   { { "foo1" , &amp;make_foo1 }
+   , { "foo2" , &amp;make_foo2 }
+   , { 0 , 0 } };
+</pre>
+
+<p>Once this table is built, the factory can be implemented such that it simply searches <B>factory_table</B> for the given class identifier:</p>
+
+<pre>
+class foo_factory
+   {
+   public:
+      foo* instantiate
+      (std::string const&amp; req_class_id )
+      throw( exception )
+      {
+      table_entry* p_entry = 
+         factory_table;
+      assert( p_entry );
+      while( p_entry-&gt;class_id )
+         {
+         assert( p_entry-&gt;pfn );
+         if ( req_class_id == 
+              p_entry-&gt;class_id )
+            return p_entry-&gt;pfn( );
+         ++p_entry;
+         }
+      throw exception;
+      } // instantiate
+   }; // foo_factory
+</pre>
+
+<p>This approach really isn't bad, but it has a few minor problems. First, the lookup is a simple sequential search, so it gains almost nothing over the if-else based approach in terms of worst-case performance. This can be patched over by requiring that <B>factory_table</B> be sorted and then using faster search algorithms. Unfortunately, doing so only adds to the major problem with this approach: it suffers from the same lack of maintainability as the if-else approach.</p>
+<p>When you add a new class, you have to do more than just implement a new instantiation routine for it; you have to register the instantiation routine in <B>factory_table</B>. If you forget, the compiler cares no more about it than if your instantiation routine simply returned a null pointer. When you run the program and it asks the factory for the new class, you'll get a big fat exception thrown in your face. The situation isn't much better in the case where you have to remove a class. This just causes compiler errors at the declaration of <B>factory_table</B>, which breaks the build. In this case, you get a bureaucratic build administrator breathing down your neck while you fix the problem.</p>
+<p>The only real advantages that this approach offers over if-else is that it lends itself to speed optimizations that the if-else approach doesn't. You can replace the simple table with a <B>std::map</B>, for example. This guarantees that the search for the appropriate instantiation routine will be found in an optimal amount of time. You could perform some hashing on the class identifier to reduce the lookup time even further.</p>
+<p>Neither of these optimizations addresses the basic problem that the maintenance of the table is placed upon your shoulders, however. Furthermore, they will typically also require that you include an initialization function that populates the map. This ends up being just one more thing that can go wrong as your program starts up.</p>
+
+<H4><FONT COLOR="#000080">Introduction to Dynamic Linking</FONT></H4>
+
+<p>So how can we implement a factory and guarantee that as classes are removed we don't get any compiler errors? How do we guarantee that as classes are added, they are capable of being instantiated from the factory?</p>
+<p>The answer, of course, is dynamic linking. Simply put, dynamic linking allows you to create a special type of module that the operating system can load at the request of a program. Once the module is loaded, the program can then find and call functions contained within the module. These modules are called dynamic link libraries, or DLLs, on Win32 platforms, and shared libraries on Unix platforms. For simplicity's sake, I will refer to them as DLLs.</p>
+<p>Both Unix and Windows allow you to load a DLL and then request a pointer to a function contained in that DLL. More importantly, you request the function pointer by giving the OS the name of the function. In other words, DLLs contain a table that behaves exactly like the one implemented earlier, except that the operating system is capable of searching the table for you. This table is referred to as the function export table.</p>
+<p>The feature that makes DLLs most attractive for factory implementation is not that the function export table exists, but that it is a trivial matter to guarantee that this table contains the correct functions. As you add classes, you merely include a short macro invocation afterwords, which causes a function to be added to the table. As you remove the class, you delete the macro invocation, which has the effect of removing the function from the table. <a href="list1.htm">Listing 1</a> contains an implementation of this macro.</p>
+<p>Once all the functions exist and are in the table, the only thing left is to provide a class factory that interacts with the OS to find the correct function and call it. A simple implementation of this class for the Win32 platform might look something like <a href="list2.htm">Listing 2</a>. As you'll notice, it is a little more complex than either the if-else or the simple table approach. This is because there is some overhead involved in dealing with DLLs; you have to make some OS calls to load the DLL, find the instantiation routine, and to close the DLL. The factory in this simple implementation is doing double duty as both a factory and as a "sentinel" for the DLL, guaranteeing that the DLL gets closed when the factory goes out of scope.</p>
+
+<H4><FONT COLOR="#000080">DLL Pitfalls</FONT></H4>
+
+<p>The implementation of a DLL based factory shown in <a href="list2.htm">Listing 2</a> has some problems that preclude its use in a production environment. For instance, if the factory is destroyed before all the objects implemented by the DLL are destroyed, those objects will be made invalid. That's because the code implementing the objects resides in the DLL, and destroying the factory causes the DLL to be unloaded by the OS. Any call into an invalidated object will typically cause an access violation, or worse.</p>
+<p>It is therefore necessary to tie each object instance to the DLL in which it resides. This is accomplished by using three DLL support classes: <B>dll_sentinel</B>, <B>dll_object_ref</B>, and <B>dll_object_ptr</B>.</p>
+<p>Class <B>dll_sentinel</B> (<a href="list3.htm">Listing 3</a>) is responsible for ensuring that the DLL is resident during the sentinel's lifetime. It keeps track of both the DLL name and the handle to that DLL. The first time a <B>dll_sentinel</B> is created, it asks the OS to load the DLL, and the OS sets the DLL's reference count to one. Every time another <B>dll_sentinel</B> loads the same DLL, the OS increments that DLL's reference count. When each <B>dll_sentinel</B> is destroyed, it asks the OS to close the DLL. The OS actually just decrements the DLL's reference count, and unloads the DLL only when that count reaches zero. The fact that the OS implements this reference counting scheme is fortunate, because it makes implementing <B>dll_sentinel</B> quite simple; there is no need to worry about one <B>dll_sentinel</B> unloading the DLL from underneath another <B>dll_sentinel</B>. If the OS didn't implement this scheme, it would be necessary to keep a map of DLL names to DLL handles and implement the counting manually.</p>
+<p><B>dll_object_ref</B> (<a href="list4.htm">Listing 4</a>) contains a <B>dll_sentinel</B>, a pointer to an object residing in the DLL, and a reference count. When a <B>dll_object_ref</B> is constructed, it finds the appropriate function in the DLL and uses it to initialize its pointer. When the <B>dll_object_ref</B> is destroyed, it deletes the object pointed to.</p>
+<p><B>dll_object_ptr</B> (<a href="list5.htm">Listing 5</a>) is similar to <B>std::auto_ptr</B>, except that its ownership semantics are slightly different. Copying one <B>dll_object_ptr</B> to another does not cause one of them to become invalidated or to lose ownership of the underlying object. Because <B>dll_object_ptr</B> takes advantage of <B>dll_object_ref</B>'s reference counting scheme, the underlying object gets destroyed only when all of its <B>dll_object_ptr</B>s are destroyed. Unlike the reference counting that <B>dll_sentinel</B> depends on, the reference counting employed by <B>dll_object_ref</B> and <B>dll_object_ptr</B> is not necessary to use DLLs. Rather, it is a convenience provided by the wrapper classes to make <B>dll_object_ptr</B> feel more like a real pointer: you can have multiple <B>dll_object_ptr</B>s point at the same actual object.</p>
+<p>It is also worth mentioning that this approach depends on more features than those provided by the ANSI C++ Standard, since the OS must support dynamic linking, and is therefore less portable than the simple table and <B>std::map</B> based approaches. This is not as bad as it sounds, since most modern operating systems do support dynamic linking. In practice, it means that the DLL wrapper classes are not implemented as elegantly as they could be, since their source must be riddled with <B>#ifdef</B>s to account for the differences in the platforms they do support.</p>
+<p>There is yet another pitfall to DLLs. If you allocate memory in a DLL, the only safe place to delete that memory is in the DLL. For this reason, <B>dll_object_ref</B> requires that the instantiated class implement a function called <B>destroy</B>, whose sole purpose is to delete the object. In the sample application, <B>destroy</B> is implemented as a private function, and <B>dll_object_ref</B> is a friend. This scheme guarantees that client code cannot delete an object other than by destroying its owner, the <B>dll_object_ref</B>.</p>
+
+<H4><FONT COLOR="#000080">A Sample Application</FONT></H4>
+
+<p>The sample application implements a simple postfix calculator. <a href="list6.htm">Listing 6</a> shows the source code for the calculation engine; <a href="list7.htm">Listing 7</a> shows a sampling of the classes defined in the DLL. The engine reads lines from standard input, where each line is either a number or an operator. To keep things simple, operators are specified by name rather than symbolically, so to add two numbers, the input would look like this:</p>
+
+<pre>
+1
+2
+plus
+</pre>
+
+<p>As the application reads each line, it first checks to see if the line is a string that is recognized by the class factory. If not, it converts the line to an integer and pushes it onto the stack. On the other hand, if the line is recognized, it passes the line to the factory to obtain an operator object. It then passes a reference to the stack to the operator object, which performs the operation. The calculator can easily be extended by simply adding new classes of operator. There is no need to recompile the calculator engine; only the DLL containing the operators.</p>
+<p>The source for the sample application, along with a full implementation of the class factory and DLL wrapper classes, is available in this month's source archive (<B>www.cuj.com/code/</B>). The DLL wrapper factories has been tested under Windows 95, 98, NT 4.0, and 2000, along with RedHat Linux 6.2.</p>
+
+</FONT></H4>DLL Function Lookup Performance</FONT></H4>
+
+<p>On Linux, <B>dlsym</B> (<B>src/dlfcn/dlsym.c</B>) is the function used to lookup a function in a DLL from its name. <B>dlsym</B> is a wrapper for <B>dlsym_doit</B> (<B>src/dlfcn/dlsym.c</B>). In a confusing twist, <B>dlsym_doit</B> is just a wrapper for <B>_dl_sym</B> (<B>src/elf/dl-sym.c</B>), which handles some special cases we aren't concerned with, and then calls <B>_dl_lookup_symbol</B> to actually find the symbol. <B>_dl_lookup_symbol</B> (<B>src/elf/dl-lookup.c</B>) generates a hash value from the function name and passes both to another function called <B>do_lookup</B> (<B>src/elf/do-lookup.h</B>). <B>do_lookup</B> then does a linear search through all functions that happen to share the same hash value. This number should be minimal and is hopefully equal to one. So it would seem that on Linux, at least, the performance of a symbol lookup should be pretty good.</p>
+<p>I attempted tracing through Windows 2000's implementation of <B>GetProcAddress</B> using the disassembler in Visual C++. Since I'm not exactly an assembly guru, I got confused and thought that I was looking at a simple linear search through the symbol table, using <B>strcmp</B> to check each entry. I had even written a draft of this article expressing that opinion. Luckily, I have several friends with access to the Windows 2000 source code and one of them was kind enough to check the source and tell me what it really does. To judiciously say that my analysis was dead wrong is completely fair. It turns out that Windows 2000 implements <B>GetProcAddress</B> with two searches. The first search converts the <B>HINSTANCE</B> into a pointer to the symbol table. My friend says that this search is a simple linear search through a linked list of loaded DLL <B>HINSTANCE</B>s. Once it has the symbol table, <B>GetProcAddress</B> performs a binary search through the symbol table. He says it does use <B>strcmp</B>, or a private implementation anyway, to check each entry. So, although Windows 2000 doesn't use hashing, at least its symbol lookup performance is O(log2n), where n is the number of functions exported by the DLL. The linear search to find the symbol table is somewhat troubling though, considering how many DLLs a typical application can have in memory at one time.</p>
+<p>Some optimizations can be made to improve performance. For instance, the factory can be modified to cache the locations of the instantiation routines in a <B>std::map</B>. Note that this doesn't require adding initialization code to build the map. As each instantiation request comes in, the factory checks first to see if the class identifier resides in the map. If so, then it calls the associated instantiation function. If not, then it asks the OS to find the function and stores its address for later requests. In fact, it makes sense to have this caching implemented in the DLL wrapper classes; that way you can share the <B>dll_sentinel</B> with code that may not have anything to do with class factories.</p>
+
+<H4><FONT COLOR="#000080">Conclusion</FONT></H4>
+
+<p>I have shown that by placing the class heirarchy into a DLL and using a special macro to place a routine into the DLL's export table, it is possible to make a table-based approach to implementing class factories easily maintainable. There are collateral benefits to this approach as well &#151; for example, you can use the same classes in multiple projects without recompiling them. By using the DLL wrapper classes provided in this article, you can write DLL-accessing code that is portable between Windows and a wide range of Linux platforms. Although I haven't tested them there, the wrapper classes should also work unchanged on Solaris, since the Linux implementation of DLLs is borrowed from Solaris.</p>
+
+<p><i><B>Early Ehlinger</B> is a Senior Software Engineer at Xqsite. In his spare time, Early enjoys skateboarding. He can be reached at <B>earlye@yahoo.com</B>.</i></p>
+
+<h4><a href="../../../source/2000/nov00/ehlinger.zip">Get Article Source Code</a></h4>
+
+</blockquote></body></html>

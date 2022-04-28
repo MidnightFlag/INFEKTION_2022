@@ -1,0 +1,209 @@
+<HTML>   
+     <HEAD>
+<TITLE>December 2000 Java Solutions/Developing for the PalmOS Platform using J2ME</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocjdec.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   Java</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Developing for the PalmOS Platform using J2ME</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Peter Meehan</FONT></H3>
+
+<BLOCKQUOTE>
+<p>What on earth can Java do on a Palm Pilot? A lot more than you might think.</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+
+<H4><FONT COLOR="#000080">Introduction</FONT></H4>
+
+<p>Realizing that one size does not fit the entire range of computing devices from the PDA (Personal Digital Assistant) to the enterprise server, Sun defined three different editions of Java 2 corresponding to different-sized platforms. These editions are:</p>
+
+<UL><LI>   J2EE (Java 2 Enterprise Edition) for enterprise-level applications running on enterprise servers
+<LI>   J2SE (Java 2 Standard Edition) for desktop client applications
+<LI>   J2ME (Java 2 Micro Edition) for small devices such as PDAs, cell phones, and set-top boxes</UL>
+
+<p>In this article, I present an overview of J2ME, indicate how to get started with J2ME development, and finally present a J2ME-based web cam application for the PalmOS.</p>
+
+<H4><FONT COLOR="#000080">J2ME</FONT></H4>
+
+<p>The range of devices supported by J2ME offers a variety of memory, display, and connectivity capabilities. For instance, a set-top box can have several megabytes of memory and be permanently connected to the Internet via cable modem, while a PDA will typically have several hundred kilobytes of memory and be infrequently connected to the Internet, if at all. To cope with this variety of platforms that fall under the "small device" umbrella, the J2ME designers introduced the concepts of Configuration and Profile. A Configuration defines a Java virtual machine and a set of core APIs. There are currently two configurations being defined under the JCP (Java Community Process). These are the CDC (Connected Device Configuration) and CLDC (Connected Limited Device Configuration). The CLDC is aimed at devices that have between 160 KB and 512 KB of memory, such as PDAs, cellphones, and pagers. It uses Sun's KVM (K Virtual machine), a small footprint Java virtual machine designed for small portable devices. The CDC is for 32-bit devices with more than 512 KB of memory. A Profile is related to the application or usage of a device. A Profile defines a Configuration and a set of APIs. Current Profiles being defined under the JCP include a PDA profile and a MIDP profile (Mobile Information Device) for cell phones and pagers. Both of these reference the CLDC.</p>
+
+<H4><FONT COLOR="#000080">JCP</FONT></H4>
+
+<p>The JCP is an open process for defining new additions to Java under industry and public scrutiny. Briefly the steps involved in defining a new addition are as follows:</p>
+
+<OL><LI>A JSR (Java Submission Request) defining the addition is submitted to a JCP Executive committee, which is comprised of elected industry representatives. The committee decides to accept or reject the JSR.
+<LI>If accepted, a CAFE (Call for Experts) is made to create an expert committee to fully define the JSR.
+<LI>A draft specification is submitted for public review by the expert committee.
+<LI>After review, the first public specification is made available along with a reference implementation.</OL>
+
+<H4><FONT COLOR="#000080">J2ME Development for the PalmOS</FONT></H4>
+
+<p>Java developers targeting the PalmOS platform will eventually use the PDA Profile. As stated previously, the PDA profile is based on the CLDC. At the time of this writing, the PDA profile has not yet reached the implementation stage; however a reference implementation of the CLDC is available. The CLDC contains the following packages:</p>
+
+<UL><LI>   <B>java.lang</B> &#151; a subset of the J2SE core package; one limitation of this package is a lack of floating-point support.
+<LI>   <B>java.util</B> &#151; a subset of the J2SE package
+<LI>   <B>java.io</B> &#151; contains stream classes for data input and output
+<LI>   <B>javax.microedition.io</B> &#151; a CLDC-specific package containing connection classes; supported connection types on the Palm include UDP (User Datagram Protocol) and TCP (Transmission Control Protocol) sockets and HTTP connections.</UL>
+
+<p>A notable absentee from these packages is a GUI API. The PDA profile will include GUI functionality, but until it is available, the Palm port of the CLDC contains a set of Palm-specific GUI classes for development and test of CLDC applications. These classes are in the <B>com.sun.kjava</B> package.</p>
+
+<H4><FONT COLOR="#000080">Getting Started</FONT></H4>
+
+<p>The CLDC can be downloaded from Sun's website, <B>java.sun.com</B>. Be sure to download the Palm port of the CLDC and overlay it on the main CLDC implementation as per the download instructions. The CLDC contains the CLDC specification, Java Documentation for the CLDC classes, the KVM in Palm database form, and tools to convert Java class files into application resource files suitable for upload to the Palm. Programmers without a Palm device can also write and test KVM programs by using the POSE (PalmOS Emulator). POSE is freely available from <B>www.palm.com</B>, although you must enter into a licensing agreement with Palm Computing to obtain a necessary ROM (read-only memory) image. If you do possess a PalmOS device, you can transfer the device's ROM image to your PC and use it to boot POSE. POSE offers stricter error checking than PalmOS itself and also includes a random input event generator called Gremlins, which is a useful automated testing facility. Loading new application resource files is also faster and simpler than HotSyncing your Palm, as all development and testing can be done from the PC.</p>
+
+<H4><FONT COLOR="#000080">The com.sun.kjava Package</FONT></H4>
+
+<p>The <B>com.sun.kjava</B> package provides a simple collection of 17 UI classes. It was originally delivered as part of an early access version of the KVM on the PalmOS. This UI is much simpler than the Swing or AWT toolkits, only supports monochrome screens, and has no layout managers. The constant 160x160 screen size obviates the requirement for layout managers, since layout managers adapt UIs to different screen sizes. While this simplifies the package, it does mean that programmers have to position components manually. The main UI class is <B>com.sun.kjava.Spotlet</B>. <B>Spotlet</B> provides an execution environment and event handling for Palm programs, and all Palm programs extend <B>Spotlet</B>. Spotlet provides methods for handling key and pen events. The following "Hello World" program illustrates the use of <B>Spotlet</B>.</p>
+
+<H4><FONT COLOR="#000080">Anatomy of a Spotlet Program</FONT></H4>
+
+<p><a href="list1.htm">Listing 1</a> shows the listing for a <B>HelloWorld</B> program. This program displays a button with the label "Hello World" and waits for the user to terminate it. The user can terminate the program in three ways</p>
+
+<UL><LI>   by pressing the button with the Palm stylus
+<LI>   by entering the character "q" via Palm's Graffiti script or the soft keyboard
+<LI>   by pressing the Agenda key</UL>
+
+<H4><FONT COLOR="#000080">The Spotlet Class</FONT></H4>
+
+<p>Like every KVM program, <B>HelloWorld</B> extends the <B>Spotlet</B> class:</p>
+
+<pre>
+public class HelloWorld extends Spotlet {
+</pre>
+
+<H4><FONT COLOR="#000080">Explicit Positioning</FONT></H4>
+
+<p>Since there are no layout managers in the KVM, the button must be centered manually:</p>
+
+<pre>
+String hello = "Hello World";
+int stringWidth = g.getWidth(hello); // get string dimensions
+int stringHeight = g.getHeight(hello);
+
+// Create a centered button.
+button = new Button(hello,
+                (SCREEN_WIDTH-stringWidth)/2,
+                (SCREEN_HEIGHT-stringHeight)/2);
+</pre>
+
+<H4><FONT COLOR="#000080">Explicit Painting</FONT></H4>
+
+<p>Updating the screen is entirely the responsibility of the programmer, as there is no window manager helping with the job. When a program starts up, the Graphics <B>clearScreen</B> method must be called to erase the KVM startup screen, and all components must be explicitly painted by a call to their <B>paint</B> method. There is a single graphics context in <B>com.sun.kjava</B>, which is returned by the static method <B>Graphics.getGraphics</B>.</p>
+
+<pre>
+g.clearScreen(); // erase screen contents
+button.paint();  // draw the button on the screen
+</pre>
+
+<H4><FONT COLOR="#000080">Event Handlers</FONT></H4>
+
+<p>The <B>Spotlet</B> class provides several event-handling methods that must be overridden by any program wishing to perform custom event processing. In <B>HelloWorld</B>, the <B>penDown</B> and <B>keyDown</B> methods are overridden to catch various quit events. The <B>keycode</B> argument to the <B>keyDown</B> method contains the code indicating the key that was pressed. This <B>keycode</B> is either the integer value representing the entered character or a constant representing one of the Hard or Soft (silkscreen) keys.</p>
+
+<pre>
+public void keyDown(int keycode) {
+    if ((keycode == Spotlet.KEY_HARD1) || // Agenda key
+        (keycode == 'q')) // letter 'q'
+        System.exit(0);
+}
+</pre>
+
+<p>Pen events on the main Palm screen are handled by the <B>penDown</B> method. The <B>HelloWorld</B> <B>penDown</B> method tests to see if the pen's x and y coordinates are in the button by calling the Button <B>pressed</B> method. <B>pressed</B> has a dual role &#151; in addition to returning a Boolean indicating the button containing the pen, it also causes the button to invert, providing button-pressed feedback.</p>
+
+<pre>
+public void penDown(int x,int y) {
+    // test if pen in button and show button feedback
+    if (button.pressed(x,y)) {
+       System.exit(0);
+   }
+}
+</pre>
+
+<p>In order to receive any events, the application must register itself. Registering also implicitly unregisters any currently registered <B>Spotlet</B>. (Applications can contain multiple <B>Spotlet</B>s, although only one receives events at any one time). The <B>register</B> method takes a single argument that indicates whether the application wants to receive hard-key events. If the <B>Spotlet</B> does not register for system events, these keys provide their normal functions (e.g., displaying the address book application and consequently terminating the application). It is therefore advisable to always register for system keys, even if the application does not need to process them:</p>
+
+<pre>
+spotlet.register(Spotlet.WANT_SYSTEM_KEYS);  
+</pre>
+
+<H4><FONT COLOR="#000080">Building and Running the Application</FONT></H4>
+
+<p>Building and running a CLDC Palm application is a four-step process. The following explanation presumes the CLDC is installed on a Windows machine in the <B>C:\java\j2me_cldc</B> directory.</p>
+<p>1.  Set up the <B>classpath</B> to include the CLDC and Palm UI classes and compile the Java source using the standard JDK <B>javac</B> compiler.</p>
+<pre>
+set KVM_HOME=c:\java\j2me_cldc\bin
+set CLASSPATH=%KVM_HOME%\..\tools\palm\
+    classes.zip;%KVM_HOME%\api\classes;.
+mkdir tmpdir
+javac HelloWorld.java -d tmpdir
+</pre>
+
+<p>The <B>-d</B> option is supplied to <B>javac</B> to force the output class files to be placed in a separate directory. This is in preparation for Step 2.</p>
+<p>2.  Perform the preverification process. Verification is performed at run time by the Java virtual machine for J2SE and J2EE applications. It is not feasible to perform all of this memory- and compute-intensive operation on a small device, so the majority is done during a preverification process at compile time. The preverification process creates class files in a format that supports rapid final verification at run time on the device.</p>
+
+<pre>
+%KVM_HOME%\preverify -d . tmpdir
+</pre>
+
+<p><B>preverify</B> takes all class files in <B>tmpdir</B> and writes the preverified version of each to the current directory.</p>
+<p>3.  Next the Java class files must be converted to a Palm Resource Specification using the <B>MakePalmApp</B> tool included with the CLDC. This tool is used as follows [line broken to fit column layout]:</p>
+
+<pre>
+java palm.database.MakePalmApp -v -icon kjava.bmp
+   -bootclasspath %CLASSPATH% -classpath .
+   -name Hello -o HelloWorld.prc HelloWorld
+</pre>
+
+<p>Its arguments include the icon used to represent your application in the Palm Applications screen, the <B>bootclasspath</B> used to find the <B>MakePalmApp</B> class, the <B>classpath</B> to be used to locate your Palm application's class files, and the name of your application class. The above command produces a <B>HelloWorld.prc</B> file, which can be loaded on to the Palm.</p>
+<p>4.  Loading the prc file is achieved by using the Palm App Install tool, which adds <B>HelloWorld.prc</B> to the list of applications to be loaded on to the Palm during the next HotSync operation, or by the POSE Install Application/Database command.</p>
+<p>When the application is loaded, its icon appears on the Applications screen. Note that if the Applications screen is displayed before you load your application, you may need to switch to another application and then back to the Applications screen before the new application's icon appears.</p>
+
+<H4><FONT COLOR="#000080">A J2ME Web Cam</FONT></H4>
+
+<p>The Palm is best known for its preloaded personal organizer applications, but its TCP/IP support can be leveraged to turn the Palm into a thin-client for Internet applications. The remainder of the article describes a CLDC web camera, developed as part of an ongoing collaboration between LOOX Software and members of Sun's Jini evangelist group. This collaboration focuses on a web-based monitoring and control system for a Jini-enabled house. The current user interface for the system, shown in <a href="fig1.htm">Figure 1</a>, is a J2SE application developed using Java Foundation Classes/Swing and JLOOX graphics components. The interface has three main areas of functionality:</p>
+
+<UL><LI>   Control &#151; via an interactive schematic drawing of the house, the user can activate various Jini-enabled devices, including the TV, fan, lights, and aquarium pumps.
+<LI>   Monitoring &#151; the system displays a continuously updating set of temperature and humidity readings from sensors placed inside and outside the house.
+<LI>   Camera &#151; the user interface can display an image from one of several cameras placed throughout the house, allowing the user to really see what's happening from anywhere in the world.</UL>
+
+<p>The Camera interface is the first area of functionality ported to the CLDC. The J2SE version of the Camera interface allows the user to select one of a number of preset camera views or to manually select pan/zoom/tilt settings for a camera. The parameters of the camera view are encoded as a URL, which is passed to the JLOOX <B>LxImage</B> object constructor, for example:</p>
+
+<pre>
+http://.../halfsize.jpg?camera=5&amp;pan=0&amp;tilt=2&amp;zoom=1
+</pre>
+
+<p>The <B>LxImage</B> object retrieves the image from the URL and displays it in a Swing component.</p>
+<p>This two-tier architecture is extended to three tiers for the KVM web cam, as illustrated in <a href="fig2.htm">Figure 2</a>. The steps involved in displaying a camera image on the Palm are as follows:</p>
+
+<OL><LI>The user selects a preset camera view from a list of choices, and the client sends the associated URL string over a newly established socket connection to a Camera Server.
+<LI>The Camera Server creates a URL object from the URL string and calls the Swing <B>Toolkit.createImage(URL)</B> method to retrieve the image from the web server controlling the actual camera in the Jini house.
+<LI>The color image is sent to the Camera Server by the web server, dithered, and converted to an array of bytes. This byte array is in a format used by the <B>com.sun.kjava.Bitmap</B> class constructor. <a href="fig3.htm">Figure 3</a> illustrates the color-to-grayscale-to-monochrome dithering process used by the Camera Server.
+<LI>The monochrome image is sent back to the Camera Client and used to construct a Bitmap object, which is then painted to the Palm screen. See <a href="fig4.htm">Figure 4</a>.</OL>
+
+<p>The Camera Client code consists of three classes: <B>CameraClient</B>, <B>CameraSelector</B>, and <B>ImageViewer</B>. The code for these classes is shown in <a href="list2.htm">Listings 2</a>, <a href="list3.htm">3</a>, and <a href="list4.htm">4</a> respectively.</p>
+<p><B>CameraClient</B> initializes itself, creates an instance of <B>CameraSelector</B>, and passes control to it. Thereafter <B>CameraClient</B> acts as a dispatcher, passing data between and scheduling instantiation and cleanup of the <B>CameraSelector</B> and <B>ImageViewer</B> classes.</p>
+<p><B>CameraSelector</B> displays a list of preset camera views in a kjava <B>SelectScrolledTextBox</B> instance. When the user clicks on a preset view, the corresponding URL string is passed back to the <B>CameraClient</B>'s <B>handleImageRequest</B> method. <B>handleImageRequest</B> resets the reference to <B>CameraSelector</B>, runs the garbage collector, creates an <B>ImageViewer</B> instance, and passes the URL string to the <B>ImageViewer</B> <B>retrieveImage</B> method. The <B>retrieveImage</B> method stores the image description and URL string, registers for system events, and starts up a thread to manage communication with the Camera Server.</p>
+<p>The image thread creates a socket connection to the Camera Server and sends it the URL string. The thread then does a blocking read on the socket and waits for a six-byte reply from the Camera Server. This reply contains the magic string <B>"Imag"</B> and the width and height of the image. If the width and height are valid, the image thread sends the command <B>"Ack"</B> to the Camera Server, allocates space for the image data, and sets up a loop to read the data from the socket. As data arrives, it is stored in the <B>imageBuffer</B> array. Once the complete image is received, the socket is closed and a Bitmap object is constructed from the <B>imageBuffer</B> data. The bitmap is then painted to the screen.</p>
+<p>The user returns to the <B>CameraSelector</B> view by pressing the Agenda key. The <B>handleKeyDown</B> method calls the <B>CameraClient</B> <B>handleViewerDone</B> method, which resets the reference to the <B>ImageViewer</B> object, runs the garbage collector, and creates a new <B>CameraSelector</B> instance.</p>
+
+<H4><FONT COLOR="#000080">Conclusion</FONT></H4>
+
+<p>Java will be an important development language for embedded and portable applications. Although crucial specifications such as the PDA Profile are not yet complete, the participation of industry giants, such as Ericsson, Motorola, Nokia, and Palm Inc., in the specification of J2ME technologies indicates the importance attached to Java in this space.</p>
+
+<H4><FONT COLOR="#000080">Acknowledgements</FONT></H4>
+
+<p>Thanks to my friends John Wetherill and Doug Sutherland of Sun Microsystems &#151; builders of the Jini House &#151; for the opportunity to participate in their inspirational project.</p>
+
+<H4><FONT COLOR="#000080">Resources</FONT></H4>
+
+<p>For further information please see:</p>
+<UL><LI>   Java Community Process, <B>http://java.sun.com/aboutJava/communityprocess/jcp2.html</B>.
+<LI>   Java 2 Micro Edition, <B>http://java.sun.com/j2me</B>.
+<LI>   Connected Limited Device Connection, <B>http://java.sun.com/aboutJava/communityprocess/jsr/jsr_030_j2melc.html</B>.
+<LI>   The Los Gatos Project, <B>http://java.sun.com/features/2000/06/jeniuses.html</B>.</p></UL>
+
+<p><i><B>Peter Meehan</B> is President of LOOX Software Inc. in Los Altos, CA, where he is heavily involved with the LOOX range of dynamic graphics development tools. His interests include user interfaces, graphics and distributed computing, and the application of these technologies to supervision and control applications. He holds a B.A.I. in Computer Science and Electronic Engineering and an M.Sc. in Computer Science from Trinity College Dublin, Ireland. He can be contacted at <B>meehanp@home.com</B>.</i></p>
+
+<h4><a href="../../../source/2000/jdec00/meehan.zip">Get Article Source Code</a></h4>
+</blockquote></body></html>

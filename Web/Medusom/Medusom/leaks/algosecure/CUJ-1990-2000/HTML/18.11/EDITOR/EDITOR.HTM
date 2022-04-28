@@ -1,0 +1,24 @@
+<HTML>   
+     <HEAD>
+<TITLE>November 2000/Editor's Forum</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocnov.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   Departments</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Editor's Forum</FONT></H2>
+
+<HR>
+<BLOCKQUOTE>
+<p>I just got the October issue of our sister publication, <I>Dr. Dobb's Journal,</I> and sure enough, the lead article covers Microsoft's new language, C#. The article is written by Scott Wiltamuth, a member of the C# design team. He introduces C# as an attempt to provide "the best of C++ and VB [Visual Basic] &#151; productivity by default and power on demand." Productivity by default. Now there's a nice management slogan. VB, of course, is supposed to be the productivity half of this equation, which seems a bit unfair to C++, but I understand what Wiltamuth is driving at. VB programmers are productive because they don't spend hours chasing memory bugs. (They just spend hours waiting for their programs to finish.) Given Wiltamuth's employment at Microsoft, I can see why he uses VB as an example of a safe, but underpowered language. It is strange though, that his article never once mentions Java. It is decidely strange, since the C# code in it looks <I>so much</I> like Java; makes you wonder what Microsoft is trying to pull.</p>
+<p>I suspect not much. Maybe Microsoft is just weary of Java. Maybe they don't desire a PR war with Sun, and it is easier to avoid one by remaining silent. But comparisons between C# and Java are inevitable, given their striking similarities. These similarities occur on three levels:</p>
+<UL><LI>   <I>Syntax.</I> Like Java, C# has forgone the unsightly <B>::</B> operator of C++. All members are accessed via the dot. Also as in Java, access modifiers are applied on a member-by-member basis. And classes are defined whole, not split up between header and source files.
+<LI>   <I>Object model.</I> As in Java, all C# objects derive from a single <B>object</B> class. C# has both primitives and reference types, and like Java, a scheme for wrapping primitives in objects, so that they can be stored in containers.
+<LI>   <I>Execution model.</I> Just as compiling Java produces byte code, compiling C# produces an intermediate language, appropriately named IL. The IL executes in a "managed environment" which provides garbage collection, just like Java.</UL>
+<p>Here the similarity ends, however. The C# execution environment looks to be far more powerful than the Java JVM. Among other things, it implements a "common language specification," a sort of binary standard which allows interoperability with other languages. The commonly given example of a cool thing you can do is derive a C++ class from a VB base class. Well, that does sound pretty cool &#151; and it points up one last similarity between C# and Java: the most interesting thing about these languages isn't the languages themselves; it's the environments in which they execute.</p>
+<p>I don't know if we are entering the era of the "Managed Execution Environment." I kind of hope not, especially if those environments are controlled by the likes of Sun and Microsoft. Once again, we must rethink our dearest assumptions about computing &#151; what it means to be a "C-like" language, whether environment should be considered part of language, and so on. But at least it keeps things interesting. If you want read more about C#, see <B>http://msdn.microsoft.com/vstudio/nextgen</B>.</p>
+<p>P.S. Want a preview of upcoming <I>CUJ</I> web and magazine articles? Sign up for our email newsletter. Point your browser to <B>www.cuj.com</B> to find out more.</p>
+Marc Briand<br>
+Editor-in-Chief</p>
+<p><B>Publisher's Note:</B> In the September 1990 issue of the then <I>C Users Journal,</I> our distinguished former publisher Robert Ward wrote as follows: "I am pleased and excited to announce that Dr. P.J. Plauger will become editor of <I>The C Users Journal,</I> effective with the November 1990 issue." It's my sad duty as current publisher to announce that with this, the November 2000 issue, Dr. Plauger ends his formal relationship with the magazine, rounding off a decade of invaluable service to the C/C++ programming community. On behalf of CMP Media Inc., the past and present staff of <I>C/C++ Users Journal</I>, but most significantly, the many thousands of readers whom he has instructed and entertained, I extend to Dr. Plauger our heartfelt thanks for a job well done, along with an invitation to return to our pages whenever the opportunity presents itself. &#151; Martha Masinton</p>
+</blockquote></body></html>

@@ -1,0 +1,103 @@
+<HTML>
+<HTML><HEAD>
+<TITLE>November 2000/Extracting Data from X-Y Plots/Sidebar</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<H3 align=center><FONT COLOR="#000080">Walking through the Math</FONT></H3>
+
+<HR>
+
+<BLOCKQUOTE>
+<p>In order to understand the implementation of the data extraction algorithm, it is necessary to review some mathematics, which I will present using an example. If you are not interested in math, you can safely skip this sidebar.</p>
+<p><a href="fig2.htm">Figure 2</a> shows a diagram imported into the document's client window. For simplicity, the diagram contains only one data point (<B>D</B>) without any error bars. The physical diagram is slightly tilted within the client window because some minimal tilting will always be introduced when scanning a diagram. The tilt has been somewhat exaggerated for the purpose of the example.</p>
+<p>The user has already marked points <B>A</B> and <B>B</B> on the physical axis, entered their respective physical values (10 and 50 in the example) into the pop-up dialog, and acquired the sole data point <B>D</B>. SCANDAT has to calculate the physical x and y of the data point <B>D</B> in the physical coordinate system of the diagram. The calculations for the physical x and y values of D are formally identical (using different axes, of course); therefore, I restrict the discussion to the calculation of the physical x value of <B>D</B>.</p>
+
+<H4><FONT COLOR="#000080">Projecting the Data Point onto the X Axis</FONT></H4>
+
+<p>To obtain the physical x value of data point <B>D</B>, we project the data point onto the physical x axis. This is accomplished by first finding the device coordinates of the projected point. This section shows how to find those device coordinates. The next section will show how to calculate the physical coordinates of the projected point from the device coordinates.</p>
+<p>The diagram shows a projection line <B>p(x)</B> from the data point to the physical x axis. It is possible to interpret the physical x axis <B>g(x)</B> and the projection line <B>p(x)</B> as mathematical functions within the coordinate system of the device. <B>g(x)</B> and <B>p(x)</B> can be expressed according to formula (1):</p>
+
+<pre>
+g<SUB>d</SUB>(x<SUB>d</SUB>) = m*x<SUB>d</SUB> + c
+p<SUB>d</SUB>(x<SUB>d</SUB>) = M*x<SUB>d</SUB> + C
+</pre>
+
+<p>where <B>x<SUB>d</SUB></B> and <B>g<SUB>d</SUB></B> are the x and y device coordinates, respectively, along the line <B>g(x)</B>; <B>x<SUB>d</SUB></B> and <B>p<SUB>d</SUB></B> are the x and y coordinates along the line <B>p(x)</B>.</p>
+<p>The quantities <B>m</B> and <B>c</B> of <B>g(x)</B> can be directly expressed in terms of the device coordinates of axis points <B>A</B> and <B>B</B> using formulas (2) and (3).</p>
+
+<pre>
+m = (B.y<SUB>d</SUB> - A.y<SUB>d</SUB>)/(B.x<SUB>d</SUB> - A.x<SUB>d</SUB>)
+c = A.y<SUB>d</SUB> - m * A.x<SUB>d</SUB>
+</pre>
+
+<p>To express <B>p(x)</B> in terms of user input, we use the fact that <B>p(x)</B> is orthogonal to <B>g(x)</B>, which means the slope <B>M</B> of <B>p(x)</B> is the negative inverse of the slope <B>m</B> of <B>g(x)</B>:</p>
+
+<pre>
+M = -(B.x<SUB>d</SUB> - A.x<SUB>d</SUB>)/(B.y<SUB>d</SUB> - A.y<SUB>d</SUB>)
+</pre>
+
+<p>With <B>M</B> as a known quantity, we can use formula (3) to write <B>C</B> in terms of <B>A</B>, <B>B</B>, and <B>D</B>.</p>
+
+<pre>
+C = D.y<SUB>d</SUB> - M * D.x<SUB>d</SUB>     &lt;==&gt;
+C = D.y<SUB>d</SUB> + D.x<SUB>d</SUB> * (B.x<SUB>d</SUB> - A.x<SUB>d</SUB>)/(B.y<SUB>d</SUB> - A.y<SUB>d</SUB>)
+</pre>
+
+<p><B>g(x)</B> and <B>p(x)</B> are now expressed entirely in terms of known quantities.</p>
+<p>The next task is to calculate the coordinates of point <B>P</B>, where <B>g(x)</B> and <B>p(x)</B> intersect. The device x coordinate of <B>P</B> is given by the equation:</p>
+
+<pre>
+g(x) = p(x)
+</pre>
+
+<p>The solution for <B>x</B> is:</p>
+
+<pre>
+x = (C - c) / (m - M)            ( = P.x )
+</pre>
+
+<p>Substituting <B>P.x<SUB>d</SUB></B> into the expression for <B>g(x)</B> or <B>p(x)</B> yields the device y coordinate of <B>P</B>:</p>
+
+<pre>
+y<SUB>d</SUB> = M * P.x<SUB>d</SUB> + C = m * P.x<SUB>d</SUB> + x    ( = P.y<SUB>d</SUB> )
+</pre>
+
+<p>The above yields the coordinates of the projection point <B>P</B> expressed in terms of the coordinates of <B>A</B>, <B>B</B>, and <B>D</B>. These coordinates, however, are <I>device</I> coordinates. What we are really interested in is the <I>physical</I> x coordinate of <B>P</B>. This is calculated in the next step, using the device coordinates of <B>P</B> as input.</p>
+
+<H4><FONT COLOR="#000080">Reading the Physical Value</FONT></H4>
+
+<p>Let us denote the distance between points <B>A</B> and <B>B</B> in device coordinates by <B>(AB)<SUB>d</SUB></B> and in physical coordinates by <B>(AB)<SUB>p</SUB></B>. Similarly, the distance between <B>A</B> and <B>P</B> is written as <B>(AP)<SUB>d</SUB></B> in device and <B>(AP)<SUB>p</SUB></B> in physical coordinates. In the case of a linear axis, the following relationship holds:</p>
+
+<pre>
+(AP)<SUB>p</SUB> / (AB<SUB>p</SUB>) = (AP)<SUB>d</SUB> / (AB)<SUB>d</SUB>
+</pre>
+
+<p>The distance from point <B>A</B> to <B>B</B> in physical coordinates <B>(AB)<SUB>p</SUB></B> is known: it is the difference in physical values entered by the user for the axis defining points. In the example, these values are 10 and 50 respectively, therefore <B>(AB)<SUB>p</SUB> = 40</B>. <B>(AB)<SUB>d</SUB></B> and <B>(AP)<SUB>d</SUB></B> can be calculated using the law of Pythagoras, since their respective device coordinates are known:</p>
+
+<pre>
+(AP<SUB>d</SUB>) = SQRT ( (A.x<SUB>d</SUB> - P.x<SUB>d</SUB>)<SUP>2</SUP> + (A.y<SUB>d</SUB> - P.y<SUB>d</SUB>)<SUP>2</SUP> )
+(AB<SUB>d</SUB>) = SQRT ( (A.x<SUB>d</SUB> - B.x<SUB>d</SUB>)<SUP>2</SUP> + (A.y<SUB>d</SUB> - P.y<SUB>d</SUB>)<SUP>2</SUP> )
+</pre>
+
+<p>This is why we needed to calculate the device coordinates of <B>P</B> in the previous section. Therefore, we can calculate the distance between <B>P</B> and <B>A</B> in physical coordinates:</p>
+
+<pre>
+(AP)<SUB>p</SUB> = (AP)<SUB>d</SUB> * (AB)<SUB>p</SUB> / (AB)<SUB>d</SUB>
+</pre>
+
+<p>The actual physical value of <B>P</B> is then given by</p>
+
+<pre>
+P.x<SUB>p</SUB> = A.x<SUB>p</SUB> + (AP)<SUB>p</SUB>
+</pre>
+
+<p>This is true only in those cases where <B>P</B> falls to the right of <B>A</B>, as in the example. Otherwise, the expression is</p>
+
+<pre>
+P.x<SUB>p</SUB> = A.x<SUB>p</SUB> - (AP)<SUB>p</SUB>.
+</pre>
+
+<p>The program determines the proper sign by evaluating the inner product between the vectors from <B>A</B> to <B>P</B> and <B>A</B> to <B>B</B> respectively. But that's another story.</p>
+<p>The formulas must be modified when logarithmic scales are involved. I will omit this here, but you can see them in <a href="list2.htm">Listing 2</a>.</p>
+<p><B>P.x<SUB>p</SUB></B> is the physical x value of the data point <B>D</B>. To obtain the physical y value of <B>D</B>, the calculations shown above have to be repeated, substituting for <B>A</B> and <B>B</B> the corresponding points on the physical y axis.</p>
+</blockquote></body></html>

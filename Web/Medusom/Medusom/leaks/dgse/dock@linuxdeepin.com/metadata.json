@@ -1,0 +1,8 @@
+{
+    "shell-version": [ "3.2" ],
+    "uuid": "dock@linuxdeepin.com",
+    "name": "Deepin Enhanced Dock",
+    "description": "Deepin Enhanced Dock",
+    "localedir": "/usr/share/locale", 
+    "url": "http://www.linuxdeepin.com"
+}

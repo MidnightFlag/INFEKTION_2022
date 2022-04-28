@@ -1,0 +1,109 @@
+<HTML>   
+     <HEAD>
+<TITLE>December 2000/The New C</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocdec.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   C/C++ Contributing Editors</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">The New C: Integers in C99, Part 1</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Randy Meyers</FONT></H3>
+
+<BLOCKQUOTE>
+<p>C has its roots in typeless languages, but it has come a long long way from its humble beginnings.</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+<p>Back in the 1980s before the ANSI C Standard and function prototypes, there were occasional flame wars in the comp.lang.c newsgroup over the C type system. The wars would start when Pascal proponents would berate C for lacking strict type checking. Out of pure contrariness, the C camp would sometimes disingenuously argue against type checking in general: "C doesn't need strong typing because C programs only use three types: <B>int</B>, <B>char</B>, and pointer to <B>char</B>," wrote one poster.</p>
+<p>This exaggeration has some humor to it because it has some truth to it as well. In much of C programming, particularly systems programming, integers of different sizes are the fundamental data type. Sure, you have arrays of them and structures of them; sometimes they represent numbers and sometimes they represent characters, but almost everything is some type of integer. The primary data type for SNOBOL is the string; for FORTRAN, the floating-point number; and for C, it is the <B>int</B>.</p>
+<p>That is not to say that C99 does not have significant new floating-point features, because it does. However, to many C programmers, the integer is still king, and this month and the next I will cover the new integer features of C99.</p>
+
+<H4><FONT COLOR="#000080">No Longer the Default</FONT></H4>
+
+<p>C grew out of the typeless languages BCPL and B, and for a brief time was a typeless language itself <a href="#1">[1]</a>. It is not that those languages had no types; it is more accurate to say that they had one type, the machine word, which most operators treated as an <B>int</B>. Needless to say, declarations in those languages did not need to include a type specifier since there was only one (unnamed) type available. When Dennis Ritchie first added types to C, there were only two: <B>int</B> and <B>char</B>. I do not know if it was a nod to C's roots as a typeless language, or the popularity of <B>int</B>, or C's notable brevity, but C from its beginnings, until changed by C99, made <B>int</B> the default data type. If you declared an object or function and did not specify a type, or you implicitly declared a function by just calling it, the default type was <B>int</B>.</p>
+<p>For example, before C99, if the following was a complete translation unit:</p>
+
+<pre>
+extern x;
+f(y)
+{
+    register z = g(x) + y;
+    return z;
+}
+</pre>
+
+<p>then the variables <B>x</B>, <B>y</B>, and <B>z</B> all had type <B>int</B>, and the functions <B>f</B> and <B>g</B> had return type <B>int</B>. C99 requires that an implementation issue a diagnostic whenever a type would have defaulted to <B>int</B> under earlier definitions of C. The motivation for the diagnostic is that many uses of "implicit <B>int</B>" are errors that can be hard to spot, as in this complete translation unit:</p>
+
+<pre>
+int main()
+{
+    double d;
+    d = sqrt(2.0);
+    return 0;
+}
+</pre>
+
+<p>Since <B>sqrt</B> is implicitly declared, the compiler treats it as returning an <B>int</B>. While <B>sqrt</B> will correctly store somewhere its <B>double</B> return value, <B>main</B> will not necessarily know where that return value is stored. (On some machines, integers and floating point use different registers.) After <B>main</B> loads the return value (from possibly the wrong location), it will then convert the value from <B>int</B> to <B>double</B> in order to assign it to <B>d</B>. Since the result value was already a <B>double</B> (assuming that <B>main</B> correctly found it), this results in completely scrambling the result from <B>sqrt</B>.</p>
+<p>This sort of error can take many forms. For example, you might include the wrong header and not get a needed function declaration, or you might forget to include a type specifier when declaring an extern variable. The convenience of implicit <B>int</B> is outweighed by the difficulty of spotting the bugs it introduces. Even Ritchie himself reports he is glad to use a C compiler that forces function prototypes to be declared <a href="#2">[2]</a>.</p>
+<p>Note that the C99 Standard does not require that the diagnostic about implicit <B>int</B> be an error that stops the compilation. A wise implementation will make the diagnostic merely a warning, and have options to make the message an error or turn it off completely at the programmer's discretion.</p>
+
+<H4><FONT COLOR="#000080">long long and unsigned long long</FONT></H4>
+
+<p>The type <B>long long int</B> (a 64-bit or greater integer) has been an extension in some C compilers since the mid-1980s. It was added to C99 for several reasons:</p>
+
+<UL><LI>   64-bit machines are increasingly common. While the most popular mapping of C data types on such machines is <B>short</B> to 16 bits, <B>int</B> to 32 bits, and <B>long</B> to 64 bits, some 64-bit machines wish to keep <B>long</B> as 32 bits and have a new name for a 64-bit integer.
+<LI>   32-bit machines sometimes have to share data with 64-bit machines. The <B>long long</B> type gives 32-bit machines a way of handling 64-bit data.
+<LI>   Floating-point programmers sometimes find it useful to have an integer that can hold all of the mantissa bits of a <B>double</B>.
+<LI>   <B>long long</B> has sufficient utility and is now common enough to deserve standardization.</UL>
+
+<p>Note that <B>long long</B> is not part of the C++98 Standard, but it is increasingly common in C++ compilers. It is likely that a future revision of the C++ Standard will incorporate <B>long long</B> for compatibility with C.</p>
+<p>The types <B>long long</B> and <B>unsigned long long</B> are integer data types with at least 64 bits. They may be used wherever any integer type can be used. The header <B>&lt;limits.h&gt;</B> now defines the macros:</p>
+
+<UL><LI>   <B>LLONG_MIN</B>, the most negative number that can be stored in a <B>long long</B>
+<LI>   <B>LLONG_MAX</B>, the largest positive number that can be stored in a <B>long long</B>
+<LI>   <B>ULLONG_MAX</B>, the largest number that can be stored in a <B>unsigned long long</B></UL>
+
+<p>Since <B>long long</B> and <B>unsigned long long</B> are at least 64 bits long, <B>LLONG_MAX</B> expands into a 19-digit number that starts with <B>9</B>. <B>LLONG_MIN</B> expands into a negative 19-digit number. <B>ULLONG_MAX</B> expands into a 20-digit number. Of course, an implementation may use more than 64 bits for <B>long long</B>, and the above limits would be adjusted up as necessary.</p>
+
+<H4><FONT COLOR="#000080">long long constants</FONT></H4>
+
+<p>The new suffix <B>ll</B> or <B>LL</B> may be added to the end of an integer constant. Some examples: <B>7ll</B>, <B>7LL</B>, <B>07LL</B>, <B>0x7ll</B>. When added to a decimal integer constant, the constant has type <B>long long</B>. When added to an octal or hexadecimal integer constant, the constant has type <B>long long</B> if the constant can be represented, or <B>unsigned long long</B> if the constant is too big for <B>long long</B>. The <B>ll</B> and <B>LL</B> suffixes can be combined with the <B>u</B> and <B>U</B> suffixes to force the constant to have type <B>unsigned long long</B>. Some examples: <B>7Ull</B>, <B>7LLu</B>, <B>0x7llu</B>, <B>07ULL</B>.</p>
+<p>You need not use the new suffixes to have constants of type <B>long long</B> or <B>unsigned long long</B>. If an integer constant is too big to fit in any other type, it will have type <B>long long</B> or <B>unsigned long long</B> depending upon whether the constant was decimal versus octal or hexadecimal, and whether the <B>u</B> or <B>U</B> suffix was used or not. Next month's column will discuss this topic more fully, and explain how in a few very rare cases this may break old programs.</p>
+
+<H4><FONT COLOR="#000080">Conversions</FONT></H4>
+
+<p>The usual arithmetic conversions work with <B>long long</B> and <B>unsigned long long</B> as you would suspect. If you add a <B>long long</B> and a smaller integer type, the result is <B>long long</B>. If you add <B>unsigned long long</B> to a smaller integer type, the result is <B>unsigned long long</B>. If you add <B>long long</B> and <B>unsigned long long</B>, the result is <B>unsigned long long</B>. If you add <B>long long</B> or <B>unsigned long long</B> to a floating-point type, the result has the same floating-point type.</p>
+
+<H4><FONT COLOR="#000080">Operations</FONT></H4>
+
+<p>Since <B>long long</B> and <B>unsigned long long</B> are integer types, they may be used wherever any integer type can be used. This means that all of the usual arithmetic operators work on them, and they can be converted to floating-point types, etc.</p>
+
+<H4><FONT COLOR="#000080">printf and scanf</FONT></H4>
+
+<p>In C99, the <B>printf</B> and <B>scanf</B> families of functions support an optional <B>ll</B> length modifier (note that it must be in lower case). The <B>ll</B> length modifier can appear immediately before the <B>d</B>, <B>i</B>, <B>o</B>, <B>u</B>, <B>x</B>, or <B>X</B> format conversion specifier characters. For the <B>printf</B> functions, this means that the item being printed is <B>long long</B> or <B>unsigned long long</B>. For the <B>scanf</B> functions, this means that the corresponding argument is a pointer to <B>long long</B> or <B>unsigned long long</B>. You may also use the <B>ll</B> length modifier before the <B>n</B> conversion specifier character in <B>printf</B> functions in order to store a count of the characters written thus far into a <B>long long</B> pointed to by the corresponding <B>printf</B> argument.</p>
+<p>For example:</p>
+
+<pre>
+long long x;
+scanf("%lld", &amp;x);
+printf("%19lld is hex %#llX\n", x, x);
+</pre>
+
+<H4><FONT COLOR="#000080">Next Month</FONT></H4>
+
+<p>I have glossed over a few of the details concerning the rules giving the types of constants and the usual arithmetic conversions because they are best dealt with in next month's column. C99 permits implementations to add extra integer data types to the language, and the various rules concerning integers were generalized to handle the traditional integer types (<B>char</B>, <B>short</B>, <B>int</B>, <B>long</B>) and the new C99 integer types (<B>long long</B> and <B>_bool</B>) as well as implementation defined integers. Next month this will be covered, along with the new headers <B>&lt;inttypes.h&gt;</B> and <B>&lt;stdint.h&gt;</B>, which allow access to extended integers and which aid in increasing program portability.</p>
+
+<H4><FONT COLOR="#000080">Own a copy of the Standard</FONT></H4>
+
+<p>You can now download a copy of the C99 Standard in Adobe PDF format for $18. (In contrast, a paper copy of the Standard costs $220!). Visit <B>http://www.techstreet.com/ncitsgate.html</B>, and enter 9899 in the first search box.</p>
+<p>You might also want to pick up a copy of the C++ Standard for another $18. Search for standard 14882.</p>
+
+<H4><FONT COLOR="#000080">References</FONT></H4>
+
+<p><a name="1"></a>[1]  Dennis Ritchie. "The Development of the C Programming Language," In Bergin and Gibson, editors, <I>History of Programming Languages</I> (Addison Wesley, 1996). Originally in <I>ACM SIGPLAN Notices,</I> Vol. 28, No. 3 (March 1993).</p>
+<p><a name="2"></a>[2]  Dennis Ritchie. "Transcript of Question and Answer Session," page 696. In Bergin and Gibson, editors, <I>History of Programming Languages</I> (Addison Wesley, 1996). (Not part of the earlier <I>ACM SIGPLAN Notices</I> publication.)</p>
+
+<p><i><B>Randy Meyers</B> is consultant providing training and mentoring in C, C++, and Java. He is the current chair of J11, the ANSI C committee, and previously was a member of J16 (ANSI C++) and the ISO Java Study Group. He worked on compilers for Digital Equipment Corporation for 16 years and was Project Architect for DEC C and C++. He can be reached at <B>rmeyers@ix.netcom.com</B>.</i></p>
+
+</blockquote></body></html>

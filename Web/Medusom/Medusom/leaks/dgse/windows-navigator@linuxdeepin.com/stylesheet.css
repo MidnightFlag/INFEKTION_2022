@@ -1,0 +1,9 @@
+.extension-windowsNavigator-window-tooltip {
+    /* background-image: url("background.png"); */
+    font-weight: bold;
+	font-size: 2.5em;
+	width: 54px;
+	height: 54px;
+    text-shadow: 1px 1px 1px 1px #DDDDDD;
+    color: rgba(255,255,255,1.0);
+}

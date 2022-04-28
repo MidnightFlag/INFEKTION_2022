@@ -1,0 +1,28 @@
+template<typename target_ptr_type, typename member_ptr_type>
+class remember_function
+{
+public:
+    remember_function(target_ptr_type on, member_ptr_type call)
+      : ptr(on), member(call)
+    {
+    }
+    void operator()() const
+    {
+        (ptr->*member)();
+    }
+private:
+    target_ptr_type ptr;
+    member_ptr_type member;
+};
+template<typename target_ptr_type, typename member_ptr_type>
+remember_function<target_ptr_type, member_ptr_type>
+remember(target_ptr_type on, member_ptr_type call)
+{
+    return remember_function<
+                target_ptr_type, member_ptr_type>(on, call);
+}
+
+
+
+
+

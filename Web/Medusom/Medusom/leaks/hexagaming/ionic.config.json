@@ -1,0 +1,8 @@
+{
+  "name": "hexagame",
+  "app_id": "ba4a0c9d",
+  "type": "ionic-angular",
+  "integrations": {
+    "cordova": {}
+  }
+}

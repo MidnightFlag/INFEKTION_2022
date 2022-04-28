@@ -1,0 +1,165 @@
+<HTML>   
+     <HEAD>
+<TITLE>December 1999 Java Solutions/Handling Non-User Events in Swing</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocjsup.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   Java Solutions</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Handling Non-User Events in Swing</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Peter Meehan</FONT></H3>
+
+<BLOCKQUOTE>
+<p>Java's Swing API is not thread safe in general, but it can be made more so with just a few small additions.</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+
+<p>Swing is Java's pluggable look-and-feel user interface toolkit. Unlike many other Java packages and classes, Swing is not multithreaded. Once the user interface is created and painted to the screen, all updates to it must occur in the Swing event dispatch thread. The event dispatch thread is automatically started when the application or applet starts up, and all repaint and listener (user event handling) code is executed in this thread.</p>
+<p>In this article I show that Swing's lack of thread safety <a href="#1">[1]</a> poses problems when designing supervision applications, since these applications require a separate thread to handle communications with remote machines. I then discuss two capabilities Swing provides to overcome its single thread limitations, and finally present a multithreaded supervision application that illustrates how to overcome these limitations.</p>
+
+<H4><FONT FACE="Garamond" COLOR="#000080">User Events in Swing</FONT></H4>
+
+<p>Swing uses a delegation event model. In this model listener objects are added to user interface components to listen for events on those components. When an event occurs, Swing invokes the appropriate method of each listener in the event dispatch thread.</p>
+<p><a href="fig1.htm">Figure 1</a> shows a simple Java application containing Swing <B>JButton</B> and <B>JLabel</B> components. The label displays a count of the number of times the button is clicked. <a href="fig2.htm">Figure 2</a> contains a partial listing for this application. The main thread contructs an instance of the <B>ClickCount</B> application class and then lays out and displays the application window:</p>
+
+<pre>
+// Runs in the main thread
+static public void main(String args[]) {
+// instantiate application class
+   ClickCount click = new ClickCount();
+   click.pack(); // layout window and components 
+   click.show(); // make visible
+   // from this point on all UI 
+   // update must occur in the event thread
+}
+</pre>
+
+<p>The call to <B>show</B> paints the interface on the screen. From this point on, all updates to the interface must occur in the event dispatch thread. When the user clicks on the button, the <B>actionPerformed</B> method is called to update the interface:</p>
+
+<pre>
+// The actionListener runs in the event thread
+class CountClicks implements 
+ActionListener {
+   public void
+   actionPerformed(ActionEvent e) {
+      label.setText("Count is : " +
+         ++count); // update label ok
+   }
+}
+</pre>
+
+<p>Since <B>actionPerformed</B> runs in the event thread this is okay.</p>
+
+<H4><FONT FACE="Garamond" COLOR="#000080">What About Non-User Events?</FONT></H4>
+
+<p>There are, however, a large number of supervision applications which need to update the UI in response to non-user generated events. Factory automation, network management, and real-time quote display are examples of such applications. Their client UIs display data received from a remote process or processes via sockets or some other messaging mechanism. In all these cases input event processing generally consists of the following minimum sequence of steps:</p>
+<p>1.   read data<br>
+2.  process data<br>
+3.   update the UI</p>
+<p>The requirement to update the UI from the event dispatch thread complicates the efficient scheduling of data reads, user event handling, and UI repainting, since a blocking read of a socket in the event dispatch thread will freeze the UI. Conversely, a separate communications thread cannot update the user interface directly since this will break Swing's single-threaded requirements.</p>
+
+<H4><FONT FACE="Garamond" COLOR="#000080">A Potential Solution &#151; Timers</FONT></H4>
+
+<p>Swing provides timer facilities for the periodic execution of a task in the event dispatch thread. To use a timer you pass two arguments to the <B>Timer</B> constructor &#151; the task, which is an implementation of the <B>ActionListener</B> interface; and the delay time between invocations:</p>
+
+<pre>
+//Class to execute a periodic task
+class MyPeriodicTask implements
+ActionListener {
+   public void
+      actionPerformed(ActionEvent e) {
+   // .. do something
+   }
+}
+
+// Create a timer object with a 1000 
+// millisecond delay to execute an
+// instance of MyPeriodicTask.
+Timer timer =
+   new Timer(1000,
+       new MyPeriodicTask());
+timer.start(); // start up the timer
+</pre>
+
+<p>Timers offer a potential solution to the supervision application problem, since a periodic task could test for data on a socket, read and process any available data, and update the user interface. However, I believe timers are an inappropriate solution for the following reasons:</p>
+<p>1.  All reading, data processing, and UI update work occurs in the event dispatch thread. If the reading and processing are time-consuming processes then the interface refreshing and user event handling will be sluggish.</p>
+<p>2.  The lack of correlation between timer firing and the work to be done will either cause unnecessary delays in processing socket data (timer firing too infrequently) or unnecessary sluggishness in the UI (timer firing too often). This is a general problem with the use of polling to detect asynchronous events. For this reason timers are inappropriate for tasks other than animation, clock update, or others that are periodic by nature.</p>
+
+<H4><FONT FACE="Garamond" COLOR="#000080">A Better Solution &#151; Execution Scheduling</FONT></H4>
+
+<p>The <B>javax.swing.SwingUtilities</B> class provides two static methods that allow code to be scheduled for execution in the event dispatch thread. These methods are <B>static void invokeAndWait(Runnable task)</B> and <B>static void invokeLater(Runnable task)</B>. The <B>Runnable</B> interface (which the scheduled task must implement) contains the single method <B>void run()</B>.</p>
+<p><B>invokeAndWait</B> schedules its argument for synchronous execution on the event dispatch thread and returns only when the <B>run</B> method returns. <B>invokeLater</B> simply adds its task to a list of pending tasks on the event dispatch queue and returns immediately. Since <B>invokeLater</B> does not block, it is faster. It is also easier to use, as the following code fragments illustrate:</p>
+
+<pre>
+SwingUtilities.invokeLater
+   (
+      new Runnable() {
+             public void run() {
+             // ... update the UI 
+             // (not shown)
+             }
+          }
+   );
+
+try {
+   SwingUtilities.invokeAndWait
+      (
+         new Runnable() {
+                public void run() {
+                // ... update the UI 
+                // (not shown)
+                }
+             }
+      );
+
+} catch (InterruptedException e1) {
+     // this thread was interrupted 
+     // while waiting for run()
+     // to terminate
+} catch (java.lang.reflect.
+   InvocationTargetException e2) {
+    // an uncaught exception was thrown 
+    // during run's execution
+}
+</pre>
+
+<p>invokeAndWait</B> must be enclosed in a <B>try</B> block since it can throw two exceptions. If the current thread is interrupted while waiting for <B>run</B> to terminate, <B>invokeAndWait</B> throws an <B>InterruptedException</B>. If an uncaught exception is thrown during the execution of <B>run</B>, <B>invokeAndWait</B> wraps it in an <B>InvocationTargetException</B> and rethrows it.</p>
+<p>Note that in these examples the arguments to <B>invokeLater</B> and <B>invokeAndWait</B> are instances of anonymous classes, which implement the <B>Runnable</B> interface. Anonymous classes can be defined at their point of use and make for more compact code; however, I will show that they are not suitable for all occasions.</p>
+
+<H4><FONT FACE="Garamond" COLOR="#000080">A Multithreaded Swing Client</FONT></H4>
+
+<p>The remainder of the article presents a multithreaded Swing client that monitors the status of a simulated remote process consisting of multiple subsystems. <a href="fig3.htm">Figure 3</a> shows the running client. The client receives periodic status messages from various subsystems, which it displays to the user in a scrolled list. When a subsystem fails, the client asks the user to terminate that subsystem. <a href="fig4.htm">Figure 4</a> shows the subsystem failure dialog. The simulator is not presented here but source for the entire application is available at <B>www.cuj.com/java/code.htm</B>.</p>
+
+<H4><FONT FACE="Garamond" COLOR="#000080">Building the User Interface</FONT></H4>
+
+<p>Like any Swing application, the client builds and realizes its user interface in the main application thread. <a href="fig5.htm">Figure 5</a> shows user interface construction code from <B>SwingClient</B>. The <B>main</B> method creates an instance of <B>SwingClient</B>, whose contructor invokes the <B>buildUI</B> method to construct the user interface. Once the main frame is packed and displayed, all further updates to the user interface must occur in the event dispatch thread.</p>
+
+<H4><FONT FACE="Garamond" COLOR="#000080">Socket Communications</FONT></H4>
+
+<p>The client uses a separate thread to manage communications with the simulator. <a href="fig6.htm">Figure 6</a> shows the <B>Comms</B> constructor with error checking removed. The constructor opens a socket to TCP port 4444 on the local machine, then wraps the socket's input and output streams in a <B>BufferedReader</B> and <B>PrintWriter</B> respectively. A <B>BufferReader</B> provides efficient buffering of data from the socket's input stream, while <B>PrintWriter</B> provides convenient methods for writing formatted data to the socket.</p>
+
+<H4><FONT FACE="Garamond" COLOR="#000080">Handling Input Data</FONT></H4>
+
+<p><a href="fig7.htm">Figure 7</a> shows the <B>run</B> method of the <B>Comms</B> thread. When the blocking read returns with a new message from the simulator, <B>run</B> creates a new <B>MessageTask</B> with the message as argument. This message task is then added to the Swing event dispatch queue with <B>invokeLater</B>. Note that I use the named <B>MessageTask</B> class rather than an anonymous class as in the earlier example. This allows me to pass the actual message received as an argument to the constructor. <a href="fig8.htm">Figure 8</a> contains the code for <B>MessageTask</B>. The constructor stores the message argument, which the <B>run</B> method adds to the status list.</p>
+<p>If the received message is a <B>FAIL</B> message the subsystem name is extracted and stored in the <B>ConfirmTerminateTask</B>. <B>run</B> then passes the <B>ConfirmTerminateTask</B> instance to <B>invokeAndWait</B>. When <B>invokeAndWait</B> returns, the client calls the <B>terminateTask</B> method to see if the user wants to terminate the task. If the user has elected to terminate the failed subsystem, the client sends a <B>Kill</B> command to the simulator and the subsystem name is added to the list of subsystems to filter out of the incoming message list. Here I use <B>invokeAndWait</B> to execute the <B>ConfirmMessageTask</B> rather than <B>invokeLater</B>, since I know the result is available when <B>invokeAndWait</B> returns.</p>
+<p><a href="fig9.htm">Figure 9</a> contains the listing for <B>ConfirmTerminateTask</B>. It provides methods to set the subsystem name and retrieve the user's choice.</p>
+
+<H4><FONT FACE="Garamond" COLOR="#000080">Conclusion</FONT></H4>
+
+<p>Although Swing is essentially not multithreaded, it is possible to write multithreaded applications that update the Swing user interface. This can be done using the <B>SwingUtilities</B> <B>invokeLater</B> and <B>invokeAndWait</B> methods. <B>invokeLater</B> is faster and easier to use than <B>invokeAndWait</B> but cannot be used in all situations. As shown here, <B>invokeAndWait</B> must be used when a user interface update task returns a result. </p>
+<p><B>invokeAndWait</B> is also a better option when each task contains state information and memory usage must be kept to a minimum. When <B>invokeAndWait</B> returns, its associated task's <B>run</B> method has finished and the task instance can be reused. Since there is no built-in way of knowing when a task passed to <B>invokeLater</B> has terminated, a new task must be created for each invocation, which increases memory usage. This restriction does not apply to stateless classes, since a single task can be added to the event dispatch thread multiple times.</p>
+<p>The use of the <B>invokeLater</B> and <B>invokeAndWait</B> methods is more cumbersome than direct update of the user interface would be from a separate thread. However, Swing's single-threaded architecture offers one major advantage: developers of new Swing classes do not have to concern themselves with rendering their work thread safe. This greatly encourages reuse of existing Swing components and creation of new Swing JavaBeans.</p>
+
+<H4><FONT FACE="Garamond" COLOR="#000080">Note</FONT></H4>
+
+<p><a name="1"></a>[1]  It should be pointed out that some aspects of Swing are thread-safe. It is possible to modify listener lists and invoke repaint and validate methods from any thread.</p>
+
+<p><i><B>Peter Meehan</B> is President of LOOX Software Inc. in Los Altos, CA, where he is heavily involved with the LOOX range of dynamic graphics development tools. His interests include user interfaces, graphics and distributed computing, and the application of these technologies to supervision and control applications. He holds a B.A.I. in Computer Science and Electronic Engineering and an M.Sc. in Computer Science from Trinity College Dublin, Ireland. He can be contacted at <B>peter@loox.com</B>.</i></p>
+
+<h4><a href="../../../source/1999/jsup99/meehan.zip">Get Article Source Code</a></h4>
+
+</BLOCKQUOTE>
+</BODY>
+</HTML>

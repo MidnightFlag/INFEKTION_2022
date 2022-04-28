@@ -1,0 +1,46 @@
+<HTML><HEAD>
+<TITLE>November 2000/Standard C++ IOStreams and Locales/Listing 2</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 2: Facet member function do_out</A></h4>
+<pre>
+std::codecvt_base::result
+CaesarRotateCvt::do_out( std::mbstate_t &amp; state,
+                         const char * from,
+                         const char * from_end,
+                         const char *&amp; from_next,
+                         char * to,
+                         char * to_limit,
+                         char *&amp; to_next ) const
+{
+   std::locale classic( "C" );
+   const std::ctype&lt;char&gt; &amp; fac = 
+      std::use_facet&lt;std::ctype&lt;char&gt; &gt;( classic );
+   
+   int len = length( state, from, from_end, to_limit - to );
+   for( int i = 0; i &lt; len; i++ )
+   {
+      if( fac.is( std::ctype_base::alpha, from[ i ] ))
+      {
+         if( fac.is( std::ctype_base::upper, from[ i ] ))
+         {
+            to[ i ] = (( from[ i ] - 'A' + 13 ) % 26 ) + 'A';
+         }
+         else
+         {
+            to[ i ] = (( from[ i ] - 'a' + 13 ) % 26 ) + 'a';
+         }
+      }
+      else
+      {
+         to[ i ] = from[ i ];
+      }
+   }
+
+   from_next = from + len + 1;
+   to_next = to + len + 1;
+
+   return std::codecvt_base::ok;
+}
+</pre></body></html>

@@ -1,0 +1,4 @@
+page-hard {
+  @include border-difficulty($hard-color-secondary);
+  @include toolbar-border($hard-color-secondary);
+}

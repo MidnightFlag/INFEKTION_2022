@@ -1,0 +1,202 @@
+<HTML>   
+     <HEAD>
+<TITLE>November 2000/import java.*</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocnov.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   C/C++ Contributing Editors</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">import java.*: Basic Stream I/O</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Chuck Allison</FONT></H3>
+
+<BLOCKQUOTE>
+<p>Java supports input/output of streams with a gazillion combinations of options.</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+
+<p>You can't use a language effectively if it doesn't enable you to easily communicate with the outside world, whether through a display, a file system, or a network. Furthermore, a language's I/O facilities should be robust, cohesive, and easy to use. In 1979 I was on a project that used a proprietary language called PL/S III. It had a small keyword list, was nicely block-structured, and was easy to learn &#151; but it had no I/O capability whatsoever! I had been out of school only one year and was thoroughly dumbfounded. An I/O-less programming language? But...! What...? How...? Needless to say, I was full of questions. The answer: our local BAL <a href="#ref1">[1]</a> expert wrote assembler language routines to give us the I/O features we needed.</p>
+<p>Today's Internet culture will not tolerate such impediments to rapid development. When it comes to I/O power, Java has everything most developers could possibly wish for. In the unlikely case you don't find what you need, there are (as always) classes to extend and interfaces to implement, and as fast you can define <B>int MyInputClass.read(){...}</B>, you've solved your problem.</p>
+
+<H4><FONT COLOR="#000080">Abandon printf, All Ye Who Enter Here</FONT></H4>
+
+<p>If you're looking to save keystrokes, though, look somewhere else. Certainly you've discovered by now that Java is not known for it's economy of expression, and nowhere does verbosity rule and reign so mightily than in using Java's I/O classes. As in other areas of the Java library, flexibility is the name of the game. A quick glance at the <B>java.io</B> package reveals over forty classes spread throughout four hierarchies, with a few extra classes on the side (see <a href="fig1.htm">Figures 1</a>, <a href="fig2.htm">2</a>, <a href="fig3.htm">3</a>, <a href="fig4.htm">4</a>, and <a href="fig5.htm">5</a>). There are even more classes in these hierarchies if you open the lid on the packages <B>java.util.zip</B> and <B>java.security</B>, but I'll leave those for another time. It is indeed a daunting maze at first glance, but there is good design lurking beneath.</p>
+<p>The first thing to understand about these hierarchies is that the first two, <B>InputStream</B> and <B>OutputStream</B>, deal with streams of bytes, while the Readers and Writers traffic in characters, which are 16-bit Unicode quantities. If you're working with binary data, therefore, you'll probably want to use byte streams, whereas character streams are suitable for text processing.</p>
+<p>The second thing to note is that these classes fall into two broad categories, roughly referred to as low-level and high-level streams. Low-level streams are objects you define independently of any other stream, like a stream connected to files or arrays in memory, or pipes between processes. They include the following:</p>
+
+<pre>
+ByteArrayInputStream &amp;
+ByteArrayOutputStream
+FileInputStream &amp; FileOutputStream
+PipedInputStream &amp; PipedOutputStream
+CharArrayReader &amp; CharArrayWriter
+FileReader &amp; FileWriter
+PipedReader &amp; PipedWriter
+StringReader &amp; StringWriter
+</pre>
+
+<p>The rest are either abstract classes or high-level streams that act as wrappers to existing streams to add functionality thereto. For example, if you have a <B>FileOutputStream</B> you can make it a <B>BufferedOutputStream</B> for increased efficiency like this:</p>
+
+<pre>
+// First define a file stream:
+FileOutputStream fs =
+    new FileOutputStream("myfile.out");
+
+// Wrap in a buffered stream:
+BufferedOutputStream bfs =
+    new BufferedOutputStream(fs);
+</pre>
+
+<p>Or you can do it all at once like this:</p>
+
+<pre>
+BufferedOutputStream bfs =
+    new BufferedOutputStream(
+        new FileOutputStream(
+            "myfile.out"));
+</pre>
+
+<p>The wrapper buffers the output for efficiency when processing large files, and when you call <B>bfs.close</B> the underlying file stream also closes. This design obviates the need for a combinatorial explosion of classes such as <B>BufferedFileOutputStream</B>, <B>BufferedFileInputStream</B>, <B>BufferedByteArrayInputStream</B>, etc. <a href="#ref2">[2]</a>.</p>
+<p>Overwhelmed yet? I warned you about all the typing! If you read my article in the July 2000 issue about text formatting, you saw a whole family of classes just for formatting different kinds of numbers. The separation of formatting from I/O is good design, just like the separation among low-level and high-level streams, but it keeps your fingers busy and your source files full. Alas, there is no concise <B>printf</B>-like operation in Java Land!</p>
+
+<H4><FONT COLOR="#000080">Byte Streams</FONT></H4>
+
+<p>The basic contracts for all byte streams are defined in the abstract classes <B>InputStream</B> and <B>OutputStream</B> and consist of methods to read or write one or more bytes. The following command-line filter uses the pre-defined streams <B>System.in</B> and <B>System.out</B> to copy standard input to standard output.</p>
+
+<pre>
+import java.io.*;
+
+class CopyInput
+{
+    public static void 
+    main(String[] args)
+        throws IOException
+    {
+        int b;
+        while ((b = System.in.read()) !=
+                -1)
+            System.out.write(b);
+    }
+}
+</pre>
+
+<p>Most of the methods found in the <B>java.io</B> package may throw an exception derived from <B>java.io.IOException</B>. In real programs, you'll want to catch and process these exceptions, but for convenience and clarity, in this article I just include a <B>throw</B>s clause in the specification of <B>main</B>. As always, consult the online Java API documentation for more detail.</p>
+<p><B>InputStream.read</B> extracts the next byte from its underlying source and returns it as an <B>int</B> for the same reason that <B>getc</B> returns an <B>int</B> in C: so <B>-1</B>, the end-of-file indicator, will be distinct from any byte. <B>OutputStream.write</B> pushes a byte onto its underlying sink. It's important not to use <B>System.out.print</B> here. <B>System.out</B> is actually an instance of <B>PrintWriter</B>, whose print methods do some minimal formatting, which in this case would output the character representation of the byte code value of its argument. For example, in the ASCII character set an opening brace would print as <B>"123"</B> instead of <B>"{"</B>.</p>
+<p>To copy files with this program, you have to use redirection on the command line, of course, as in:</p>
+
+<pre>
+C:&gt; java CopyFile &lt;infile &gt;outfile
+</pre>
+
+<p>To read command-line arguments as file names explicitly, you can use <B>main</B>'s string array parameter, as follows:</p>
+
+<pre>
+import java.io.*;
+
+class CopyFile
+{
+    public static void 
+    main(String[] args)
+        throws IOException
+    {
+        // Copy files explicitly:
+        FileInputStream fin =
+        new FileInputStream(
+           args[0]);
+        FileOutputStream fout =
+        new FileOutputStream(
+           args[1]);
+
+        int b;
+        while ((b = fin.read()) != -1)
+            fout.write(b);
+
+        fin.close();
+        fout.close();
+    }
+}
+</pre>
+
+<p>Each constructor opens file streams for input/output automatically and throws an exception if the input file doesn't exist or if some other error occurs. You always need to close any top-level stream that you create. (Remember, Java doesn't have destructors like C++!) The program above will of course throw an <B>ArrayIndexOutOfBoundsException</B> if you don't provide two filenames on the command line. The program in <a href="list1.htm">Listing 1</a> combines the flexibility of the <B>CopyInput.java</B> and <B>CopyFile.java</B> above by defaulting to standard input or standard output if you omit any filenames.</p>
+<p>The program in <a href="list2.htm">Listing 2</a> shows how easy it is to define your own streams. In the case of an input stream, all you have to do is extend <B>InputStream</B> and override the <B>read</B> method, which returns the next byte from your stream. Here I just return a random byte value. The other <B>read</B> methods that extract an array of bytes are implemented in terms of <B>InputStream.read</B>, so I get those for free. After reading the first byte, I save the next three bytes in a byte array. I then wrap a <B>ByteArrayInputStream</B> around that array and read it again. The method <B>InputStream.read(byte[] arr)</B> returns the number of bytes read, up to <B>arr.length</B>. The <B>InputStream.available</B> method returns the number of bytes that can be read without blocking, which in this case is the entire array. <B>InputStream.mark</B> is like <B>ftell</B> in C &#151; it stores a file position that you can return to with the <B>reset</B> method, provided you don't read more than the number of bytes that you passed to <B>mark</B> initially. The <B>skip</B> method is an efficient way of ignoring bytes in a stream. The casts to byte are significant in this example. Remember that <B>int</B>s are actually returned. If I didn't do the cast, then negative numbers would print as their positive two's-complements.</p>
+
+<H4><FONT COLOR="#000080">High-Level Streams</FONT></H4>
+
+<p>The program in <a href="list3.htm">Listing 3</a> illustrates <B>SequenceInputStream</B>, a high-level input stream that wraps an arbitrary number of existing streams so that you can process them in sequence as a single stream. In this example, I treat the three log files depicted in <a href="list4.htm">Listings 4</a>, <a href="list5.htm">5</a>, and <a href="list6.htm">6</a> as a single log file. First I have to open each stream separately and place their stream references into any collection that can yield an <B>Enumeration</B> <a href="#ref3">[3]</a>. That enumeration then becomes the argument to the constructor for my <B>SequenceInputStream</B>, which I process as a single entity. <B>SequenceInputStream.close</B> automatically closes the underlying files' streams.</p>
+<p>It is often convenient to write program values out to files so that you can read them back later. You don't really need to know how it's done, nor do you ever plan on reading the intermediate file(s) &#151; you just want to reconstitute objects at some future time. This is a well known technique called <I>serialization</I> and is supported by two sets of classes in Java. The <B>DataOutputStream</B> class serializes Java's primitive types, as well as <B>String</B> objects, to an existing <B>OutputStream</B> with methods like <B>writeBoolean</B>, <B>writeInt</B>, <B>writeFloat</B>, etc.; a <B>DataInputStream</B> object reads those serialized bytes and reconstructs the corresponding objects, as shown in <a href="list7.htm">Listing 7</a>. </p>
+<p>It's instructive to look at the intermediate file, <B>data.dat</B>. Here it is in hexadecimal format (with linefeeds added for clarity):</p>
+
+<pre>
+/* Contents of data.dat in hex:
+00
+41
+00 41
+00 05 68 65 6C 6C 6F
+3F 80 00 00 00 00
+00 01
+*/
+</pre>
+
+<p>As you can see, Booleans are stored as single bytes with the value <B>0</B> for <B>false</B> (and non-zero for <B>true</B>), and a <B>char</B> is stored in two-byte Unicode format. The <B>writeUTF</B> method stores a string in UTF-8 format, which is a standard and efficient way of serializing Unicode strings. The first two bytes <B>(00 05)</B> constitute a short integer representing the number of bytes in the serialized representation of the string, which bytes then follow. Traditional ASCII characters require only one byte, the next 1,919 Unicode code points require two bytes, and the rest require three, so UTF-8 is good for ASCII, but wasteful for Asian characters.</p>
+<p>These data streams only work for primitives and strings. You can serialize arbitrary objects, including arrays, however, with <B>ObjectOutputStream</B> and <B>ObjectInputStream</B>. These are very intelligent classes. You can have objects within objects extending other objects, serialize them to a byte stream, and when you deserialize them all the relationships are intact. The program in <a href="list8.htm">Listing 8</a> defines a class <B>Person</B>, which extends class <B>CarbonUnit</B> and contains an instance of class <B>Name</B> and class <B>Date</B>. To serialize a <B>Person</B> to a byte stream, all classes involved must implement the marker interface <B>Serializable</B>, otherwise you get a <B>java.io.NotSerializableException</B> (<B>Person</B> is implicitly serializable since it extends <B>CarbonUnit</B>, which implements the <B>Serializable</B> interface). All non-static, non-transient fields are serialized; if you want to ignore a field during serialization, qualify it with the <B>transient</B> keyword. This typically applies to computed fields or values or references that are cached. When an object is reconstituted, its transient fields are zero initialized.</p>
+<p>When I'm ready to serialize a <B>Person</B> object, I wrap a <B>FileOutputStream</B> with an <B>ObjectOutputStream</B> and call <B>writeObject</B>. That's it! To deserialize, I wrap the <B>FileInputStream</B> in an <B>ObjectInputStream</B> and call <B>ReadObject</B>. Easy enough. Since <B>readObject</B> returns an <B>Object</B>, I have to cast to a <B>Person</B>.</p>
+<p>How are these methods so smart? First of all, <B>ObjectOutputStream.writeObject</B> determines the actual type information of its argument via reflection, an object introspection capability in Java that I'll discuss in a future article. Also, object references are replaced with local serial numbers that have meaning within each serialization stream, so when objects are serialized, the restored references point to the right objects.</p>
+<p>You might want to experiment with this example in a couple of ways. First, remove the <B>"implements Serializable"</B> qualifier from the <B>CarbonUnit</B> class. You'll get no errors, but the id numbers will be wrong in the reconstituted objects (<B>3</B> and <B>4</B>, respectively, instead of <B>0</B> and <B>1</B>). Why is that so <a href="#ref4">[4]</a>? And if you try removing the same qualifier from <B>Name</B>, what will happen <a href="#ref5">[5]</a>?</p>
+
+<H4><FONT COLOR="#000080">Character Streams</FONT></H4>
+
+<p>With only a few exceptions, all byte streams have a character-based Reader/Writer counterpart. A character stream version of <B>CopyFile.java</B> above, for example, looks like this:</p>
+
+<pre>
+import java.io.*;
+
+class CopyChars
+{
+    public static void 
+    main(String[] args)
+        throws IOException
+    {
+        // Copy files
+        // character-by-character:
+        FileReader fin =
+            new FileReader(args[0]);
+        FileWriter fout =
+            new FileWriter(args[1]);
+
+        int c;
+        while ((c = fin.read()) != -1)
+            fout.write(c);
+
+        fin.close();
+        fout.close();
+    }
+}
+</pre>
+
+<p>This version doesn't add any functionality over the byte stream version and is of little use. Character streams do allow you to read a line at a time, however, which can be useful in text processing applications. To read lines you need a <B>BufferedReader</B>. To behave like a command-line filter, the utility in <a href="list9.htm">Listing 9</a> wraps <B>System.in</B> in a <B>BufferedReader</B> and calls <B>BufferedReader.getLine</B> repeatedly. <B>InputStreamReader</B> is a bridge from byte streams to character streams &#151; it takes a byte stream and wraps it in a <B>Reader</B> that returns characters <a href="#ref6">[6]</a>. There is also an <B>OutputStreamWriter</B> for converting output byte streams to <B>Writer</B>s. Since keeping track of lines is a common task, <B>java.io</B> provides the <B>LineNumberReader</B> class that keeps count for you (see <a href="list10.htm">Listing 10</a>).</p>
+
+<H4><FONT COLOR="#000080">Token Parsing</FONT></H4>
+
+<p>A good deal of text processing consists of fishing through input files for data surrounded by delimiters, which are ignored on input. A common situation in data processing requires reading comma-delimited files, such as when exporting data from one database to import into another. With the <B>StreamTokenizer</B> class you can define which characters in a character stream make up tokens and which don't (similar to <B>strtok</B> in C). The program in <a href="list11.htm">Listing 11</a> reads files of employee tokens that come in groups of three: a name, a number, and a title. The first and third fields are strings and can contain spaces. By default, <B>StreamTokenizer</B> recognizes white space as an ordinary (i.e., non-token) character, so to preserve spaces in a token it should be surrounded by quotes, which are subsequently discarded on input. To tag the comma character as a non-token character, call the <B>ordinaryChar</B> method. The <B>parseNumbers</B> method tells the tokenizer to recognize numbers and not just strings in general. A nice feature for compiler writers is the ability to ignore C and C++-style comments (both of which are valid in Java, of course &#151; see the calls to <B>slashSlashComments</B> and <B>slashStarComments</B>). The tokenizing loop is driven by a call to <B>nextToken</B>, which returns <B>StreamTokenizer.TT_EOF</B> when input is exhausted. To retrieve a token as a string, simply access the public <B>sval</B> field. For numbers, use <B>nval</B>. Whenever a non-token character is extracted, it is stored in the <B>ttype</B> field.</p>
+<p>With fixed-sized records like this, you may prefer to read a line at a time and parse each string by searching for commas. If you want to allow empty fields, then you'll need to use the <B>String</B> class search methods to find commas and then calculate substrings. If no empty fields are allowed, then the <B>StringTokenizer</B> class provides a simpler solution. When I create a <B>StringTokenizer</B> object for each input line in <a href="list12.htm">Listing 12</a>, I pass it the characters I'm not interested in (a comma and linefeed, in this case &#151; I suppose I should have included other punctuation as well). It collects tokens consisting of all other characters and returns them via the <B>nextToken</B> method. One drawback to this approach is that it does not ignore comments, so I had to remove the leading comment line from the input.</p>
+<p>Quite often, though, lines don't matter, like when parsing a Java program. The program in <a href="list13.htm">Listing 13</a> shows how easy it is to extract tokens from a free-form text file. It looks for the <B>class</B> keyword and then reads the next word, interpreting it as a class name. This time the loop inspects the <B>ttype</B> field, which returns <B>TT_WORD</B> if a word was found, <B>TT_NUMBER</B> if a number was found instead (which doesn't apply in this case), <B>TT_EOL</B> if it found the end of a line (which only works if you have previously called <B>eolIsSignificant</B>), and <B>TT_EOF</B> if input was exhausted; otherwise it found a non-token character and returns it.</p>
+
+<H4><FONT COLOR="#000080">Summary</FONT></H4>
+
+<p>Even if you have to type almost to the point of suffering from carpal tunnel syndrome, I'm sure you'll agree that the design of the Java I/O system is Good Work. You have facilities to create a stream that talks to just about anything, with common filtering features such as buffering, counting lines, or literally interpreting program objects. The high-level classes come nicely equipped to function as decorators for the low-level ones, so the number of classes needed is much smaller than it would have been otherwise. And in many of the cases where you have to define your own stream, you can get away with just overriding a single <B>read</B> or <B>write</B> method. In January's article, I'll talk more about files and working with your local file system from Java programs.</p>
+
+<H4><FONT COLOR="#000080">Notes</FONT></H4>
+
+<a name="ref1">[1]</a>  If you entered the programming biz after 1990, you probably don't know that this is an acronym for Basic Assembler Language, which was the lingua franca of IBM mainframes.</p>
+<a name="ref2">[2]</a>  This is an application of the Decorator pattern, described in the pioneering patterns book, <I>Design Patterns: Elements of Reusable Object-oriented Software</I>, Gamma et al (Addison-Wesley, 1995). A Decorator enhances an object by adding to and/or modifying its functionality while maintaining its interface, so the new object can act as an instance of the old, just like inheritance does, but with the flexibility of combining layers at run time.</p>
+<a name="ref3">[3]</a>  I chose <B>ArrayList</B> instead of <B>Vector</B>, which is my wont, because the former is one of the new collection classes. If you need a refresher on collections and enumerations, see my previous article in the September 2000 issue of this magazine.</p>
+<a name="ref4">[4]</a>  If a non-serializable base class has a no-arg constructor, it is called when the derived object is reconstituted, which in this case erroneously increments <B>CarbonUnit.nextID</B>. By making <B>CarbonUnit</B> serializable, the true values are stored and retrieved. Not all base classes need to be <B>Serializable</B> &#151; just the ones that you don't want to be default-initialized when the derived object is built (in which case there must be a no-arg constructor).</p>
+<a name="ref5">[5]</a>  Since <B>Name</B> is a non-transient, non-static field of <B>Person</B>, <B>writeObject</B> attempts to serialize it, which results in a <B>NotSerializableException</B>. The standard <B>Date</B> class is also serializable.</p>
+<a name="ref6">[6]</a>  How many bytes make up a character depends on the encoding you choose when you create the reader. (There is an optional constructor that takes a second argument for specifying the encoding.)</p>
+
+<p><i><B>Chuck Allison</B> is a long-time columnist with </I>CUJ<I>. During the day he does Internet-related development in Java and C++ as a Software Engineering Senior in the Custom Development Department at Novell, Inc. in Provo, Utah. He was a contributing member of the C++ standards committee for most of the 1990's and authored the book </I>C &amp; C++ Codes Capsules: A Guide for Practitioners<I> (Prentice-Hall, 1998). He has taught mathematics and computer science at six western colleges and universities and at many corporations throughout the U.S. You can email Chuck at <B>cda@freshsources.com</B>.</i></p>
+
+<h4><a href="../../../source/2000/nov00/allison.zip">Get Article Source Code</a></h4>
+
+</blockquote></body></html>

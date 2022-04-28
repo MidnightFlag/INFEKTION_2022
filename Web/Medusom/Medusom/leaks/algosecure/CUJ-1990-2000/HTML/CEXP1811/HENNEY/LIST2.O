@@ -1,0 +1,12 @@
+class function_ptr
+{
+public:
+    function_ptr();
+    function_ptr(const function_ptr &other);
+    template<typename nullary_function>
+      function_ptr(nullary_function function);
+    ~function_ptr();
+    function_ptr &operator=(const function_ptr &rhs)
+    void operator()() const;
+    ...
+};

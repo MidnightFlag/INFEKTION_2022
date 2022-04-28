@@ -1,0 +1,5 @@
+vendor/src/
+.vscode/
+debug.test
+.idea/
+Makefile

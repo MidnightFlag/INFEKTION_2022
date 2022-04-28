@@ -1,0 +1,26 @@
+<HTML><HEAD>
+<TITLE>December 2000/STL & Generic Programming/Listing 1</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 1:	A function to read a character from the console in Win32</A></h4>
+<pre>
+_TCHAR ReadCharFromConsole()
+{
+   HANDLE hConsoleInput = GetStdHandle(STD_INPUT_HANDLE);
+   SetConsoleMode(hConsoleInput, 0);
+  
+   _TCHAR cIn = '\0';
+   LPVOID lpBuffer = &amp;cIn;
+   DWORD dwNumberOfCharsRead;
+   ReadConsole( 
+      hConsoleInput, 
+      lpBuffer, 
+      1, 
+      &amp;dwNumberOfCharsRead,
+      NULL
+      ); 
+
+   return cIn;
+}
+</pre></body></html>

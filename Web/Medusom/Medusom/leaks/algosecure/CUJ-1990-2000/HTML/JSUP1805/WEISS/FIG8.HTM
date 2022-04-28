@@ -1,0 +1,25 @@
+<HTML><HEAD>
+<TITLE>May 2000 Java Solutions/Understanding JavaBeans/Figure 8</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 8: A JavaBean client that saves the bean's properties in a file</A></h4>
+<pre>
+import java.io.*;
+
+public class SimpleTest2 {
+    public static void main(String[] args) {
+        SimpleBean bean = new SimpleBean();
+        bean.setCount(33);
+        try {
+            FileOutputStream f = 
+                new FileOutputStream("SimpleBean.ser");
+            ObjectOutputStream s = new ObjectOutputStream(f);
+            s.writeObject(bean);
+            s.flush();
+        } catch (Exception e) {
+            System.out.println(e);
+        }        
+    }
+}
+</pre></body></html>

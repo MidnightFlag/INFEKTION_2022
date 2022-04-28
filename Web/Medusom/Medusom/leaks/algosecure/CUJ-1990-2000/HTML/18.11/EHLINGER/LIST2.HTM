@@ -1,0 +1,66 @@
+<HTML><HEAD>
+<TITLE>November 2000/Creating Truly Maintainable Class Factories/Listing 2</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 2: A naive implementation of a DLL-based class factory</A></h4>
+<pre>
+#include &lt;string&gt;
+#include &lt;exception&gt;
+#include &lt;assert.h&gt;
+
+#include &lt;windows.h&gt;
+
+#include "listing1.h"
+
+class foo_factory
+   {
+      bool invariant() 
+         { return m_h_dll != 0 }
+   public:
+
+      foo_factory
+         ( std::string const&amp; dll_name 
+         , std::string const&amp; prefix ) throw( exception )
+         : m_h_dll( NULL ), m_prefix( prefix )
+         {
+         HINSTANCE h_dll = LoadLibrary( dll_name.c_str() );
+         if ( !h_dll )
+            throw exception;
+         m_h_dll = h_dll;
+         assert( invariant() );
+         }
+
+      ~foo_factory( )
+         {
+         assert( invariant() );
+         FreeLibrary( m_h_dll );
+         }
+
+      foo* instantiate( std::string const&amp; req_class_id )
+         {
+         assert( invariant() );
+         typedef foo* (DLLCALL* pfn_factory_entry)( );
+
+         std::string entry_name( decorate( req_class_id ) );
+         pfn_factory_entry pfn_instantiate = 
+            GetProcAddress( m_h_dll , entry_name.c_str() );
+         if ( !pfn_instantiate )
+            throw exception;
+
+         return (pfn_instantiate)( );
+         }
+
+   private:
+      std::string decorate( std::string const&amp; req_class_id )
+         {
+         // '_' is necessary because of DLLCALL's name-mangling
+         // effects on Win32 compilers.
+         return "_" + m_prefix + req_class_id;
+         }
+
+   private:
+      HINSTANCE    m_h_dll;
+      std::string m_prefix;
+   };
+</pre></body></html>

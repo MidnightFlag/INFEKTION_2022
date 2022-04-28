@@ -1,0 +1,38 @@
+#
+# Configuration parameters for JObjects QuestAgent applet
+#
+
+# Basic parameters...
+
+IndexFile1=data/index.que
+IndexDescription1=CUJ CD-ROM v4
+Prefix1=../
+
+
+# Some custom settings...
+
+layout=2
+
+#target=_self
+
+#geom.description.visible=true
+
+result_format=%N. %D
+
+geom.frame.width=350
+geom.frame.height=300
+
+# Default templates for "HTML interface with word highlighting"
+
+template.html.form=htmlagnt/form.tpl
+template.html.nohits=htmlagnt/nohits.tpl
+template.html.hits=htmlagnt/hits.tpl
+template.html.bhits=htmlagnt/bhits.tpl
+template.html.ahits=htmlagnt/ahits.tpl
+template.html.header=htmlagnt/header.tpl
+template.html.footer=htmlagnt/footer.tpl
+
+# Controls number of hits shown in search window
+
+geom.maxhits_choice.label=500|200|100|50
+

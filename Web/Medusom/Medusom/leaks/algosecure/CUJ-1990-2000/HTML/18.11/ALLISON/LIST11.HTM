@@ -1,0 +1,82 @@
+<HTML><HEAD>
+<TITLE>November 2000/import java.*/Listing 11</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 11: File StreamTokenizerTest.java &#151; parse comma-delimited fields</A></h4>
+<pre>
+import java.io.*;
+
+class StreamTokenizerTest
+{
+    public static void main(String[] args)
+        throws IOException
+    {
+        FileReader f =
+            new FileReader("Tokens.dat");
+        StreamTokenizer in =
+            new StreamTokenizer(f);
+
+        in.slashSlashComments(true);
+        in.slashStarComments(true);
+        in.ordinaryChar(',');
+        in.parseNumbers();
+
+        String name = null;
+        long enum = 0;
+        String title = null;
+
+        for (int fieldno = 0;
+             in.nextToken() !=
+                 StreamTokenizer.TT_EOF;
+             ++fieldno)
+        {
+            switch (fieldno % 5)
+            {
+            case 0:
+                name = in.sval;
+                break;
+            case 2:
+                enum = (long)in.nval;
+                break;
+            case 4:
+                title = in.sval;
+                break;
+            case 1:
+            case 3:
+                if (in.ttype != ',')
+                {
+                    System.err.println(
+                       "Syntax error in line " +
+                       in.lineno()
+                       );
+                    System.exit(1);
+                }
+            }
+
+            if ((fieldno + 1) % 5 == 0)
+                System.out.println("name = " +
+                                   name + ", " +
+                                   "enum = " +
+                                   enum + ", " +
+                                   "title = " +
+                                   title);
+        }
+
+        f.close();
+    }
+}
+
+/* Input (file Tokens.dat):
+// Employee Roster
+"John Doe",1,Engineer
+"Jane Dear",2,"President &amp; CEO"
+"John Deere",3,"Mail Clerk"
+*/
+
+/* Output:
+name = John Doe, enum = 1, title = Engineer
+name = Jane Dear, enum = 2, title = President &amp; CEO
+name = John Deere, enum = 3, title = Mail Clerk
+*/
+</pre></body></html>

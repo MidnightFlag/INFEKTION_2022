@@ -1,0 +1,78 @@
+<HTML><HEAD>
+<TITLE>December 2000 C++ Experts Forum/The Standard Librarian/Listing 1</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 1:  A sample allocator based on malloc</A></h4>
+
+<pre>
+template &lt;class T&gt; class malloc_allocator
+{
+public:
+  typedef T                 value_type;
+  typedef value_type*       pointer;
+  typedef const value_type* const_pointer;
+  typedef value_type&amp;       reference;
+  typedef const value_type&amp; const_reference;
+  typedef std::size_t       size_type;
+  typedef std::ptrdiff_t    difference_type;
+  
+  template &lt;class U&gt; 
+  struct rebind { typedef malloc_allocator&lt;U&gt; other; };
+
+  malloc_allocator() {}
+  malloc_allocator(const malloc_allocator&amp;) {}
+  template &lt;class U&gt; 
+  malloc_allocator(const malloc_allocator&lt;U&gt;&amp;) {}
+  ~malloc_allocator() {}
+
+  pointer address(reference x) const { return &amp;x; }
+  const_pointer address(const_reference x) const { 
+    return x;
+  }
+
+  pointer allocate(size_type n, const_pointer = 0) {
+    void* p = std::malloc(n * sizeof(T));
+    if (!p)
+      throw std::bad_alloc();
+    return static_cast&lt;pointer&gt;(p);
+  }
+
+  void deallocate(pointer p, size_type) { std::free(p); }
+
+  size_type max_size() const { 
+    return static_cast&lt;size_type&gt;(-1) / sizeof(T);
+  }
+
+  void construct(pointer p, const value_type&amp; x) { 
+    new(p) value_type(x); 
+  }
+  void destroy(pointer p) { p-&gt;~value_type(); }
+
+private:
+  void operator=(const malloc_allocator&amp;);
+};
+
+template&lt;&gt; class malloc_allocator&lt;void&gt;
+{
+  typedef void        value_type;
+  typedef void*       pointer;
+  typedef const void* const_pointer;
+
+  template &lt;class U&gt; 
+  struct rebind { typedef malloc_allocator&lt;U&gt; other; };
+};
+
+
+template &lt;class T&gt;
+inline bool operator==(const malloc_allocator&lt;T&gt;&amp;, 
+                       const malloc_allocator&lt;T&gt;&amp;) {
+  return true;
+}
+
+template &lt;class T&gt;
+inline bool operator!=(const malloc_allocator&lt;T&gt;&amp;, 
+                       const malloc_allocator&lt;T&gt;&amp;) {
+  return false;
+}</pre>
+</pre></body></html>

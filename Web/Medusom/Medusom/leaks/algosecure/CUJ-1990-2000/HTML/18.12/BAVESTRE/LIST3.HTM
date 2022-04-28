@@ -1,0 +1,31 @@
+<HTML><HEAD>
+<TITLE>December 2000/A Class Template for N-Dimensional Generic Resizable Arrays/Listing 3</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 3: Array and SubArray</A></h4>
+<pre>
+template &lt;typename T, unsigned int N&gt;
+class SubArray 
+{  
+   T * m_pElements; // Refers to elements in another Array
+  
+public:
+  
+   SubArray&lt;T, N-1&gt; operator [] (unsigned int index); 
+   const SubArray&lt;T, N-1&gt;
+   operator [] (unsigned int index) const; 
+};
+
+template &lt;typename T, unsigned int N&gt;
+class Array 
+{
+   T * m_pArrayElements; // C array storing all Array elements
+  
+public:
+
+   SubArray&lt;T, N-1&gt; operator [](unsigned int index); 
+   const SubArray&lt;T, N-1&gt;
+   operator [] (unsigned int index) const; 
+};
+</pre></body></html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+  <html lang="fr" ng-app="todoApp">
+    <head>
+      <meta charset="utf-8">
+      <title>ToDoList</title>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+      <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body>
+      <div ng-view></div>
+    </body>
+
+    <script type="text/javascript" src="node_modules/angular/angular.js"></script>
+    <script type="text/javascript" src="node_modules/angular-route/angular-route.js"></script>
+    <script type="text/javascript" src="node_modules/angular-sanitize/angular-sanitize.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+    <script type="text/javascript" src="controllers/home.controller.js"></script>
+    <script type="text/javascript" src="controllers/addTask.controller.js"></script>
+    <script type="text/javascript" src="controllers/editTask.controller.js"></script>
+  </html>

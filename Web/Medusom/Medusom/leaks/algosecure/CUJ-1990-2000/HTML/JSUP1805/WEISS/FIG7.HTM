@@ -1,0 +1,31 @@
+<HTML><HEAD>
+<TITLE>May 2000 Java Solutions/Understanding JavaBeans/Figure 7</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 7: A TimerEvent class</A></h4>
+<pre>
+package timerbean;
+
+import java.util.*; // for EventObject
+
+public class TimerEvent extends EventObject {
+    
+    private int theTimer;
+    private int theCount;
+    public 
+    TimerEvent(Object source, 
+       int timerNumber, int timerCount) {
+
+       super(source);   
+       theTimer = timerNumber;
+       theCount = timerCount; 
+    }
+    public int getTimerNumber() {
+        return theTimer;
+    }
+    public int getTimerCount() { 
+        return theCount;
+    }
+}
+</pre></body></html>

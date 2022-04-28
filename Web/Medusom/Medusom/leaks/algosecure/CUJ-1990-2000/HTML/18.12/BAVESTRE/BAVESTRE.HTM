@@ -1,0 +1,179 @@
+<HTML>   
+     <HEAD>
+<TITLE>December 2000/A Class Template for N-Dimensional Generic Resizable Arrays</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocdec.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   Features</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">A Class Template for N-Dimensional Generic Resizable Arrays</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Giovanni Bavestrelli</FONT></H3>
+
+<BLOCKQUOTE>
+<p>Need dynamic arrays that are efficient and intuitive? Try a little template recursion and specialization.</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+<p>C has good support for one-dimensional arrays (vectors), and with C++ and STL, things have only gotten better. Even without STL, whose <B>vector</B> class template is very flexible and efficient, C++ makes using one-dimensional arrays very easy; you can just allocate them directly on the stack or heap and access them like you expect to with <B>operator []</B>. Additionally, almost any application framework available provides many types of standard containers, including vectors. Unfortunately, support for multidimensional arrays is not as good, neither from C++ nor from libraries like STL.</p>
+
+<H4><FONT COLOR="#000080">Standard Solutions</FONT></H4>
+
+<p>If you need a three-dimensional array, you have a few choices. You can declare it this way:</p>
+
+<pre>
+int MyArray[10][20][30];
+</pre>
+
+<p>The above declaration has the following problems: the size is fixed at compile time, the array too easily decays into more elementary pointers (e.g., when passed to functions), and there is no bounds checking. You can overcome the first problem, in part, by fixing all but the first dimension and allocating the array on the heap, but for an N-dimensional array so defined, N-1 dimensions are fixed at compile time, which is not very useful.</p>
+<p>You can do the following with STL:</p>
+
+<pre>
+vector&lt;vector&lt;vector&lt;int&gt; &gt; &gt;
+MyArray (10, vector&lt;vector&lt;int&gt; &gt;
+             (20, vector&lt;int&gt;(30))
+   );
+</pre>
+
+<p>This array has a few problems, too, and they might not all be obvious. First, it allocates 1+10*20=201 vector objects, in addition to the 10*20*30=6000 integers. In a more general case, for a five-dimensional array of dimensions M*N*J*K*L, a total of 1+M*N*J*K vectors will be allocated. On my platform, a vector is 16 bytes in size, so a lot of space is wasted. But allocating this memory does more than take up space, it also takes time, as the same number of heap allocations will be performed. And the allocated array of integers will not end up in contiguous blocks of memory, but in a lot of small scattered memory chunks.</p>
+<p>Second, you will not be able to use many STL algorithms (e.g., <B>max_element</B>) on the three-dimensional vector thus defined, and even using standard iterators to traverse the array is difficult.</p>
+<p>Third, you won't be able to access <B>vector</B>'s member functions to get information about the entire three-dimensional array, but only about its first dimension. An STL <B>vector</B> of <B>vector</B> of <B>vector</B> is really a 3-D structure where algorithms can work on each dimension, rather than a linear structure (container) that can be accessed through one-, two-, or three-subscript access methods.</p>
+<p>Clearly this is not a nice solution, as the extra flexibility provided by the <B>vector</B> class is unnecessary here. <B>std::vector</B> was not intended to implement multidimensional vectors efficiently. You can compound it like above, but the result is suboptimal to say the least.</p>
+
+<H4><FONT COLOR="#000080">A Better Solution</FONT></H4>
+
+<p>Given these limitations, I created my own class template since I needed a two-dimensional, generic, and resizable array:</p>
+
+<pre>
+template &lt;typename T&gt;
+class Array2D {...};
+</pre>
+
+<p>When I needed a three-dimensional array, I created another class template:</p>
+
+<pre>
+template &lt;typename T&gt;
+class Array3D {...};
+</pre>
+
+<p>Then I looked at the two class templates and discovered they had a lot in common, so the obvious question came up: can't I create a single class template for an N-dimensional generic resizable array?</p>
+
+<pre>
+template &lt;typename T, unsigned int N&gt;
+class Array {...};
+</pre>
+
+<p>This turned out to be much easier than I expected, as this article will demonstrate. The class I designed allows me to write code like that found in <a href="list1.htm">Listing 1</a>.</p>
+
+<H4><FONT COLOR="#000080">Building the Array</FONT></H4>
+
+<p>In creating such a class template, the allocation of the actual array elements is trivial. The class template needs a pointer to elements of type <B>T</B>, and it will allocate a single one-dimensional C array of them on the heap with a size equal to the product of the N dimensions' sizes. Along with this physical representation, you must provide access to this internal one-dimensional array as if it were an N-dimensional array. All you need are the necessary indexing operators (<B>operator []</B>) to access the individual elements. The first problem starts here: you cannot define <B>operator [][][]...</B> in class <B>Array</B>; you can only define a single <B>operator []</B>. The solution is easy: <B>operator []</B> needs to return an object of some class upon which you can apply another <B>operator []</B>, and so on until you have specified all N array indexes, one for each dimension. <a href="list2.htm">Listing 2</a> shows a first attempt at this class template, which leaves one big question unanswered: what <B>ReturnType</B> must <B>operator []</B> have?</p>
+
+<H4><FONT COLOR="#000080">SubArrays</FONT></H4>
+
+<p>An object of some type <B>ReturnType</B> must be returned from the array's operator <B>[]</B>, to which another <B>operator []</B> will be applied if necessary. Naturally, if you apply <B>operator []</B> to an N-dimensional array, you should return an N-1 dimensional array. You don't want to copy any elements, though, so the operator should not actually return another N-1 dimensional array; instead, it should return a reference to an N-1 dimensional projection (or view) within the original N-dimensional array. Enter subarrays. I call a <B>SubArray</B> a part of an N-dimensional <B>Array</B>. A <B>SubArray</B> within an N-dimensional <B>Array</B> can have any number of dimensions between N-1 and 1. It is an M-dimensional array in its own right, but it doesn't own any elements; it refers to the elements in another <B>Array</B>. So a three-dimensional array of dimensions <B>[10][20][30]</B> has 10 two-dimensional subarrays of dimension 20*30=600 elements, and each of these subarrays contains 20 one-dimensional subarrays of 30 elements each. Note that a subarray can contain other subarrays, but each contained subarray has one less dimension than the containing one. <a href="list3.htm">Listing 3</a> shows what to return from the <B>operator []</B> applied to the array, and what to return from the <B>operator []</B> applied to each subarray.</p>
+
+<H4><FONT COLOR="#000080">Partial Specialization</FONT></H4>
+
+<p>I have just defined a mechanism that allows you to traverse an N-dimensional array, one dimension at a time, until a problem is discovered. The recursive definition of class template <B>SubArray</B> (in <a href="list3.htm">Listing 3</a>) does not have the necessary base of recursion so that the instantiation process can terminate, providing a fully indexed <B>Array</B> element. Each <B>SubArray&lt;T,N&gt;</B> has an <B>operator []</B> that returns a <B>SubArray&lt;T,N-1&gt;</B>, but you could continue applying <B>operator []</B> ad infinitum without getting anywhere. Explicit specialization, commonly used in this scenario as the base of recursion, comes to the rescue. Explicit specialization allows you to provide a specific definition of a class template, for a particular set of template arguments <a href="#1">[1]</a>. You must specify that <B>SubArray&lt;T,1&gt;</B>, which is one-dimensional, has an <B>operator []</B> that returns a reference to an actual array element of type <B>T</B>, not a <B>SubArray&lt;T,0&gt;</B>. This can be done with partial specialization, which is a kind of explicit specialization where not all template parameters are specialized, since type <B>T</B> remains generic (see <a href="list4.htm">Listing 4</a>). The core of my solution is in <a href="list3.htm">Listings 3</a> and <a href="list4.htm">4</a>.</p>
+<p>To summarize, class template <B>Array</B> represents an N-dimensional generic array. Its <B>operator []</B> returns an N-1 dimensional <B>SubArray</B> within the array, and <B>operator []</B> applied to this N-1 dimensional <B>SubArray</B> will return an N-2 dimensional <B>SubArray</B> within the same array, and so on until you reach <B>SubArray&lt;T,1&gt;</B>. <B>SubArray&lt;T,1&gt;</B> will point to a one-dimensional array of elements, and its <B>operator []</B> will return a reference to an actual element. What's left is the implementation of a mechanism that each <B>Array</B> or <B>SubArray</B> will use to pass to its subarrays the correct part of the original <B>Array</B> and all the information needed to continue the indexing process.</p>
+<p>Be warned that some current C++ compilers do not support partial specialization, although it is part of the C++ Standard. My compiler, Microsoft Visual C++ v6.0, does not support it, so I had to use a trick to define these classes. I nested the <B>SubArray</B> classes within <B>Array</B> and removed template parameter <B>T</B> from them so that I could use total specialization. This works well with Visual C++. You can find one version of my Visual C++ classes and other versions for Standard C++ on the <I>CUJ</I> website (<B>www.cuj.com/code</B>). So far, the Standard C++ versions have been tested with Comeau C/C++ 4.2.42 and GNU C++ 2.95.2, but I imagine that soon most compilers will handle them correctly.</p>
+
+<H4><FONT COLOR="#000080">Making It Work</FONT></H4>
+
+<p>With the above architecture in place, you now need a mechanism to create the necessary <B>SubArray</B>s. The first <B>SubArray</B> will be created by <B>Array</B>'s <B>operator []</B>, and the subsequent subarrays (if any) will be created by each previous one. The last subarray, <B>SubArray&lt;T,1&gt;</B>, will return a reference to the actual element indexed. You must pass some information to each <B>SubArray</B> so that it can refer to the elements inside the original <B>Array</B> correctly and so that it can pass the necessary information on to the subarrays it will create, allowing them to continue the indexing process.</p>
+<p>For this to happen, each <B>SubArray&lt;T,N&gt;</B> needs three pieces of information:</p>
+
+<OL><LI>It needs a pointer, of type <B>T*</B>, to the first element in the <B>SubArray</B>.
+<LI>It needs to know how many subarrays of type <B>SubArray&lt;T,N-1&gt;</B> it contains.
+<LI>It needs to know the size of each contained subarray of type <B>SubArray&lt;T,N-1&gt;</B>.</OL>
+
+<p>Given these three pieces of information, each <B>SubArray&lt;T,N&gt;::operator []</B> can provide a pointer to the first element of each <B>SubArray&lt;T,N-1&gt;</B> it contains. Note that each subarray lies in a contiguous part of the one-dimensional C array of <B>T</B> elements stored in the <B>Array</B>'s member <B>m_pArrayElements</B>. So a <B>SubArray</B> is just a way to see this contiguous area of memory as an M-dimensional array, and each <B>SubArray</B>'s <B>operator []</B> returns a smaller contiguous part within this same area.</p>
+<p>A simple example will make it clearer. Suppose you have a three-dimensional <B>Array</B> of dimensions <B>[10][20][30]</B>. The single C array containing all the <B>Array</B> elements will be created in class <B>Array&lt;T,3&gt;</B> as follows:</p>
+
+<pre>
+m_pArrayElements = new T [6000]; // All the T elements lie here
+</pre>
+
+<p>To be able to access the individual elements according to the specified three dimensions, you need two C arrays containing the following information:</p>
+
+<pre>
+int m_NDimensions[3]={  10, 20, 30 };
+int m_SubArrayLen[3]={ 600, 30,  1 }; // 600=20*30
+</pre>
+
+<p>The first array is intuitive; it contains the number of elements for each array dimension. The second is slightly more complicated; it contains the number of elements in each subarray.</p>
+<p>The above information can be read as follows: the three-dimensional array is made of 10 two-dimensional subarrays of 600 elements each, each of those is made of 20 one-dimensional subarrays of 30 elements each, and each of those is made of 30 individual elements. If I create these two C arrays in class <B>Array&lt;T,3&gt;</B>, I have all the information I need for each <B>SubArray</B> that will be created in the indexing process. All I need is a way to pass this information along to each <B>SubArray</B>, and each <B>SubArray</B> will need the next element in these two C arrays. <a href="list5.htm">Listing 5</a> shows the source code for the complete indexing process, while <a href="list6.htm">Listing 6</a> shows the implementation of the <B>resize</B> member function. <B>resize</B> builds up the two C arrays, <B>m_NDimensions</B> and <B>m_SubArrayLen</B> as described above, and allocates the C array with all the elements of type <B>T</B>, assigning it to <B>m_pArrayElements</B>. In <a href="list5.htm">Listing 5</a>, note that array <B>m_pNDimensions</B> is passed from <B>SubArray</B> to <B>SubArray</B>, but it is used only for bounds checking and could be removed from <B>SubArray</B>s for efficiency. <B>m_SubArrayLen[0]</B>, which is the size of the subarrays contained in the current <B>SubArray</B>, is multiplied by the array index to retrieve the pointer to the beginning of the next <B>SubArray</B>. Note also that each <B>SubArray</B>, by passing <B>m_NDimensions+1</B> and <B>m_SubArrayLen+1</B> to the subarrays it creates, is in fact passing the part of the relative C arrays that follows the part it needs for itself. <B>m_NDimensions</B> and <B>m_SubArrayLen</B> are pointers, so adding one just points to the next elements in the arrays. If this is not clear to you, the easiest thing to do is step through the code with a debugger. You can download the code from <B>www.cuj.com/code</B>.</p>
+
+<H4><FONT COLOR="#000080">Allocation</FONT></H4>
+
+<p>The <B>resize</B> member function is responsible for the <B>Array</B> class's only piece of tedious work. Everything else is done in tiny member functions. <B>resize</B> must calculate all the information the <B>Array</B> class requires (arrays <B>m_NDimensions</B> and <B>m_SubArrayLen</B>) and allocate the elements with <B>operator new</B>, before deleting the previous ones, if any. Note that <B>resize</B> can preserve the existing array elements by copying them onto the newly allocated array, where possible, in each position that maintains the same set of indexes. Since this might be a slow operation, you have to request it specifically by passing parameter <B>PreserveElems</B> as <B>true</B> (shown in <a href="list6.htm">Listing 6</a>). <B>resize</B> also receives as input parameters a C array of N unsigned integers, representing the N dimensions of the array, and an initialization value for the newly created elements. <B>resize</B> does a bit of dirty work, but not much and not often; it is called only when you create the array and when you change its dimensions. <B>resize</B> is the only member function that invalidates current iterators.</p>
+
+<H4><FONT COLOR="#000080">Back to One-Dimensional Arrays</FONT></H4>
+
+<p>The class template for generic N-dimensional arrays can be used as follows:</p>
+
+<pre>
+Array&lt;int,5&gt; A5;   // Five-dimensional array of ints!
+Array&lt;float,1&gt; A1; // One-dimensional array of floats?
+</pre>
+
+<p>True? Almost. The one-dimensional array above will not work correctly. <B>Array&lt;T,1&gt;</B>'s <B>operator []</B> will return a <B>SubArray&lt;T,0&gt;</B>. However, there is no working specialization for <B>SubArray&lt;T,0&gt;</B>, and the return type went past the <B>SubArray&lt;T,1&gt;</B> specialization that does exist. <B>Array&lt;T,1&gt;::operator []</B> somehow must return a reference to a single element of type <B>T</B>. I had two choices here; either I could provide a specialization for <B>SubArray&lt;T,0&gt;</B> and add to it two conversion operators that return a reference to an element of type <B>T</B> (one of them <B>const</B>) and an assignment operator, or I could provide a specialization for <B>Array&lt;T,1&gt;</B> itself. Providing a specialization for <B>SubArray&lt;T,0&gt;</B> is easier, since it only needs to implement three tiny operators, but providing a full specialization for <B>Array&lt;T,1&gt;</B>, with its memory management and all, would be better. The full specialization would allow <B>operator []</B> to return a reference to an element of type <B>T</B> directly, and it would also allow me to change the interface of the class to suit the fact that the array is one-dimensional. For instance, I could change the <B>resize</B> member function to take the actual dimension, not a pointer to an array of one element containing the dimension. Besides, the conversion operators that would be needed if I were to provide a specialization for <B>SubArray&lt;T,0&gt;</B> are dangerous and would probably not always work as expected.</p>
+<p>The real issue is, who needs this one-dimensional generic resizable array? Plenty of these classes exist, in STL or other application frameworks, so I think the best specialization for <B>Array&lt;T,1&gt;</B> is shown in <a href="list7.htm">Listing 7</a>. Empty. Just to be sure, I also provided an empty specialization for <B>Array&lt;T,0&gt;</B>, since an <B>Array&lt;T,0&gt;</B> truly does not make sense.</p>
+
+<H4><FONT COLOR="#000080">Back to STL</FONT></H4>
+
+<p>Given any container, it is a good idea to make it integrate well with STL, since there are so many algorithms and so much other reusable code that works with STL iterators and containers. It is simple to add iterators, a few typedefs, and member functions ala STL to my <B>Array</B> and <B>SubArray</B> classes. Since the internal representation of the elements inside my <B>Array</B> class is just a standard C array of <B>T</B> elements, ordinary pointers will make good and fast iterators. <a href="list8.htm">Listing 8</a> shows what I added to my <B>Array</B> class. (I made similar additions to <B>SubArray</B>.) It is enough to make my classes integrate well with STL, though more features can still be added. This will also allow you to iterate through all the elements of an <B>Array</B> of N dimensions without nesting N <B>for</B> loops, with just one very fast loop using the iterator. You can use many STL algorithms on my <B>Array</B> and <B>SubArray</B> too. The iterators actually provide a mono-dimensional view of this N-dimensional Array.</p>
+
+<H4><FONT COLOR="#000080">Back to Array Dimensions</FONT></H4>
+
+<p>To set the dimensions of the <B>Array</B>, an <B>Array</B> constructor and a <B>resize</B> member function take an <B>unsigned int [N]</B> (i.e., a C array of N unsigned integers). Although this solution is type safe, it is not very nice, since you must define an external array and set its elements one by one if they are not constants. It would be nice to be able to pass the N dimensions directly to the <B>Array</B> constructor and <B>resize</B> member function without passing through an external C array. But how do you construct the <B>unsigned int</B> array inside the call to <B>resize</B>? And how do you guarantee at compile time that the array contains exactly N elements?</p>
+<p>Using the same type of solution that I devised for <B>SubArray</B>s, I created class <B>ArraySizes</B> and class template <B>ArraySize&lt;unsigned int N&gt;</B> (shown in <a href="list9.htm">Listing 9</a>). Class <B>ArraySize&lt;N&gt;</B> contains a C array of N unsigned integers, and <B>ArraySize&lt;N&gt;</B> objects can only be created starting from class <B>ArraySizes</B>. Class <B>ArraySizes</B> contains an <B>unsigned int</B> array of one element, and its constructor puts the first <B>Array</B> dimension inside it. Its <B>operator ()</B> returns an <B>ArraySize&lt;2&gt;</B> element, which contains the previous <B>Array</B> dimension plus the one passed to <B>operator ()</B>. <B>ArraySize&lt;2&gt;</B> has an <B>operator ()</B> that returns an <B>ArraySize&lt;3&gt;</B> element, which contains the previous two <B>Array</B> dimensions plus the one now passed to <B>operator ()</B>, and so on. This way I guarantee that type <B>ArraySize&lt;N&gt;</B> contains a type-safe C array that was filled with exactly N elements. Since <B>ArraySize&lt;N&gt;</B> has a conversion operator to convert it to an <B>unsigned int (&amp;)[N]</B>, I can resize my <B>Array</B>s as shown in <a href="list9.htm">Listing 9</a>. If I accidentally call <B>operator ()</B> the wrong number of times, the code will not compile. Note that this solution works only for <B>N&gt;=2</B>, but so does my <B>Array</B> class. Just like my <B>Array</B> class, this solution can easily be extended to work for <B>N&gt;=1</B>. Note also that since Visual C++ v6.0 does not allow specifying parameters of type <B>unsigned int (&amp;)[N]</B>, I had to implement these classes differently, passing through a <B>std::vector</B> to maintain type safety.</p>
+
+<H4><FONT COLOR="#000080">Finishing Up</FONT></H4>
+
+<p>To finish my <B>Array</B> class, I added a copy constructor and an assignment operator, equality and inequality operators, a <B>clear </B>member function to delete the contained elements explicitly, and other details, such as a member function to retrieve the size of each <B>Array</B> dimension and a <B>swap</B> member function. Then I made the <B>SubArray</B>'s constructor private, as subarrays should be created only by my classes. This was easy to do, by making class <B>SubArray&lt;T,N&gt;</B> a friend of <B>Array&lt;T,N+1&gt;</B> and <B>SubArray&lt;T,N+1&gt;</B>, as these are the only classes that can create an object of class <B>SubArray&lt;T,N&gt;</B>. Note that the <B>SubArray</B>'s default copy constructor and assignment operator work fine and are public. See the source code for more details. As far as I can tell, my <B>Array</B> class is type safe, thread safe, and exception safe. For an excellent treatment of container exception safety see <a href="#2">[2]</a>.</p>
+
+<H4><FONT COLOR="#000080">Efficiency</FONT></H4>
+
+<p>I think the <B>Array</B> class is quite efficient, especially with the help of a good optimizing compiler that, among other things, supports the return value optimization. I ran some simple tests indexing a cubic three-dimensional array of one million integers, with three nested loops that assigned a value to each element of the array, and my <B>Array</B> class ran about half as fast as a pure C array, when compiled with a GNU C++ compiler with full optimization turned on (O3). But if I traversed my <B>Array</B> with one single loop using the iterator (or with three nested loops as shown in <a href="list10.htm">Listing 10</a>, holding onto the temporary subarrays traversed), my <B>Array</B> class is just as fast as pure C arrays.</p>
+<p>There are also ways to speed up the array. You could, for instance, provide a specialization for <B>SubArray&lt;T,2&gt;</B> to return a <B>T *</B>, instead of a <B>SubArray&lt;T,1&gt;</B> so that the last <B>operator []</B> would be a normal C pointer dereference, which should be a bit faster since the temporary <B>SubArray&lt;T,1&gt;</B> on which to call <B>operator []</B> would not be created. However, this way eliminates the possibility of doing bounds checking on the last dimension, causing you to fall back on arrays decaying into pointers, which you are trying to avoid. You could also avoid passing <B>m_NDimensions</B> to <B>SubArray</B>s, as mentioned previously, but again you lose the bounds checking ability.</p>
+<p>I think Andrei Alexandrescu provided the best way to speed up these classes. He suggested I derive <B>SubArray&lt;T,N&gt;</B> from <B>SubArray&lt;T,N-1&gt;</B> so that each <B>SubArray&lt;T,N&gt;::operator []</B> can return a reference to a <B>SubArray&lt;T,N-1&gt;</B> by returning itself instead of returning a new <B>SubArray&lt;T,N-1&gt;</B> object. I did so, and I even pushed it one (dangerous) step further by including a single <B>SubArray&lt;T,N-1&gt;</B> object as member of class <B>Array&lt;T,N&gt;</B> and doing all the indexing by returning references to that single object. This avoids the creation of any <B>SubArray</B> during the indexing process. It works correctly in most situations, but is not thread-safe. Nevertheless, if you need maximum speed in well-behaved single-threaded applications and test your code very well, it may be an alternative. These two versions of the <B>Array</B> class are also available on this website; I think they are both interesting and efficient. The fastest version is roughly 40 percent slower than pure C arrays. In the source code section of this site, you can also find the small test program I used to test the efficiency of my classes, along with a set of results.</p>
+
+<H4><FONT COLOR="#000080">Back to Subarrays</FONT></H4>
+
+<p>My discussion of <B>SubArray</B>s is rather simple and intuitive, but the concept is not general enough. The main problem is that <B>Array&lt;T,N&gt;</B> and <B>SubArray&lt;T,N&gt;</B> are totally distinct types, even though they behave in a very similar way, at least as far as indexing is concerned. So if I have a function that takes a <B>SubArray&lt;int,3&gt;</B> as an argument, I cannot pass it an <B>Array&lt;int,3&gt;</B>, although they both represent three-dimensional arrays of <B>int</B>s. What's more, the implementation of the indexing operators, iterators, etc. is identical in <B>Array&lt;T,N&gt;</B> and <B>SubArray&lt;T,N&gt;</B> and is repeated twice. This is often an indication that a redesign is due.</p>
+<p>So, I renamed class <B>SubArray</B> to <B>RefArray</B>, which more correctly indicates that the class is actually a reference to an N-dimensional array, not necessarily a subarray. Then I had two options. First, I could derive <B>Array&lt;T,N&gt;</B> from <B>RefArray&lt;T,N&gt;</B>, thus achieving the twofold advantage of being able to pass an <B>Array</B> to functions that expect a <B>RefArray</B> and reusing <B>RefArray</B>'s implementation of the indexing, iterators, etc. Class <B>Array</B> would just add the interface for creating, resizing, deleting, assigning, and swapping an <B>Array</B>; the rest would be inherited from class <B>RefArray</B>. Note that to do this last modification, I would mainly have to remove code, so the result would be greatly simplified.</p>
+<p>There are a few extra things to consider. Is it really true that an <B>Array</B> IS-A <B>RefArray</B>? Do I really want to add the necessary virtual destructor? Do I want the extra (protected?) data members of <B>RefArray&lt;T,N&gt;</B> in my <B>Array&lt;T,N&gt;</B>? One thing is sure, I don't want to add a destructor to <B>RefArray</B> for performance reasons (I tried it with 100 percent performance overhead), and not adding it opens the door to misuse. Besides, just as with STL containers, I don't want my <B>Array</B> to have any virtual functions. Let's consider the second alternative. I can simply add to <B>Array&lt;T,N&gt;</B> a member function (better than a conversion operator) to return a <B>RefArray&lt;T,N&gt;</B>. This way the code duplication would not be avoided, but the solution would be neater. You can find both solutions on this website. <B>README.TXT</B> describes all the versions provided.</p>
+
+<H4><FONT COLOR="#000080">Extensions</FONT></H4>
+
+<p>These classes can easily be extended. You could add a lower bound to each array dimension, whereas currently it is fixed to zero. You could use exceptions instead of assertions in bounds checking, if you are willing to put up with the overhead of the extra check in such a critical position, even in release builds. You can also add an allocator as a template parameter to my <B>Array</B> class template and some useful member function templates, as in other STL containers. If you want my <B>Array</B> to work with different <B>SubArray</B> classes, you could pass them as a template parameter to <B>Array</B>. If you need to do numerical calculations, you might want to add numerical operations that work on entire arrays. I leave these and other modifications for the interested reader, as my goal is to present a useful and extensible idea.</p>
+
+<H4><FONT COLOR="#000080">Alternatives</FONT></H4>
+
+<p>Bjarne Stroustrup pointed out another multidimensional <B>Array</B> class that uses a template argument to specify the number of dimensions. It is part of POOMA (Parallel Object-Oriented Methods and Applications), a collection of C++ template classes for writing parallel PDE (Partial Differential Equation) solvers using finite-difference and particle methods <a href="#3">[3]</a>. POOMA is a very powerful, big, and complex object-oriented framework for applications in computational science requiring high-performance parallel computers.</p>
+<p>Besides being much, much smaller, simpler, and less ambitious, my <B>Array</B> class differs from POOMA's <B>Array</B> class in significant ways. First of all, it does not have the support for parallel computation, polymorphic indexing through engine objects, floating-point domains, or any other advanced numerical feature. POOMA's <B>Array</B> is dedicated to numerical applications and can hold only elements of intrinsic numeric types (like <B>int</B> and <B>double</B>) and fixed-size <B>Vector</B>, <B>Tensor</B>, and <B>Matrix</B> classes (also provided by POOMA). My <B>Array</B> is much more general; it can contain elements of any intrinsic type and any class that has a default constructor and an assignment operator.</p>
+<p>Second, whereas I use a sequence of <B>operator []</B> to index the N-dimensional <B>Array</B>, as with C arrays and <B>std::vector</B>, POOMA's <B>Array</B> uses <B>operator ()</B>, passing N parameters to a single function. Since POOMA's <B>Array</B> has to implement these <B>operator ()</B>s individually (along with many other functions coded individually for each specific number of dimensions), it has a fixed maximum number of dimensions (currently seven). My <B>Array</B> does not have this limitation; it can have any number of dimensions. (Currently my <B>Array</B> has a lower limit, <B>N&gt;=2</B>, but the limit can easily be removed, as explained above.)</p>
+<p>Lastly, POOMA requires a license for its use (although it is free for government agencies and teaching institutions). My <B>Array</B> certainly cannot compete with POOMA's power for complex numerical applications and is not meant to, but it is a more general, much smaller, and simpler container. It can provide a simple, efficient, generic, and resizable N-dimensional Array to most applications, like <B>std::vector</B> does with mono-dimensional vectors.</p>
+
+<H4><FONT COLOR="#000080">Conclusions</FONT></H4>
+
+<p>The presented classes yield a generic resizable N-dimensional array, all in about 400 lines of source code. In the complete article on the website, I have discussed and provided various implementations of the <B>Array</B> class, each with its own advantages and disadvantages, hoping to inspire interest, feedback, and new alternatives. I think the exercise of building these classes is instructive, and the power and elegance of template programming and explicit (partial) specialization is evident. The ideas presented, like the recursive definition of class templates <B>SubArray</B> and <B>ArraySize</B>, are applicable to many different fields beside <B>Array</B>s.</p>
+
+<H4><FONT COLOR="#000080">Acknowledgments</FONT></H4>
+
+<p>My sincere thanks to two exceptional reviewers, Andrei Alexandrescu and Carlo Pescio, who kindly provided me with many great ideas and some clever criticism, influencing this article in many ways with remarkable insight. Thanks also to Herb Sutter for honoring me by sending my article to Bjarne Stroustrup, and to Bjarne Stroustrup for his comments (and for C++).</p>
+
+<H4><FONT COLOR="#000080">References</FONT></H4>
+
+<p><a name="1"></a>[1]  Bjarne Stroustrup. <I>The C++ Programming Language, Third Edition</I> (Addison-Wesley, 1997), section 13.5.</p>
+<p><a name="2"></a>[2]  Herb Sutter. <I>Exceptional C++</I> (Addison-Wesley, 1999), items 8-17.</p>
+<p><a name="3"></a>[3]  POOMA websites: <B>http://www.acl.lanl.gov/pooma/</B>; <B>http://acts.nersc.gov/pooma/</B>; <B>http://www.zib.de/benger/pooma/</B>.</p>
+<p><a name="4"></a>[4]  Andrei Alexandrescu. "Adapting Automation Arrays to the Standard <B>vector</B> Interface," <I>C/C++ Users Journal</I>, April 1999.</p>
+<p><a name="5"></a>[5]  Carlo Pescio. "Binary Constants Using Template Metaprogramming," <I>C/C++ Users Journal</I>, February 1997.</p>
+
+<p><i><B>Giovanni Bavestrelli</B> is Technology and Research Manager for the World-Wide Unisys Publishing Solutions Program, headquartered in Unisys Italia S.p.A. in Milan, Italy. He has a degree in Electronic Engineering from the Politecnico di Milano and a passion for C++, Object Oriented Programming and Design, and Software Development in general. He can be reached at <B>gbavestrelli@yahoo.com</B>.</i></p>
+
+<h4><a href="../../../source/2000/dec00/bavestre.zip">Get Article Source Code</a></h4>
+</blockquote></body></html>

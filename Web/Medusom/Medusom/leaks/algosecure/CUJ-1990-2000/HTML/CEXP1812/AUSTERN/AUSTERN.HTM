@@ -1,0 +1,374 @@
+<HTML>   
+     <HEAD>
+<TITLE>December 2000 C++ Experts Forum/The Standard Librarian</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../18.12/tocdec.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   C++ Experts Forum</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">The Standard Librarian: What Are Allocators Good For?</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Matt Austern</FONT></H3>
+
+<HR>
+<BLOCKQUOTE>
+
+<P>Allocators are one of the most mysterious parts of the C++ Standard library.  Allocators are rarely used explicitly; the Standard doesn’t make it clear when they should ever be used.  Today’s allocators are substantially different from those in the original STL proposal, and there were two other designs in between &#151; all of which relied on language features that, until recently, were available on few compilers.  The Standard appears to make promises about allocator functionality with one hand and then take those promises away with the other.</P>
+<P>This column will discuss what you can use allocators for and how you can define your own.  I’m only going to discuss allocators as defined by the C++ Standard:  bringing in pre-Standard designs, or workarounds for deficient compilers, would just add to the confusion.</P>
+
+<h3><FONT COLOR="#000080">When Not to Use Allocators</FONT></h3>
+
+<P>Allocators in the C++ Standard come in two pieces: a set of generic requirements, specified in §20.1.5 (Table 32), and the class <B>std::allocator</B>, specified in §20.4.1.  We call a class an allocator if it conforms to the requirements of Table 32.  The <B>std::allocator</B> class conforms to those requirements, so it is an allocator.  It is the only predefined allocator class in the standard library.<P>
+<P>Every C++ programmer already knows about dynamic memory allocation: you write <B>new X</B> to allocate memory and create a new object of type <B>X</B>, and you write <B>delete p</B> to destroy the object that <B>p</B> points to and return its memory.  You might reasonably think that allocators have something to do with <B>new</B> and <B>delete </B>&#151; but they don’t.  (The Standard describes <B>::operator new</B> as an "allocation function," but, confusingly, that’s not the same as an allocator.)<P>
+<P>The most important fact about allocators is that they were intended for one purpose only: encapsulating the low-level details of STL containers’ memory management.  You shouldn’t invoke allocator member functions in your own code, unless you’re writing an STL container yourself.  You shouldn’t try to use allocators to implement <B>operator new[]</B>; that’s not what they’re for.  If you aren’t sure whether you need to use allocators, then you don’t.<P>
+<P>An allocator is a class with member functions <B>allocate</B> and <B>deallocate</B>, the rough equivalents of <B>malloc</B> and <B>free</B>.  It also has helper functions for manipulating the memory that it allocated and typedefs that describe how to refer to the memory &#151; names for pointer and reference types.  If an STL container allocates all of its memory through a user-provided allocator (which the predefined STL containers all do; each of them has a template parameter that defaults to <B>std::allocator</B>), you can control its memory management by providing your own allocator.<P>
+<P>This flexibility is limited: a container still decides for itself how much memory it’s going to ask for and how the memory will be used.  You get to control which low-level functions a container calls when it asks for more memory, but you can’t use allocators to make a <B>vector</B> act like a <B>deque</B>.  Sometimes, though, even this limited flexibility is useful.  If you have a special <B>fast_allocator</B> that allocates and deallocates memory quickly, for example (perhaps by giving up thread safety, or by using a small local heap), you can make the standard list class use it by writing <B>std::list&lt;T, fast_allocator&lt;T&gt; &gt;</B> instead of plain <B>std::list&lt;T&gt;</B>.<P>
+<P>If this seems esoteric to you, you’re right.  There is no reason to use allocators in normal code.<P>
+
+<h3><FONT COLOR="#000080">Defining an Allocator</FONT></h3>
+
+<P>This already shows you something about allocators: they’re templates.  Allocators, like containers, have value types, and an allocator’s value type must match the value type of the container it’s used with.  This can sometimes get ugly: <B>map</B>’s value type is fairly complicated, so a <B>map</B> with an explicit allocator involves expressions like <B>std::map&lt;K, V, fast_allocator&lt;std::pair&lt;const K, V&gt; &gt; &gt;</B>.  (As usual, typedefs help.)<P>
+<P>Let’s start with a simple example.  According to the C++ Standard, <B>std::allocator</B> is built on top of <B>::operator new</B>.  If you’re using an automatic tool to trace memory usage, it’s often more convenient to have something a bit simpler than <B>std::allocator</B>.  We can use <B>malloc</B> instead of <B>::operator new</B>, and we can leave out the complicated performance optimizations that you’ll find in a good implementation of <B>std::allocator</B>.  We’ll call this simple allocator <B>malloc_allocator</B>. <P>
+<P>Since the memory management in <B>malloc_allocator</B> is simple, we can focus on the boilerplate that’s common to all STL allocators.  First, some types: an allocator is a class template, and an instance of that template allocates memory specifically for objects of some type <B>T</B>.  We provide a series of typedefs that describe how to refer to objects of that type: <B>value_type</B> for <B>T</B> itself, and others for the various flavors of pointers and references.<P>
+
+<pre>template &lt;class T&gt; class malloc_allocator
+{
+public:
+  typedef T                 value_type;
+  typedef value_type*       pointer;
+  typedef const value_type* const_pointer;
+  typedef value_type&amp;       reference;
+  typedef const value_type&amp; const_reference;
+  typedef std::size_t       size_type;
+  typedef std::ptrdiff_t    difference_type;
+  ...
+};
+</pre>
+
+<P>It’s no accident that these types are so similar to those in an STL container: a container class usually gets those types directly from its allocator.<P>
+<P>Why so many typedefs?  You might think that <B>pointer</B> is superfluous: it’s just <B>value_type*</B>.  Most of the time that’s true, but you might occasionally want to define an unconventional allocator where <B>pointer</B> is some pointer-like class, or where it’s some nonstandard vendor-specific type like <B>value_type __far*</B>; allocators are a standard hook for nonstandard extensions.  Unusual pointer types are also the reason for the <B>address</B> member function, which in <B>malloc_allocator</B> is just an alternate spelling for <B>operator&amp;</B>:<P>
+
+<pre>template &lt;class T&gt; class malloc_allocator
+{
+public:
+  pointer address(reference x) const { return &amp;x; }
+  const_pointer address(const_reference x) const { 
+    return &amp;x; 
+  }
+  ...
+};
+</pre>
+
+<P>Now we can get to the real work: <B>allocate</B> and <B>deallocate</B>. They’re straightforward, but they don’t look quite like <B>malloc</B> and <B>free</B>.  We pass two arguments to <B>allocate</B>: the number of objects that we’re allocating space for (<B>max_size</B> returns the largest request that might succeed), and, optionally, an address that can be used as a locality hint.  A simple allocator like <B>malloc_allocator</B> makes no use of that hint, but an allocator designed for high performance might.  The return value is a pointer to a block of memory that’s large enough for <B>n</B> objects of type <B>value_type</B> and that has the correct alignment for that type.<P>
+<P>We also pass two arguments to <B>deallocate</B>: a pointer, of course, but also an element count.  A container has to keep track of sizes on its own; the size arguments to <B>allocate</B> and <B>deallocate</B> must match.  Again, this extra argument exists for reasons of performance, and again, <B>malloc_allocator</B> doesn’t use it.<P>
+
+<pre>template &lt;class T&gt; class malloc_allocator 
+{
+public:
+  pointer allocate(size_type n, const_pointer = 0) {
+    void* p = std::malloc(n * sizeof(T));
+    if (!p)
+      throw std::bad_alloc();
+    return static_cast&lt;pointer&gt;(p);
+  }
+
+  void deallocate(pointer p, size_type) {
+    std::free(p);
+  }
+
+  size_type max_size() const { 
+    return static_cast&lt;size_type&gt;(-1) / sizeof(value_type);
+  }
+  ...
+};
+</pre>
+
+<P>The <B>allocate</B> and <B>deallocate</B> member functions deal with uninitialized memory; they don’t construct or destroy objects. An expression like <B>a.allocate(1)</B> is more like <B>malloc(sizeof(int))</B> than like <B>new int</B>.  Before using the memory you get from <B>allocate</B>, you have to create some objects in that memory; before returning that memory with <B>deallocate</B>, you have to destroy those objects.<P>
+<P>C++ provides a mechanism for creating an object at a specific memory location: placement new.   If  you write <B>new(p) T(a, b)</B> then you are invoking <B>T</B>’s constructor to create a new object, just as if you had written <B>new T(a, b)</B> or <B>T t(a, b)</B>.  The difference is that when you write <B>new(p) T(a, b)</B> you’re specifying the location where that object is constructed: the address where <B>p</B> points.  (Naturally, <B>p</B> has to point to a large enough region of memory, and it has to point to raw memory; you can’t construct two different objects at the same address.)  You can also call an object’s destructor, without releasing any memory, by writing <B>p-&gt;~T()</B>.<P>
+<P>These features are rarely used, because usually memory allocation and initialization go together: it’s inconvenient and dangerous to work with pointers to uninitialized memory.  One of the few places where you need such low-level techniques is if you’re writing a container class, so allocators decouple allocation from initialization.  The member function <B>construct</B> performs placement new, and the member function <B>destroy</B> invokes the destructor.<P>
+
+<pre>template &lt;class T&gt; class malloc_allocator
+{
+public:
+  void construct(pointer p, const value_type&amp; x) { 
+    new(p) value_type(x); 
+  }
+  void destroy(pointer p) { p-&gt;~value_type(); }
+  ...
+};
+</pre>
+
+<P>(Why do allocators have those member functions, when containers could use placement new directly?  One reason is to hide the somewhat awkward syntax, and another is that if you’re writing a more complicated allocator you might want <B>construct</B> and <B>destroy</B> to have some side effects beside object construction and destruction.  An allocator might, for example, maintain a log of all currently active objects.)<P>
+<P>None of these member functions is static, so the first thing a container has to do before using an allocator is create allocator objects &#151; and that means we should define some constructors.  We don’t need an assignment operator, though: once a container creates its allocator, the allocator isn’t ever supposed to be changed.  The allocator requirements in Table 32 don’t include assignment.  Just to be on the safe side, to make sure nobody uses an assignment operator accidentally, we’ll disable the one that would otherwise be generated automatically.<P>
+
+<pre>template &lt;class T&gt; class malloc_allocator
+{
+public:
+  malloc_allocator() {}
+  malloc_allocator(const malloc_allocator&amp;) {}
+  ~malloc_allocator() {}
+private:
+  void operator=(const malloc_allocator&amp;);
+  ...
+};
+</pre>
+
+<P>None of these constructors actually does anything, because this allocator doesn’t have any member variables to initialize.  For the same reason, any two <B>malloc_allocator</B> objects are interchangeable; if <B>a1</B> and <B>a2</B> are both of type <B>malloc_allocator&lt;int&gt;</B>, we can freely allocate memory through <B>a1</B> and deallocate it through <B>a2</B>.  We therefore define a comparison operator that says all <B>malloc_allocator</B> objects are equal:<P>
+
+<pre>template &lt;class T&gt;
+inline bool operator==(const malloc_allocator&lt;T&gt;&amp;, 
+                       const malloc_allocator&lt;T&gt;&amp;) {
+  return true;
+}
+
+template &lt;class T&gt;
+inline bool operator!=(const malloc_allocator&lt;T&gt;&amp;, 
+                       const malloc_allocator&lt;T&gt;&amp;) {
+  return false;
+}
+</pre>
+
+<P>Would you ever want to have an allocator where different objects <I>weren’t</I> interchangeable?  Certainly &#151; but simple and useful examples are hard to come by.  One obvious possibility is memory pools.  It’s common for large C programs to allocate memory from several different places ("pools"), instead of directly doing everything through <B>malloc</B>.  This has several benefits, one of which is that it only takes a single function call to reclaim all of the memory associated with a particular phase of  the program.  A program that uses memory pools might define utility functions like <B>mempool_Alloc</B> and <B>mempool_Free</B>, where <B>mempool_Alloc(n, p)</B> allocates <B>n</B> bytes from pool <B>p</B>.  It’s easy to write a <B>mempool_allocator</B> that fits into such a framework: each <B>mempool_allocator</B> object would have a member variable to specify which pool it’s associated with, and <B>mempool_allocator::allocate</B> would invoke <B>mempool_Alloc</B> to get memory from the appropriate pool <a href="#1">[1]</a>.<P>
+<P>Finally, we get to the one tricky part of defining an allocator: mapping between different types.  The problem is that an allocator class, like <B>malloc_allocator&lt;int&gt;</B>, is all built around a single value type: <B>malloc_allocator&lt;int&gt;::pointer</B> is <B>int*</B>, <B>malloc_allocator&lt;int&gt;().allocate(1)</B> returns enough memory for one <B>int</B> object, and so on.  In general, however, a container class that uses <B>malloc_allocator</B> may have to deal with more than one type.  A list class, for example, doesn’t allocate <B>int</B>s; internally, it allocates list nodes.  (We’ll see more about that in the next section.)  Somehow, when you create an <B>std::list&lt;int, malloc_allocator&lt;int&gt; &gt;</B>, the list has to turn the <B>malloc_allocator&lt;int&gt;</B> into a <B>malloc_allocator</B> for list nodes.<P>
+<P>The mechanism for this is called <I>rebinding</I>, and it has two parts.  First, given an allocator type <B>A1</B> whose value type is <B>X1</B>, you must be able to write down an allocator type <B>A2</B> that’s just the same as <B>A1</B> except that its value type is <B>X2</B>.  Second, given an object <B>a1</B> of type <B>A1</B>, you must be able to create an equivalent object <B>a2</B> of type <B>A2</B>.  Both of these parts use member templates, which is why allocators were unsupported or poorly supported on older compilers.<P>
+
+<pre>template &lt;class T&gt; class malloc_allocator
+{
+public:
+  template &lt;class U&gt; 
+  malloc_allocator(const malloc_allocator&lt;U&gt;&amp;) {}
+
+  template &lt;class U&gt; 
+  struct rebind { typedef malloc_allocator&lt;U&gt; other; };
+  ...
+};
+</pre>
+
+<P>What this really means is that an allocator class can’t ever just be a single class; it has to be a family of related classes, each with its own value type.  An allocator class must always have a <B>rebind</B> member, because that’s what makes it possible to go from one class in that family to another. <P>
+<P>If you have an allocator class <B>A1</B>, the corresponding allocator class for a different value type is <B>typename A1::template rebind&lt;X2&gt;::other</B> <a href="#2">[2]</a>.  And just as you can convert from one type to another, the templatized converting constructor lets you convert values: you can write <B>malloc_allocator&lt;int&gt;(a)</B> whether <B>a</B> is an object of type <B>malloc_allocator&lt;int&gt;</B>, or <B>malloc_allocator&lt;double&gt;</B>, or <B>malloc_allocator&lt;string&gt;</B>.  As usual, <B>malloc_allocator</B>’s converting constructor doesn’t do anything because <B>malloc_allocator</B> has no member variables.<P>
+<P>Incidentally, while most allocators have a single template parameter (the allocator’s value type) that’s not a requirement &#151; it just often happens to be convenient.  The rebind mechanism would work just as well for allocators with multiple template parameters:<P>
+
+<pre>template &lt;class T, int flags&gt; class my_allocator
+{
+public:
+  template &lt;class U&gt;
+  struct rebind { typedef my_allocator&lt;U, flags&gt; other; };
+  ...
+};
+</pre>
+
+<P>Finally, one last detail: what do we do about <B>void</B>?  Sometimes a container has to refer to void pointers (again, we’ll see more about that in the next section), and the rebind mechanism almost gives us what we need, but not quite. It doesn’t work, because we would need to write something like <B>malloc_allocator&lt;void&gt;::pointer</B>, and we’ve defined <B>malloc_allocator</B> in such a way that instantiating it for <B>void</B> would be illegal.  It uses <B>sizeof(T)</B>, and it refers to <B>T&amp;</B>; neither is legal when <B>T</B> is <B>void</B>.  The solution is as simple as the problem: specialize <B>malloc_allocator</B> for <B>void</B>, leaving out everything except the bare minimum that we need for referring to void pointers.<P>
+
+<pre>template&lt;&gt; class malloc_allocator&lt;void&gt;
+{
+  typedef void        value_type;
+  typedef void*       pointer;
+  typedef const void* const_pointer;
+
+  template &lt;class U&gt; 
+  struct rebind { typedef malloc_allocator&lt;U&gt; other; };
+</pre>
+
+<P>That’s it!  The complete source code for <B>malloc_allocator</B> is shown in <a href="list1.htm">Listing 1</a>.<P>
+
+<h3><FONT COLOR="#000080">Using Allocators</FONT></h3>
+
+<P>The easiest way to use allocators, of course, is to pass them as arguments to container classes; write<P>
+
+<pre>
+std::vector&lt;char, malloc_allocator&lt;char&gt; &gt; V;
+</pre>
+
+<P>instead of plain <B>std::vector&lt;char&gt;</B>, or<P>
+
+<pre>  typedef std::list&lt;int, mempool_allocator&lt;int&gt; &gt; List;
+  List L(mempool_allocator&lt;int&gt;(p));
+</pre>
+
+<P>instead of plain <B>std::list&lt;int&gt;</B>.
+<P>But you can do more than that.  The whole point of the STL is that it’s extensible: just as you can write your own allocators, you can also write your own container classes.  If you are careful, and if you write a container class that uses its allocator for all memory-related functionality, then somebody else will be able to plug in their own custom-written allocators.<P>
+<P>Container classes like <B>std::vector</B> and <B>std::list</B> are complicated, and a lot of the complexity has nothing to do with memory management.  Let’s start with a simple example, so that we can focus just on the allocators.  Consider a fixed-size array class, <B>Array</B>, where the number of elements is set in the constructor and can never change thereafter.  (This is something like a simplified version of <B>std::valarray</B>.)  We’ll have two template parameters, the element type and an allocator type.<P>
+<P>Containers, like allocators, start with nested types: <B>value_type</B>, <B>reference</B>, <B>const_reference</B>, <B>size_type</B>, <B>difference_type</B>, <B>iterator</B>, and <B>const_iterator</B>.  In general, most of those types can be taken directly from the container’s allocator &#151; thus illustrating why the container’s value type and the allocator’s must match.  <P>
+<P>The iterator types, of course, don’t usually come from the allocator; usually an iterator is some kind of class, closely tied to the container’s internal representation.  The <B>Array</B> class is simpler than usual because it’s natural to store all of our elements in a single contiguous memory block; we’ll maintain a pointer to the beginning of the block and a pointer to the end.  The iterators will just be pointers.<P>
+<P>Before we go any further, we have to make a decision: how are we going to store the allocator?  The constructor will take an allocator object as one of its arguments. We need to hold on to a copy of the allocator throughout the lifetime of the container, since we’ll still need it in the destructor.  <P>
+<P>In some sense, there’s no problem here: we could just declare a member variable of type <B>Allocator</B> and be done with it.   That solution would be correct, but annoying.  Ninety-nine percent of the time, after all, users don’t want to bother thinking about allocators; they’ll just write <B>Array&lt;int&gt;</B> and use the default &#151; and the default allocator is probably an empty class with no non-static member variables.  The trouble is that a member variable of type <B>Allocator</B> will take up even when <B>Allocator</B> is an empty class.  (This is required by the C++ Standard.) Our <B>Array</B> class will have three words of overhead, instead of two.  Maybe an extra word of overhead isn’t a big deal, but it’s annoying to burden all users with that overhead for a feature that most of them will never use.<P>
+<P>There are a number of solutions to this problem, some of which rely on traits classes and partial specialization.  Probably the simplest solution is to use a (private) base class of type <B>Allocator</B> instead of a member variable.  Compilers are allowed to optimize away empty base classes, and nowadays most compilers do.  <P>
+<P>We can finally write down a skeleton class definition:<P>
+
+<pre>template &lt;class T, class Allocator = std::allocator&lt;T&gt; &gt;
+class Array : private Allocator
+{
+public:
+  typedef T value_type;
+ 
+  typedef typename Allocator::reference reference;
+  typedef typename Allocator::const_reference 
+          const_reference;
+
+  typedef typename Allocator::size_type size_type;
+  typedef typename Allocator::difference_type 
+          difference_type;
+
+  typedef typename Allocator::pointer       iterator;
+  typedef typename Allocator::const_pointer const_iterator;
+
+  typedef Allocator allocator_type;
+  allocator_type get_allocator() const {
+    return static_cast&lt;const Allocator&amp;&gt;(*this);
+  }
+
+  iterator begin()             { return first; }
+  iterator end()               { return last; }
+  const_iterator begin() const { return first; }
+  const_iterator end() const   { return last; }
+
+  Array(size_type n = 0, 
+        const T&amp; x = T(), 
+        const Allocator&amp; a = Allocator());
+  Array(const Array&amp;);
+  ~Array();
+
+  Array&amp; operator=(const Array&amp;);
+
+private:
+  typename Allocator::pointer first;
+  typename Allocator::pointer last;
+};
+</pre>
+
+<P>This doesn’t yet have all of the boilerplate that we need if we are to satisfy the container requirements (see Table 65, in §23.1
+of the C++ Standard, for the complete set of requirements), but most of that boilerplate has little to do with allocators.  For our purposes, the most interesting member functions are the constructor, which allocates memory and creates objects, and the destructor, which destroys memory and frees memory.<P>
+<P>The constructor initializes the allocator base class, obtains a block of memory that’s large enough for <B>n</B> elements (if we were writing something like <B>vector</B>, we might obtain a larger block to allow room for growth), and then loops through the block creating copies of the initial value. The only tricky part is exception safety: if one of the elements’ constructors throws an exception, we have to undo everything we’ve done.<P>
+
+<pre>template &lt;class T, class Allocator&gt;
+Array&lt;T, Allocator&gt;::Array(size_type n, 
+                           const T&amp; x, 
+                           const Allocator&amp; a)
+  : Allocator(a), first(0), last(0)
+{
+  if (n != 0) {
+    first = Allocator::allocate(n);
+    size_type i;
+    try {
+      for (i = 0; i &lt; n; ++i) {
+        Allocator::construct(first + i, x);
+      }
+    }
+    catch(...) {
+      for(size_type j = 0; j &lt; i; ++j) {
+        Allocator::destroy(first + j);
+      }
+      Allocator::deallocate(first, n);
+      throw;
+    }
+  }
+}
+</pre>
+
+<P>(You might wonder why we’re writing out these loops by hand; doesn’t <B>std::uninitialized_fill</B> already do what we need?  Almost, but not quite. We have to use the allocator’s <B>construct</B> member function instead of plain placement new.  Perhaps a future version of the C++ Standard will include a version of <B>uninitialized_fill</B> that takes an allocator argument and make such explicit loops unnecessary.)<P>
+<P>The destructor is simpler, since we don’t have to worry about exception safety: <B>T</B>’s destructor is never supposed to throw.<P>
+
+<pre>template &lt;class T, class Allocator&gt;
+Array&lt;T, Allocator&gt;::~Array() 
+{
+  if (first != last) {
+    for (iterator i = first; i &lt; last; ++i)
+      Allocator::destroy(i);
+    Allocator::deallocate(first, last - first);
+  }
+}
+</pre>
+
+<P>Our simple array class doesn’t have to use rebinding or conversion, but that’s only because <B>Array&lt;T, Allocator&gt;</B> never creates objects of any type other than <B>T</B>.  Other types come in when you define more complicated data structures.  Consider, for example, a linked list class whose value type is <B>T</B>.  A linked list typically consists of nodes, where each node holds an object of type <B>T</B> and a pointer to the next node.  So, as a first attempt, we might define a list node as follows:<P>
+
+<pre>template &lt;class T&gt; 
+struct List_node
+{
+  T val;
+  List_node* next;
+};
+</pre>
+
+<P>The procedure for adding a new value to the list might look something like this:<P>
+
+<UL>
+<LI>Using an allocator whose value type is <B>List_node&lt;T&gt;</B>, allocate memory for a new list node.
+<LI>Using an allocator whose value type is <B>T</B>, construct the new list element in the node’s <B>val</B> slot.
+<LI>Link the node into place appropriately.</UL>
+
+<P>This procedure requires dealing with two different allocators, one of which is obtained from the other via rebinding.  It’s good enough for almost all applications, even ones that use allocators for quite sophisticated purposes.  What it doesn’t do is support allocators with unusual pointer types. It explicitly relies on being able to use an ordinary pointer of type <B>List_node&lt;T&gt;*</B>. <P>
+<P>If you’re extremely ambitious, and you want to support allocators with alternative pointer types, everything suddenly becomes much more complicated &#151; the pointer from one list node to another can no longer be of type <B>List_node&lt;T&gt;*</B>, or even of type <B>void*</B>, but must be of some type taken from the allocator.  Writing this without circularity is nontrivial: it’s illegal to instantiate an allocator with an incomplete type, so there’s no way to talk about pointers to <B>List_node</B> until after <B>List_node</B> has been fully defined.  We need a delicate chain of declarations.<P>
+
+<pre>template &lt;class T, class Pointer&gt;
+struct List_node
+{
+  T val;
+  Pointer next;
+};
+
+template &lt;class T, class Alloc&gt;
+class List : private Alloc
+{
+private:
+  typedef typename Alloc::template rebind&lt;void&gt;::other  
+          Void_alloc;
+  typedef typename Void_alloc::pointer Voidptr;
+  typedef typename List_node&lt;T, Voidptr&gt; Node;
+  typedef typename Alloc::template rebind&lt;Node&gt;::other 
+          Node_alloc;
+  typedef typename Node_alloc::pointer Nodeptr;
+  typedef typename Alloc::template rebind&lt;Voidptr&gt;::other
+          Voidptr_alloc;
+
+  Nodeptr new_node(const T&amp; x, Nodeptr next) {
+    Alloc a = get_allocator();
+    Nodeptr p = Node_alloc(a).allocate(1);
+    try {
+      a.construct(p-&gt;val, x);
+    }
+    catch(...) {
+      Node_alloc(a).deallocate(p, 1);
+      throw;
+    }
+    Voidptr_alloc(a).construct(p-&gt;next, Voidptr(next));
+    return p;
+  }
+
+  ...
+};
+</pre>
+
+<P>And finally, in case you think that this is far too much effort for far too small a benefit, a reminder: just because you can write a container class that uses allocators doesn’t mean that you have to, or that you should.  Sometimes you might want to write a container class that relies on a specific allocation strategy, whether it’s something as ambitious as a disk-based B-tree container or as simple as the <B>block</B> class that I describe in my book.  Even if you do want to write a container class that uses allocators, you don’t have to support alternate pointer types.  You can write a container where you require that any user-supplied allocator uses ordinary pointers, and document that restriction.  Not everything has to be fully general.<P>
+
+<h3><FONT COLOR="#000080">Future Directions</FONT></h3>
+
+<P>If you want to write a simple allocator like <B>malloc_allocator</B>, you should have no difficulty.  (Provided that you’re using a reasonably modern compiler, that is.)  If you have more ambitious plans, however &#151; a memory pool allocator or an allocator with nonstandard pointer types for distributed computing &#151; the situation is less satisfactory.  <P>
+<P>If you want to use some alternative pointer-like type, what operations does it have to support?  Must it have a special null value, and, if so, how is that value written?  Can you use casts?  How can you convert between pointer-like objects and ordinary pointers?  Do you have to worry about pointer operations throwing exceptions?  I made some assumptions in the last section; the C++ Standard doesn’t say whether those assumptions are right or wrong.  These details are left to individual standard library implementations, and it’s even legal for an implementation to ignore alternative pointer types altogether.  The C++ Standard also leaves a few unanswered questions about what happens when different instances of an allocator aren’t interchangeable.<P>
+<P>Fortunately, the situation isn’t quite as dire as the words in the Standard (§20.1.5, paragraphs 4-5) might make it seem.   The Standard left some questions unanswered because, at the time it was written, the C++ standardization committee wasn’t able to agree on the answers; the necessary experience with allocators did not exist.  Everyone involved in writing this section of the Standard considered it to be a temporary patch, and the vagueness will definitely be removed in a future revision.<P>
+<P>For the moment, it’s best to stay away from alternative pointer types if you’re concerned about portability, but, if you’re willing to accept a few limitations, you can safely use allocators like <B>mempool_allocator</B> where the differences between individual objects is important.  All major standard library implementations now support such allocators in some way, and the differences between implementations are minor.<P>
+<P>Just as the containers take allocator types as template parameters, so the containers’ constructors take allocator objects as arguments.  A container makes a copy of that argument and uses the copy for all of its memory management; once it is initialized in the constructor, the container’s allocator is never changed.<P>
+<P>The only question is what happens when you perform an operation that requires two containers to cooperate on memory management.  There are exactly two such operations in the standard library: <B>swap</B> (all containers) and <B>std::list::splice</B>.<FONT SIZE=2>   </FONT>In principle, an implementation could handle them in several different ways:<P>
+
+
+<UL>
+<LI>Forbid <B>swap</B> or <B>splice</B> between two containers whose allocators aren't equal.
+<LI>Put a test for allocator equality in <b>swap</b> and <b>splice</b>.  If the allocators
+aren't equal, then fall back to some other operation like copying and assignment.
+<LI>For <B>swap</B> only: swap the containers' allocators as well as their data.  (It's hard to see how we could generalize this to <B>splice</B>.  It also presents a problem: how do you swap things that don't have assignment operators?)</UL>
+
+<P>If you just stay away from <B>swap</B> and <B>splice</B> whenever two containers might be using different allocators, you'll be safe.  In practice, I haven't found this to be a serious restriction: you need tight discipline to use a feature like memory pools safely, and you probably won't want indiscriminate mixing between containers with different allocators. <P>
+<P>Partly because of unfamiliarity and partly because of the unsatisfactory state of the C++ Standard's requirements, most uses of allocators today are simple.  As the C++ community becomes more familiar with allocators, and as the Standard is clarified, we can expect more sophisticated uses to emerge. <P>
+
+<h3><FONT COLOR="#000080">Notes</FONT></h3>
+<P><a name="1"></a> 
+[1] You can see an example of a pool allocator in the open source SGI Pro64<sup>TM</sup> compiler, http://oss.sgi.com/projects/Pro64/.<P>
+<P><a name="2"></a> 
+[2] Why the funny <B>template</B> keyword in that expression?  It's an annoying little technicality; like <B>typename</B>, it helps the compiler resolve a parsing ambiguity.  The problem is that when <B>A</B> is a template parameter, and the compiler sees an expression like <B>A::B&lt;T&gt;</B>, the compiler doesn't know anything about <B>A</B>'s members.  Should it assume that <B>B&lt;T&gt;</B> is a member template, or should it assume that <B>B</B> is an ordinary member variable and that <B>&lt;</B> is just a less than sign?  A human reader knows which way to interpret it, but the compiler doesn't.  You need to put in <B>template</B> to force the first interpretation. Formally, the rule (in §14.2 of the C++ Standard) is: "When the name of a member template specialization appears after <B>.</B> or <B>-&gt;</B> in a <I>postfix-expression</I>, or after <I>nested-name-specifier</I> in a <I>qualified-id</I>, and the postfix-expression or qualified-id explicitly depends on a template-parameter (14.6.2), the member template name must be prefixed by the keyword <B>template</B>.  Otherwise the name is assumed to name a non-template."<P>
+
+<p><i><b>Matt Austern</b> is the author of </I>Generic Programming and the STL<I> and the chair of the C++ standardization committee's library working group. He works at AT&amp;T Labs &#151; Research and can be contacted at austern@research.att.com.</i></p>
+
+<h4><a href="../../../source/2000/cdec00/austern.zip">Get Article Source Code</a></h4>
+
+
+</blockquote></body></html>
+
+

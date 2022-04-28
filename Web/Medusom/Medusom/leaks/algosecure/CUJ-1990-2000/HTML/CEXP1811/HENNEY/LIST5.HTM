@@ -1,0 +1,29 @@
+<HTML><HEAD>
+<TITLE>November 2000 C++ Experts Forum/From Mechanism to Method/Listing 5</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 5:  Smart function pointer dereferencing and calling</A></h4>
+<pre>
+class function_ptr
+{
+public:
+    ...
+    void operator()() const
+    {
+        if(body)
+            body-&gt;call();
+    }
+    function_ptr &amp;operator*()
+    {
+        return *this;
+    }
+    const function_ptr &amp;operator*() const
+    {
+        return *this;
+    }
+    ...
+};
+</pre></pre></body></html>
+
+

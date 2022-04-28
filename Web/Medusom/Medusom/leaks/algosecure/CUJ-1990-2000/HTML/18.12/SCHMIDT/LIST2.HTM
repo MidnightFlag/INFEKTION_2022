@@ -1,0 +1,30 @@
+<HTML><HEAD>
+<TITLE>December 2000/Uncaught Exceptions/Listing 2</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 2: Attempt at nested functions</A></h4>
+<pre>
+#include &lt;stdio.h&gt;
+
+typedef void (*CallbackFuncPtr)();
+
+void TestCallback(CallbackFuncPtr pFunc)
+    {
+    pFunc();
+    }
+
+int main()
+    {
+    struct CFoo
+        {
+        void operator ()()
+            {
+            printf("test");
+            }
+        };
+    CFoo aFoo;
+    TestCallback(aFoo);
+    return 0;
+    }
+</pre></body></html>

@@ -1,0 +1,16 @@
+<HTML><HEAD>
+<TITLE>May 2000 Java Solutions/Understanding JavaBeans/Figure 2</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 2: Using a JavaBean</A></h4>
+<pre>
+public class SimpleTest {
+    public static void main(String[] args) {
+        SimpleBean bean = new SimpleBean();
+        bean.setCount(33);
+        int cnt = bean.getCount();
+        System.out.println("Bean count = " + cnt);
+    }
+}
+</pre></body></html>

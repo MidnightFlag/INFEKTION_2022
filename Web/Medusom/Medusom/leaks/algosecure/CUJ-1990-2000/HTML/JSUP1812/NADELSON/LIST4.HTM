@@ -1,0 +1,105 @@
+<HTML><HEAD>
+<TITLE>December 2000 Java Solutions/Java Named Semaphores/Listing 4</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 4: NamedSemaphoreImpl implements the NamedSemaphore interface</A></h4>
+<pre>
+package Sem;
+
+import java.rmi.*;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.*;
+
+public class NamedSemaphoreImpl extends UnicastRemoteObject 
+   implements NamedSemaphore
+{
+   // Catalog of current semaphore names and 
+   // unnamed semaphore objects.
+   private Hashtable semaphoreHash = new Hashtable();
+
+   public NamedSemaphoreImpl() throws RemoteException
+   {
+      super();
+   }
+
+   /** The create method takes a semaphore name and the initial 
+       and maximum values of the semaphore. If the semaphore name 
+       already exists within the catalog, an exception 
+       is thrown. */
+   public void 
+   create(String _name, int _initialValue, int _maxValue) 
+      throws RemoteException
+   {
+      if (semaphoreHash.containsKey(_name))
+         throw new 
+            RemoteException("Semaphore Name: " + _name + 
+               " Already Exists");
+
+      // The semaphore name and unnamed semaphore object is 
+      // placed within the named semaphore catalog.
+      semaphoreHash.put(_name, 
+         new Semaphore(_initialValue, _maxValue));
+   }
+
+   /** The lock method takes a semaphore name and 
+       if it exsits within the named semaphore catalog, 
+       the unnamed semaphore object is retrieved and locked. 
+       If the semaphore name does not exist an exception 
+       is thrown. */
+   public void lock(String _name) throws RemoteException
+   {
+      if (!semaphoreHash.containsKey(_name))
+         throw new 
+            RemoteException("Semaphore Name: " + _name + 
+               "Does Not Exist");
+
+      Semaphore sem = (Semaphore)semaphoreHash.get(_name);
+      sem.lock();
+   }
+
+   /** The unlock method takes a semaphore name and if it exists 
+       within the named semaphore catalog, the unnamed semaphore 
+       object is retrieved and unlocked. If the semaphore name 
+       does not exist an exception is thrown. */
+   public void unlock(String _name) throws RemoteException
+   {
+      if (!semaphoreHash.containsKey(_name))
+         throw new 
+            RemoteException("Semaphore Name: " + _name + 
+               "Does Not Exist");
+
+      Semaphore sem = (Semaphore)semaphoreHash.get(_name);
+      sem.unlock();
+   }
+
+   /** The getValue method takes a semaphore name and if it 
+       exists within the named semaphore catalog, the unnamed 
+       semaphore's value is retrieved. If the semaphore name 
+       does not exist an exception is thrown.                 */
+   public int getValue(String _name) throws RemoteException
+   {
+      if (!semaphoreHash.containsKey(_name))
+         throw new 
+            RemoteException("Semaphore Name: " + _name + 
+               "Does Not Exist");
+
+      Semaphore sem = (Semaphore)semaphoreHash.get(_name);
+      return sem.getValue();
+   }
+
+   /** The remove method takes a semaphore name and if it 
+       exists within the named semaphore catalog, it is removed.   
+       If the semaphore name does not exist an exception 
+       is thrown. */
+   public void remove(String _name) throws RemoteException
+   {
+      if (!semaphoreHash.containsKey(_name))
+         throw new 
+            RemoteException("Semaphore Name: " + _name + 
+               "Does Not Exist");
+
+      semaphoreHash.remove(_name);
+   }
+}
+</pre></body></html>

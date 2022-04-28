@@ -1,0 +1,19 @@
+<HTML><HEAD>
+<TITLE>December 2000/A Class Template for N-Dimensional Generic Resizable Arrays/Listing 2</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 2: First array attempt</A></h4>
+<pre>
+template &lt;typename T, unsigned int N&gt;
+class Array 
+{
+   T * m_pArrayElements; // C array storing all Array elements
+
+public:
+
+   ReturnType operator [] (unsigned int index); 
+   const ReturnType operator [] (unsigned int index) const; 
+};
+
+</pre></body></html>

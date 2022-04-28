@@ -1,0 +1,151 @@
+Keywords: Jan2000, C, C++, Java, dynamic, interval, search, leak, debugging
+
+The code listings for the January 2000 issue of C/C++ Users Journal
+include source code for Sasha Gontmakher's article, "Easy Dynamic
+Loading in C++," Yogi Dandass' interval search trees, and Ernesto
+Guisado's memory debugging class. Also included are listings from Chuck
+Allison's column, import java.*, Dan Saks' column, "C++ Theory and
+Practice," and Bobby Schmidt's column, "Uncaught Exceptions."
+
+*************************  FILE DESCRIPTION **********************************
+
+The following files are included in the disk:
+
+FILENAME		AUTHOR-NAME	    TITLE			       
+(Zip archive/
+subdirectory name)
+-------------------------------------------------------------------------------
+gontmakh                Sasha Gontmakher    Easy Dynamic Loading in C++
+
+    Under subdirectory windows:
+
+    factory.h           partially listed as Figure 3, defines the factory
+                                                      class
+    factory.cxx         not listed
+    test.cxx            not listed
+    driver.dsp          not listed
+    kernel.cxx          not listed
+    kernel.dsp          not listed
+    kernel.exp          not listed
+    library_.cxx        not listed
+    makefile            not listed
+    product.h           not listed
+    product1.cxx        not listed
+    product1.dsp        not listed
+    product1.h          not listed
+    product2.cxx        not listed
+    product2.dsp        not listed
+    product2.h          not listed
+    regime.dsw          not listed
+    simple.cxx          not listed
+    simple.dsp          not listed
+    driver.cxx          not listed
+                                                      
+    Under subdirectory unix:
+
+    test.cc             not listed
+    factory.h           not listed
+    kernel.cc           not listed
+    library_loader.cc   not listed
+    Makefile            not listed
+    product.h           not listed
+    product1.cc         not listed
+    product1.h          not listed
+    product2.cc         not listed
+    product2.h          not listed
+    simple.cc           not listed
+    driver.cc           not listed
+
+    Under subdirectory unix/cvs:
+
+    entries             not listed
+    repository          not listed
+    root                not listed
+    
+dandass                 Yogi Dandass        Interval Trees
+
+    observat.h          Figure 1, An observation class for recording
+                                  high and low temperature readings
+    itree.h             Partially listed in Figures 3 and 5
+                                  Defines the interval tree template
+                                  class itree
+    itsample.cpp        Figure 5, Sample use of an interval tree
+                                  container
+
+guisado                 Ernesto Guisado     Debugging Component-Based
+                                            Memory Leaks
+
+    Under subdirectory qv:
+
+    readme.txt          not listed, Explains how to compile the qv VRML 1.0
+                                    parser
+    changes.txt         not listed, Documents changes in qv releases
+
+    Under subdirectory qv/include:
+
+    Include files for qv, too numerous to list
+
+    Under subdirectory qv/src:
+
+    Source files for qv, too numerous to list
+
+    Under subdirectory qv/test:
+
+    Test files for qv, too numerous to list
+
+    Under subdirectory travtest:
+
+    travtest.dsp        not listed
+    travtest.dsw        not listed
+    travtest.ncb        not listed
+    travtest.opt        not listed
+    travtest.plg        not listed
+
+    Under subdirectory travtest/debug:
+
+    log_object.obj      not listed
+    travtest.obj        not listed
+    vc50.pdb            not listed
+
+allison                 Chuck Allison       import java.*: Interfaces 
+                                            and Inner Classes
+
+    FixedStack.java     Figure 1, The FixedStack class
+    StackException.java Figure 2, The StackException class
+    StackTest.java      Figure 3, A test of FixedStack
+    DynamicStack.java   Figure 4, The DynamicStack class
+    StackTest2.java     Figure 5, Tests DynamicStack
+    StackTest3.java     Figure 6, Tests an Object that implements the
+                                  Stack interface
+    Person.java         Figure 7, A Cloneable Person class
+    PersonTest.java     Figure 8, Tests cloning of a Person class
+    Super.java          Figure 9, Illustrates cloning with superclasses
+    Stack.java          Figure 10, Nests StackException within the
+                                   Stack interface
+    StackIter.java      Figure 11, Implements an iterator for FixedStack
+    FixedStack2.java    Figure 12, Implements an iterator via an inner class
+      
+saks                    Dan Saks            C++ Theory and Practice: 
+                                            Replacing Character Arrays
+                                            with Strings, Part 1
+
+    table.h             Listing 1, The cross-reference table class and
+                                   inline member function definitions
+    table.cpp           Listing 2, The cross-reference table non-inline
+                                   member function definitions
+    sequence.h          Listing 3, The line number sequence class definitions
+    xr.cpp              Listing 4, The main source file for the
+                                   cross-reference generator, using
+                                   character arrays for input processing
+    xr2.cpp             Listing 5, The main source file for the
+                                   cross-reference generator, using
+                                   standard strings for input processing
+    gettoken.cpp        Figure 1,  A version of get_token that erases
+                                   the token string before appending
+                                   characters to it
+
+schmidt                 Bobby Schmidt           Uncaught Exceptions:
+                                                Tempus Fugit
+
+    excerror.h          Listing 1, Mysterious exceptions
+    other.h             Listing 2, Deferred initialization

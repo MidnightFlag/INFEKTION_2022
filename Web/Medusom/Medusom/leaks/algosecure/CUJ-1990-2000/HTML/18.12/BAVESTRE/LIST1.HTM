@@ -1,0 +1,27 @@
+<HTML><HEAD>
+<TITLE>December 2000/A Class Template for N-Dimensional Generic Resizable Arrays/Listing 1</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 1: Using the N-dimensional array</A></h4>
+<pre>
+Array&lt;int, 3&gt; A3;        // Three dimensional array of ints
+
+unsigned int Size3 [3]= { 10, 20, 30 }; // Array dimensions
+A3.resize(Size3);         // Can change array size any time
+
+A3[5][10][15]=3;    // OK, setting an array element
+int j=A3[30][0][0]; // Run-time bounds checking error
+j=A3[1][2];         // Compile-time error, missing brackets
+A3[1][2][1][2];     // Compile-time error, extra brackets   
+
+// We can use it also like an STL container
+int * pMaxVal=std::max_element(A3.begin(),A3.end()); 
+
+// Resize array 
+unsigned int NewSize3 [3]= { 30, 20, 10 }; // Array dimensions
+A3.resize(NewSize3);                // Can change size anytime
+
+A3[29][19][9]=0;                           // Set last element
+
+</pre></body></html>

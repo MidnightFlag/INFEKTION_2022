@@ -1,0 +1,20 @@
+<HTML><HEAD>
+<TITLE>May 2000 Java Solutions/Understanding JavaBeans/Figure 6</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 6: Notifying subscribers of an event</A></h4>
+<pre>
+protected void notifyFired() {
+    TimerEvent evt = new TimerEvent(this, theNumber, theCount);
+    Vector v;
+    synchronized(this) {
+        v = (Vector) listeners.clone();
+    }
+    int cnt = v.size();
+    for (int k=0; k&lt;cnt; k++) {
+        TimerListener client = (TimerListener) v.elementAt(k);
+        client.timerFired(evt);
+    }
+}
+</pre></body></html>

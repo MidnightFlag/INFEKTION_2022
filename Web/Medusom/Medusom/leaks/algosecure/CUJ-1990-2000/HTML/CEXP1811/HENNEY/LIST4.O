@@ -1,0 +1,17 @@
+class function_ptr
+{
+public:
+    ...
+    function_ptr(const function_ptr &other)
+      : body(other.body ? other.body->clone() : 0)
+    {
+    }
+    function_ptr &operator=(const function_ptr &rhs)
+    {
+        callable *old_body = body;
+        body = rhs.body ? rhs.body->clone() : 0;
+        delete old_body;
+        return *this;
+    }
+    ...
+};

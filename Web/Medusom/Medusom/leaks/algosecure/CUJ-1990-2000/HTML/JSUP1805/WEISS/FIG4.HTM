@@ -1,0 +1,21 @@
+<HTML><HEAD>
+<TITLE>May 2000 Java Solutions/Understanding JavaBeans/Figure 4</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 4: Methods to add and remove subscribers to the timer bean's events</A></h4>
+<pre>
+public synchronized void 
+addTimerListener(TimerListener l) {
+   if (!listeners.contains(l)) {
+      listeners.addElement(l); 
+   }
+}
+
+public synchronized void 
+removeTimerListener(TimerListener l) {
+   if (listeners.contains(l)) {        
+      listeners.removeElement(l); 
+   }
+}
+</pre></body></html>

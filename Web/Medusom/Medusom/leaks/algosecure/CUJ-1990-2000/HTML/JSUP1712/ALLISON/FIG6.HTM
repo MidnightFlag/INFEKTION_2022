@@ -1,0 +1,30 @@
+<HTML><HEAD>
+<TITLE>December 1999 Java Solutions/The Java 2 Collections -- Finally, Some News You Can Use/Figure 6</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 6: The Collection interface</A></h4>
+<pre>
+Interface Collection
+{
+   // All mutators are optional!
+   boolean      add(Object o);
+   boolean      addAll(Collection c);
+   void         clear();
+   boolean      contains(Object o);
+   boolean      containsAll(Collection c);
+   boolean      equals(Object o);
+   int          hashCode();
+   boolean      isEmpty();
+   Iterator     iterator();
+   boolean      remove(Object o);
+   boolean      removeAll(Collection c);
+   boolean      retainAll(Collection c);
+   int          size();
+   Object[]     toArray();
+   Object[]     toArray(Object[] a);
+}
+
+</pre>
+</BODY>
+</HTML>

@@ -1,0 +1,59 @@
+.sm-label {
+    color: #bbb;
+    font-size: 12px;
+}
+
+.sm-status-label {
+    color: #333;
+    font-size: 0px;
+    padding: 0 2px 0 2px;
+}
+
+.sm-unit-label {
+    color: #aaa;
+    font-size: 8px;
+    padding: 0px 2px 0 2px;
+}
+
+.sm-perc-label {
+    color: #aaa;
+    font-size: 10px;
+    padding: 0 2px 0 2px;
+}
+
+.sm-status-value {
+    min-width: 10px;
+    text-align: right;
+}
+
+.sm-big-status-value {
+    min-width: 20px;
+    text-align: right;
+}
+
+.sm-value {
+    text-align: right;
+    width: 20px;
+}
+
+.sm-void {
+    width: 0px;
+}
+
+.sm-chart {
+    padding: 0 2px;
+}
+
+.sm-tooltip-box {
+    font-size: 0.85em;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(10, 10, 10, 0.7);
+    border-radius: 5px;
+    padding: 2px;
+}
+
+.sm-tooltip-item {
+    padding: 0px;
+    spacing: 2px;
+}

@@ -1,0 +1,105 @@
+<HTML><HEAD>
+<TITLE>December 1999 Java Solutions/The Java 2 Collections -- Finally, Some News You Can Use/Figure 19</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 19: Illustrates maps</A></h4>
+<pre>
+import java.util.*;
+
+class MapTest
+{
+    public static void main(String[] args)
+    {
+        HashMap h = new HashMap();
+        h.put("Alabama", "Montgomery");
+        h.put("Tennesee", "Nashville");
+        h.put("Georgia", "Atlanta");
+        // The following is ignored:
+        h.put("Georgia", "Atlanta");
+        System.out.println(h);
+        test(h);
+        System.out.println();
+
+        TreeMap t =
+            new TreeMap(Collections.reverseOrder());
+        t.putAll(h);
+        System.out.println(t);
+        test(t);
+
+        // Extra TreeMap Stuff:
+        boolean ctest =
+            t.comparator()
+             .equals(Collections.reverseOrder());
+        System.out.println("Comparator test: " + ctest);
+        System.out.println("firstKey = " +
+                           t.firstKey());
+        System.out.println("lastKey = " +
+                           t.lastKey());
+        System.out.println("headMap: " +
+                           t.headMap("Georgia"));
+        System.out.println("tailMap: " +
+                           t.tailMap("Georgia"));
+    }
+
+    public static void test(Map m)
+    {
+        if (m.containsKey("Alabama"))
+            System.out.println("Alabama is a key");
+        if (m.containsValue("Montgomery"))
+            System.out.println("Montgomery is a value");
+        System.out.println("m[Georgia] = " +
+                           m.get("Georgia"));
+        System.out.println("m[Michigan] = " +
+                           m.get("Michigan"));
+        System.out.println("Keys: " + m.keySet());
+        System.out.println("Values: " + m.values());
+        iterate(m);
+    }
+
+    public static void iterate(Map m)
+    {
+        System.out.println("Iterating...");
+        Set s = m.entrySet();
+        Iterator i = s.iterator();
+        while (i.hasNext())
+        {
+            Map.Entry e = (Map.Entry)(i.next());
+            System.out.println(e);
+        }
+    }
+}
+
+/* Output:
+{Alabama=Montgomery, Georgia=Atlanta, Tennesee=Nashville}
+Alabama is a key
+Montgomery is a value
+m[Georgia] = Atlanta
+m[Michigan] = null
+Keys: [Alabama, Georgia, Tennesee]
+Values: [Montgomery, Atlanta, Nashville]
+Iterating...
+Alabama=Montgomery
+Georgia=Atlanta
+Tennesee=Nashville
+
+{Tennesee=Nashville, Georgia=Atlanta, Alabama=Montgomery}
+Alabama is a key
+Montgomery is a value
+m[Georgia] = Atlanta
+m[Michigan] = null
+Keys: [Tennesee, Georgia, Alabama]
+Values: [Nashville, Atlanta, Montgomery]
+Iterating...
+Tennesee=Nashville
+Georgia=Atlanta
+Alabama=Montgomery
+Comparator test: true
+firstKey = Tennesee
+lastKey = Alabama
+headMap: {Tennesee=Nashville}
+tailMap: {Georgia=Atlanta, Alabama=Montgomery}
+*/
+</pre>
+</BODY>
+</HTML>

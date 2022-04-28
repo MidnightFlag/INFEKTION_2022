@@ -1,0 +1,110 @@
+<HTML>   
+     <HEAD>
+<TITLE>November 2000/The Standard Librarian</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocnov.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   C/C++ Contributing Editors</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">The Standard Librarian: IOStreams and Stdio</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Matt Austern</FONT></H3>
+
+<BLOCKQUOTE>
+<p>You can mix C and C++ I/O operations, but you have to be careful if you don't want garbled streams.</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+
+<p>I/O is inherently complicated, and the C++ Standard library reflects that complexity. The C++ Standard defines ten I/O headers, dozens of I/O classes, and hundreds of member and nonmember functions. Some of those functions have obvious uses, but others are more obscure. Sometimes even the obscure member functions turn out to be important; one of those is <B>std::ios_base::sync_with_stdio</B>. What does <B>sync_with_stdio</B> do, and why would you ever want to use it?</p>
+
+<H4><FONT COLOR="#000080">Synchronization</FONT></H4>
+
+<p>The C++ Standard (&#167;27.4.2.4) says that <B>std::ios_base::sync_with_stdio</B>, which takes a single argument of type <B>bool</B>, controls whether "the standard iostream objects are synchronized," that "called with a false argument, it allows the standard streams to operate independently of the standard C streams," and that its return value is the previous synchronization state. That's not very informative; what does it mean for iostream objects to be synchronized?</p>
+<p>First, a brief review. The C Standard library has one mechanism for I/O: stdio streams. There are three predefined streams in the C Standard library, <B>stdin</B>, <B>stdout</B>, and <B>stderr</B>, and you manipulate them with functions like <B>getc</B> and <B>fprintf</B>. The C++ Standard library has two mechanisms for I/O: in addition to stdio, it also defines a newer mechanism called <I>iostreams</I>. There are eleven (!) predefined streams in the C++ Standard library: the three streams from the C library; three new-style streams, <B>cin</B>, <B>cout</B>, <B>cerr</B>, and a fourth stream, <B>clog</B>, that's just like <B>cerr</B> except for its buffering policy; and four streams for wide characters, <B>wcin</B>, <B>wcout</B>, <B>wcerr</B>, and <B>wclog</B>.</p>
+<p>Stdio streams and iostreams are both part of the C++ library, and it's entirely reasonable for both kinds of I/O to be found in a single program. There's no problem if you open one file with <B>fopen</B> and open a different file as an <B>fstream</B>. The predefined streams are more complicated, though, because <B>stdin</B> and <B>cin </B>connect to the same thing (the program's standard input), as do <B>stdout</B> and <B>cout</B> (standard output) and <B>stderr</B> and <B>cerr</B> (standard error). What happens if you try to mix these two methods? What happens, for example, if you read one line from standard input using <B>scanf</B> and then read the next line using <B>std::getline</B>?</p>
+<p>In general, you should expect there to be a problem. I/O is nearly always buffered &#151; performance would be dreadful if you had to make a separate operating system call for every character! &#151; and there's no reason to expect two different I/O systems to use the same buffers. (The Perl documentation, for example, warns against mixing <B>read</B> and <B>sysread</B>.) There's a special exception, though: the predefined streams in C++ can be <I>synchronized</I> with their stdio counterparts, meaning that you can freely intermix reads from <B>cin</B> and <B>stdin</B> or writes to <B>cout</B> and <B>stdout</B>.</p>
+<p>How freely? The C++ Standard doesn't really say. The intent of the people who wrote this part of the Standard, though, was that they could be mixed very freely indeed: you can, for example, read a character <B>c</B> with <B>getc(stdin)</B>, put it back in standard input with <B>std::cin.rdbuf-&gt;sputbackc(c)</B>, and then read the same character again either from <B>cin</B> or from <B>stdin</B>. This requires a tight coupling between the stdio and iostream buffers.</p>
+<p>The standard library sometimes looks very different to a library implementer than to a user! The description of <B>sync_with_stdio</B> is just four inconspicuous sentences in the C++ Standard, but, internally, a library implementation that provides this feature (especially an implementation that provides it without too great a performance penalty) looks quite different from what it would look like if it didn't have to support synchronization. There are several ways of implementing iostreams so that synchronized mode is possible; all of them boil down to sharing a single buffer between an stdio stream and its  iostream counterpart, and all of them come at a cost.</p>
+<p>In the "classic" iostreams that came with AT&amp;T cfront, unsynchronized mode was the default. <I>That has changed.</I> According to the C++ Standard, synchronized mode is the default. If you've found that your program suddenly became slower when you switched from a compiler that provided "classic" iostreams to one that provides a standard-conforming library, what you're seeing might be nothing more than the change in defaults. Unsynchronized mode is always at least as fast as synchronized, and in some implementations, it's much faster. If you don't actually need to mix stdio and iostream I/O on the predefined streams, you should always put the line</p>
+
+<pre>
+std::ios_base::sync_with_stdio(false);
+</pre>
+
+<p>at the beginning of your program. (And in many cases you should also put the line</p>
+
+<pre>
+std::cin.tie(0);
+</pre>
+
+<p>at the beginning of your program. By default, the I/O library flushes <B>cout</B> every time you read from <B>cin</B>. That's convenient if you write things like this,</p>
+
+<pre>
+std::cout &lt;&lt; "Enter a number: ";
+std::cin &gt;&gt; x;
+</pre>
+
+<p>because it ensures that your program will display the output before trying to read the input, without your having to flush the output stream explicitly. Just like synchronization, however, the convenience of automatic flushing also comes at a cost. If you don't need automatic flushing, your program will run faster without it.)</p>
+
+<H4><FONT COLOR="#000080">Stdio Filebufs</FONT></H4>
+
+<p>You probably aren't going to be writing your own C++ library implementation, so you might think that you don't need to know anything about how synchronization is implemented. What happens, though, if you want to do something slightly different? Suppose, for example, that you open a file for reading both with iostreams and with stdio:</p>
+
+<pre>
+std::ifstream f1("file.txt");
+FILE* f2 = fopen("file.txt");
+</pre>
+
+<p>What happens if you try to read from both <B>f1</B> and <B>f2</B>?</p>
+<p>The C++ Standard doesn't say what happens; it doesn't give any guarantee that this sort of thing will work. In fact, it probably won't. Probably you'll get inconsistent results, seeing some parts of the file twice and others not at all. If you want to view a file with iostreams and stdio at the same time, you'll have to extend the standard library.</p>
+<p>If you're unfamiliar with the I/O architecture of the C++ Standard library, you might think that the answer is to create a class that inherits from <B>fstream</B>. It isn't.</p>
+<p>Conceptually, I/O has two parts: interpreting a stream of characters in terms of high-level data types, and managing and buffering the physical stream of characters itself. In the C++ I/O library, those tasks are divided into separate classes. Formatting and interpretation is the role of classes like <B>std::istream</B> and <B>std::ostream</B> (with help from <B>std::locale</B> and its facets), and managing the stream of raw characters is the role of <I>streambufs</I>.</p>
+<p>The C++ I/O library was designed to be extensible, and streambufs were introduced so it would be easy to solve just the sort of problem we're looking at now: we want to manage that physical stream buffering differently (so that it's synchronized with an stdio file), but we don't want to worry about any of the formatting. The base streambuf class is <B>std::streambuf</B> (a typedef for <B>std::basic_streambuf&lt;char&gt;</B>, but you don't have to worry about the template unless you're using files whose character type is something other than <B>char</B>), and the concrete buffer classes, such as the one that manages file I/O (<B>std::filebuf</B>), are subclasses.</p>
+<p>The answer to synchronized I/O with an arbitrary <B>FILE*</B>, then, is to create a new streambuf class that inherits from <B>std::streambuf</B>. Once we have that streambuf (let's call it <B>syncbuf</B>), it will easily fit into the existing library. Each of the classes <B>std::istream</B> and <B>std::ostream</B> has a constructor that takes a <B>streambuf*</B>, so we can use this new buffer class as follows:</p>
+
+<pre>
+syncbuf buf(fptr);
+std::istream in(&amp;buf);
+</pre>
+
+<p>Or, if we'd like, we can write a tiny wrapper class to make this usage slightly more convenient:</p>
+
+<pre>
+class isyncstream
+   : public std::istream {
+public:
+   isyncstream()
+      : istream(&amp;buf), buf(0) {}
+   isyncstream(FILE* fptr)
+      : istream(&amp;buf), buf(fptr) {}
+   syncbuf* rdbuf() const {
+      return &amp;buf; 
+   }
+private:
+   syncbuf buf;
+};
+</pre>
+
+<p>Classes like <B>std::istringstream</B> and <B>std::ifstream</B> are just this sort of wrapper.</p>
+<p>Writing the <B>syncbuf</B> class itself isn't quite so trivial, but it still isn't very difficult. The <B>std::streambuf</B> class may look formidable, but fundamentally its model of I/O is quite simple. Writing a useful derived class just requires overriding a few virtual functions.</p>
+<p>The public interface of <B>std::streambuf</B> consists of member functions like <B>sbumpc</B> (get the current character and move to the next position) and <B>sputc</B> (write one character). Derived classes, however, see a different interface of protected member functions.</p>
+<p>The protected interface exposes two arrays of characters: a <I>get</I> area, used for input, and a <I>put</I> area, used for output. Each array is characterized by three pointers: a pointer to the beginning, a pointer to the current position, and a past-the-end pointer. (As with <B>FILE*</B>, we don't use the type system to distinguish between input and output streambufs. If you try to read from a write-only streambuf, or write to a read-only streambuf, you'll get a run-time failure.) The base class initializes those six pointers to <B>NULL</B>; derived classes are responsible for setting them up in whatever way is sensible.</p>
+<p>The public member functions (all of which are nonvirtual) operate on those two arrays; <B>sbumpc</B>, for example, returns the current character in the get area and increments the current-position pointer; <B>sgetc</B> returns the current character without incrementing the current-position pointer; and <B>sputc</B> writes a character to the current position in the put area and increments the put area's current-position pointer.</p>
+<p>What happens if there is no "current position"? What happens, for example, if the three get area pointers are all null, or if the current position is past the end? That's where the protected interface comes in: in the absence of an available read or write position, the public member functions defer to protected member functions (all of which are virtual) that manage the characters' ultimate source or destination. To create a <B>streambuf</B> subclass that you can use for both input and output, you need to override the virtual member functions <B>overflow</B>, <B>underflow</B>, <B>uflow</B>, and <B>pbackfail</B>.</p>
+<p>The C++ Standard has a detailed (and confusing) description of those four member functions, but the basic idea is quite simple: <B>overflow</B> writes one character and empties the output buffer, <B>underflow</B> and <B>uflow</B> read one character and replenish the input buffer, and <B>pbackfail</B> puts a character back onto the input stream. Why two different functions for underflow? The difference is that <B>uflow</B> reads a character and advances the input position, while <B>underflow</B> reads a character without advancing the input position. (This corresponds to the distinction between the public member functions <B>sgetc</B> and <B>sbumpc</B>.)</p>
+<p>In our case this is even simpler, because we don't want <B>syncbuf</B> to have its own input and output buffers; we want to use an underlying <B>FILE*</B> for all our buffering. The <B>std::streambuf</B> base class initializes the get area and put area pointers to <B>NULL</B>, and we'll let them stay that way. The public member functions will never find an available read or write position, so they will always fall back on our overridden virtuals. Those, in turn, just delegate to stdio functions. The only slightly tricky part is <B>underflow</B>: there's no stdio function for reading a character without advancing the read position. We can solve that problem, however, by combining <B>getc</B> with <B>ungetc</B>.</p>
+<p>The complete <B>syncbuf</B> class is shown in <a href="list1.htm">Listing 1</a>.</p>
+<p>That's it! There's one more refinement we can make (overriding <B>seekpos</B> and <B>seekoff</B> so that <B>syncbuf</B> will support file repositioning), but the class is already useful even without support for seeking. It's not very fast &#151; it makes a virtual function call for every character &#151; but sometimes, if you're dealing with legacy code, stdio/iostream interoperability is more important than performance.</p>
+
+<H4><FONT COLOR="#000080">Summary</FONT></H4>
+
+<UL><LI>  For the predefined streams, it's safe to mix stdio and iostreams. For example, you can safely use <B>stdin</B> and <B>cin</B> in the same program; the C++ Standard guarantees that it will work the way you would naively expect it to.
+<LI>  If you don't need to mix stdio and iostreams, you can get better performance by turning this feature off.
+<LI>  If you need to open a file with iostreams, and also access the same file as a <B>FILE*</B>, there's nothing predefined in the C++ Standard library to support that usage. The Standard library is extensible, however, and a class that allows this is just a few dozen lines of code. You shouldn't be afraid of writing a new <B>streambuf</B> when it's appropriate.</LI></UL>
+
+<p><i><B>Matt Austern</B> is the author of </I>Generic Programming and the STL<I> and the chair of the C++ standardization committee's library working group. He works at AT&amp;T Labs &#151; Research and can be contacted at <B>austern@research.att.com</B>.</i></p>
+
+<h4><a href="../../../source/2000/nov00/austern.zip">Get Article Source Code</a></h4>
+
+</blockquote></body></html>

@@ -1,0 +1,85 @@
+<HTML><HEAD>
+<TITLE>November 2000/import java.*/Listing 2</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 2: File InputStreamTest.java &#151; extends InputStream</A></h4>
+<pre>
+import java.io.*;
+import java.util.*;
+
+class RandomInputStream extends InputStream
+{
+    Random ran = new Random();
+    byte[] value = new byte[1];
+    public int read()
+    {
+        ran.nextBytes(value);
+        return value[0];
+    }
+}
+
+class InputStreamTest
+{
+    public static void main(String[] args)
+        throws IOException
+    {
+        // Read first byte:
+        RandomInputStream myStream =
+            new RandomInputStream();
+        System.out.println("First byte...");
+        System.out.println(myStream.read());
+
+        // Read some more and remember them:
+        byte[] nums = new byte[3];
+        System.out.println("\nReading " +
+                           myStream.read(nums) +
+                           " more bytes:");
+        for (int i = 0; i &lt; nums.length; ++i)
+            System.out.println(nums[i] + ",");
+        myStream.close();
+
+        // Populate and read a ByteArrayInputStream:
+        ByteArrayInputStream byteStream =
+            new ByteArrayInputStream(nums);
+        System.out.println("\nRe-reading " +
+                           byteStream.available() +
+                           " bytes...");
+        byte b;
+        byteStream.mark(3);
+        while ((b = (byte)byteStream.read()) != -1)
+            System.out.println(b);
+
+        // Rewind and read the last byte:
+        byteStream.reset();
+        long avail = byteStream.available();
+        System.out.println("\n" + avail +
+                           " bytes available");
+        byteStream.skip(avail - 1);
+        System.out.println(
+            "Reading last byte yet another time:\n" +
+            (byte)byteStream.read()
+            );
+        byteStream.close();
+    }
+}
+
+/* Output:
+First byte...
+-48
+
+Reading 3 more bytes:
+100,
+90,
+-111,
+
+Re-reading 3 bytes...
+100
+90
+-111
+
+3 bytes available
+Reading last byte yet another time:
+-111
+*/
+</pre></body></html>

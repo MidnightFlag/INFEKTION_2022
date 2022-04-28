@@ -1,0 +1,150 @@
+<HTML>   
+     <HEAD>
+<TITLE>December 2000 C++ Experts Forum/Conversations</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../18.12/tocdec.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   C++ Experts Forum</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Conversations: Virtually Yours</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Jim Hyslop and Herb Sutter</FONT></H3>
+
+<HR>
+<BLOCKQUOTE>
+
+<P>I gave the wrench another twist, but it was useless. I could have tried pounding the wrench with the hammer to try to force it over, but that didn't seem like a good idea. "It won't budge," I said. "There's almost enough room for the new module, but what's in there already is all just wedged in too tight."<P>
+<P>"Kee-ristopher," Jeannine complained, watching because there was only room for one of us to work on the machine. "It can't be that hard to extend the hardware."<P>
+<P>"It sure can be when it's not put together right," I sighed. "Whoever slapped this together must've figured that as long as it worked it was good enough. Everything's been put together too tightly coupled. We can extend it, all right, but first we'll have to take it all the way apart and rebuild it."<P>
+<P>"Welcome to Europa, the pull-your-own-weight capital of the system. Back home we'd have techs doing this for us."<P>
+<P>I mopped my brow. "You know," I said thoughtfully, "this reminds me..." Jeannine smiled; that was the signal for a caffeine break, and I began to tell her another story from my first job.<P>
+
+<hr>
+
+<P>I was working on some code that Wendy, the programmer in the next cubicle, had designed. She had created an abstract base class for the project, and my job was to derive a concrete class from it.<P>
+<P>As usual when studying a new class, I began with the public interface:<P>
+
+<pre>class Mountie
+{
+public:
+    void read( std::istream &amp; );
+    void write( std::ostream &amp; ) const;
+    virtual ~Mountie();</pre>
+
+<P>No surprises here &#151; a virtual destructor, implying that this is intended to be used as a base class. Non-virtual read and write members, though &#151; I wanted to look into that one.<P>
+<P>Then I moved on to the protected interface:<P>
+
+<pre>protected:
+    virtual void do_read( std::istream &amp; );
+    virtual void do_write( std::ostream &amp; ) const;
+</pre>
+
+<P>After a moment, I realized that Wendy was using the Template Method pattern: the public, non-virtual functions clearly would invoke the protected virtual functions <a href="#1">[1]</a>. Pleased with my own  quick understanding, I was feeling pretty smug by this point &#151; ready to handle anything that would be thrown at me. Until I looked at the private interface:<P>
+
+<pre>private:
+    virtual std::string classID() const = 0;
+</pre>
+
+<P>I stopped cold. A pure virtual, private function? How could it possibly work? I gophered up.<P>
+<P>"Um, Wendy," I said, "your <B>Mountie</B> class can't work. It's got a private virtual function."<P>
+<P>"Have you tried it?" Wendy asked, without looking up from her keyboard.<P>
+<P>"Uh, well, no," I admitted. "But my derived class can't possibly override the <B>classID</B> function."<P>
+<P>"So certain are you?" The Guru's quiet voice startled us both. "Always with you it cannot be done. Have you learned <I>nothing</I> from me in these months you have been my apprentice?"<P>
+<P>Despite the calm quiet of the Guru's voice, I was taken aback by the force of her words.<P>
+<P>"My child," she continued, "you have forgotten that access privilege and virtualness are independent of each other. Determining whether the function is to be statically or dynamically bound is the last step in resolving a function call. You need to read and meditate upon the Holy Standard, chapter 3.4 verse 1, and chapter 5.2.2 verse 1 <a href="#2">[2]</a>."<P>
+<P>I decided it was time to demonstrate my brilliance. I opened my mouth... "Oh, yeah. Uh, right." So much for brilliance. I decided to take another tack &#151; distraction. "But I still don't understand <I>why</I> it's private. It just doesn't make sense to me."<P>
+<P>"Meditate upon this parable, my apprentice. You are creating a class, and after reflecting on the design, you decide the class requires a member function that should not be called by any other classes, not even its derived classes. What do you do?"<P>
+<P>"You make it private, of course," I replied. The Guru looked at me, her eyebrows raised expectantly. My brain kicked into overdrive trying to figure out how to link together private and virtual functions.<P>
+<P>Wendy spoke up. "Have you examined the implementation of the <B>Mountie</B> class, especially the <B>write</B> function?"<P>
+<P>I quickly turned to my keyboard, glad to briefly escape the Guru's unrelenting gaze. I found the function fairly quickly:<P>
+
+<pre>void Mountie::write(std::ostream &amp;Dudley) const
+{
+    Dudley &lt;&lt; classID() &lt;&lt; std::endl;
+    do_write(Dudley);
+}</pre>
+
+<P>I could tell Wendy had spent way too much time watching cartoons as a child. "I see now," I said. "<B>classID</B> is an implementation detail, used to signal the concrete type of the class that is being saved. Derived classes must override the function, but since it is an implementation detail, it's kept private."<P>
+<P>"Good, my child," the Guru agreed. "Now explain to me why <B>do_write</B> and <B>do_read</B> are not private."<P>
+<P>That stopped me for a moment. But then the penny dropped: "Because the derived class has to call its parent class's implementation of those functions so that the parent class has a chance to read and write its data."<P>
+<P>"Very good, my apprentice," the Guru was almost beaming. "But why not make them public?"<P>
+<P>"Because," I was really warming up to this now, "they must be called in a controlled fashion, especially the <B>do_write</B> function. The object type has to be written to the stream first so that when the object is read in, the factory knows which type of object to instantiate and then load from the stream. Allowing public access to the functions would cause chaos."<P>
+<P>"Very wise, my apprentice." The Guru paused a moment. "As with spoken languages, there is more to knowing the C++ language than just knowing the grammar and the rules. You must know the idioms."<P>
+<P>"Yes, Coplien's book was the next one on my&#151; <a href="#3">[3]</a>"<P>
+<P>The Guru held up her hand. "Peace, child. I do not refer to the prophet Coplien. I refer to the linguistic sense of the word idiom &#151; the implied meaning behind certain constructs. You know, for example, that a virtual destructor tells you ‘I am meant to be used as a polymorphic base class, you may create from me little ones as you need' whereas a non-virtual destructor tells you ‘I am not meant to be used as a polymorphic base class, do not derive from me for that reason, I pray.'<P>
+<P>"In a similar manner, the access privilege given a virtual function conveys an idiomatic meaning to the initiated. A protected virtual member tells you ‘my little ones should &#151; or perhaps even must &#151; invoke my implementation of this function.' A private virtual function tells the initiated ‘my little ones may or may not override me as they choose, however they may not invoke my implementation.' "<P>
+<P>I nodded as I absorbed this. "What about public virtual functions, though?"<P>
+<P>"Avoid them where possible, and prefer to use the Template Method. Consider this parable." She picked up the dry erase marker, and began writing in her delicate script:<P>
+
+<pre>class HardToExtend
+{
+public:
+    virtual void f();
+};
+void HardToExtend::f()
+{
+   // Perform a specific action
+}
+</pre>
+
+<P>"Consider that you have released this class, and your requirements have changed," she continued. "In the second release of this class, you discover you need to implement the Template Method on the function <B>f()</B>. It will be nigh on impossible to accomplish. Can you see why?"<P>
+<P>"Uh, um. Yes, well... I think... No, I can't."<P>
+<P>"There are two possible ways to convert this class to the Template Method. The first way would be to move the implementation code of <B>f()</B> into a new function and make <B>f()</B> non-virtual, like this:<P>
+
+<pre>class HardToExtend
+{
+// possibly protected
+    virtual void do_f();
+public:
+    void f();
+};
+void HardToExtend::f()
+{
+    // pre-processing
+    do_f();
+    // post-processing
+}
+void HardToExtend::do_f()
+{
+    // Perform a specific action
+}
+</pre>
+
+<P>"However, <B>HardToExtend</B>'s little ones will expect to override <B>f()</B>, not <B>do_f()</B>. You must now change all classes derived from <B>HardToExtend</B>. If you miss just one class, that class will attempt to override a non-virtual function. This could introduce, in the words of the prophet Meyers, ‘schizophrenic behavior' into your class hierarchy <a href="#4">[4]</a>.<P>
+<P>"The other solution is to introduce a new, non-virtual function and move <B>f()</B> to the private section, like this:"<P>
+
+<pre>class HardToExtend
+{
+// possibly protected
+    virtual void f();
+public:
+    void call_f();
+};</pre>
+
+<P>"This will cause users of the class no end of headaches. All the clients of <B>HardToExtend</B> will attempt to invoke <B>f()</B>, not <B>call_f()</B>. Those clients will no longer compile. Furthermore, derived classes will most likely leave <B>f()</B> in the public interface, and clients that use those derived classes directly, rather than using a pointer or reference to <B>HardToExtend</B>, will still have direct access to the function you want to protect.<P>
+<P>"Virtual functions should be treated very much like data members &#151; make them private, until design needs indicate a less restricted approach is indicated. It is much easier to promote them to a more accessible level, than it is to demote them to a more private level."<P>
+
+<hr>
+
+<P>"When did all this happen?" Jeannine asked.<P>
+<P>"Just before the turn of the millennium &#151; the <I>real</I> turn, that is. It was at the end of 2000, I think. We were just about to celebrate New Year's Day, and we were really looking forward to the special year of 2001, because of all the literature, you know..."<P>
+<P>Oddly, it was shortly after that conversation that we heard about the discovery of the obelisk under the surface of Europa.<P>
+
+<hr>
+
+<h3><FONT COLOR="#000080">Notes</FONT></h3>
+<P><a name="1"></a>
+[1] E. Gamma, R. Helm, R. Johnson, and J. Vlissides. <I>Design Patterns: Elements of Reusable Object-Oriented Software</I> (Addison-Wesley, 1995).<P>
+<P><a name="2"></a>
+[2] ISO/IEC 14882:1998, "Programming Languages &#151; C++," clauses 3.4 and 5.2.2.<P>
+<P><a name="3"></a>
+[3] J. Coplien. <I>Advanced C++ Programming Styles and Idioms</I> (Addison-Wesley, 1992).<P>
+<P><a name="4"></a>
+[4] S. Meyers. <I>Effective C++: 50 Specific Ways to Improve Your Programs and Design</I>, 2nd edition  (Addison-Wesley, 1998); Item 37: "Never redefine an inherited non-virtual function."<P>
+
+
+<p><i><B>Jim Hyslop</b> is a senior software designer at Leitch Technology International Inc.  He can be reached at jim.hyslop@leitch.com.</i></p>
+<p><i><B>Herb Sutter</b> is chief technology officer of PeerDirect Inc. and secretary of the ISO/ANSI C++ standards committee. He can be reached at hsutter@peerdirect.com.</i></p>
+
+</blockquote></body></html>
+
+

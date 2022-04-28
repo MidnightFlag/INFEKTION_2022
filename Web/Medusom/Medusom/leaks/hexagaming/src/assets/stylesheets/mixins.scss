@@ -1,0 +1,29 @@
+@mixin transform($var...) {
+  -webkit-transform: $var;
+     -moz-transform: $var;
+      -ms-transform: $var;
+          transform: $var;
+}
+
+@mixin button-mode($primary-color, $secondary-color) {
+  background: linear-gradient(45deg, $primary-color 0%,$secondary-color 100%);
+  box-shadow: 0px 6px 0px $secondary-color, 0px 3px 15px rgba(0,0,0,.4);
+}
+
+@mixin border-difficulty($color){
+  .circle{
+    box-shadow: 0px 0px 0px 8px $color, 0px 3px 15px rgba(0, 0, 0, 0.4);
+  }
+  .button{
+    box-shadow: 0px 6px 0px $color, 0px 3px 15px rgba(0,0,0,.4);
+  }
+  .trophy{
+    box-shadow: 0px 0px 0px 8px $color, 0px 3px 15px rgba(0, 0, 0, 0.4);
+    border-radius: 50%;
+  }
+}
+@mixin toolbar-border($color){
+  .toolbar{
+    box-shadow: 0px 6px 0px $color, 0px 3px 15px rgba(0,0,0,.4);
+  }
+}

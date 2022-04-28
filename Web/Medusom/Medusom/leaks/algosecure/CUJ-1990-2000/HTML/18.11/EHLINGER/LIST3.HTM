@@ -1,0 +1,72 @@
+<HTML><HEAD>
+<TITLE>November 2000/Creating Truly Maintainable Class Factories/Listing 3</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 3: Partial listing of class dll_sentinel</A></h4>
+<pre>
+class dll_sentinel
+   {
+   public:
+      dll_sentinel( std::string const&amp; dll_name )
+         : m_dll_name( dll_name )
+         , m_instance( NULL )
+         { init( ); }
+
+      // copy constructor
+      dll_sentinel( dll_sentinel const&amp; source )
+         : m_dll_name( source.m_dll_name )
+         , m_instance( NULL )
+         { init( ); }
+
+      virtual ~dll_sentinel( )
+         { reset( ); }
+
+      void reset( )
+         {
+         if ( m_instance )
+            {
+            #ifdef _WIN32
+               FreeLibrary( m_instance );
+            #elif defined( _DLSYM )
+               dlclose( m_instance );
+            #else
+               #error Unsupported Platform.   Please port me
+            #endif
+
+            m_instance = NULL;
+            m_dll_name = std::string( );
+            }
+         } // reset( )
+
+      // not shown: functions find_func, func_exists,
+      // and is_open ...
+
+   private: // interface
+      void init( )
+         {
+         #ifdef _WIN32
+            m_instance = LoadLibrary( m_dll_name.c_str() );
+         #elif defined( _DLSYM )
+            m_instance = dlopen( m_dll_name.c_str() , RTLD_NOW );
+         #else
+            #error Unsupported Platform.   Please port me
+         #endif
+
+         if ( !m_instance ) 
+            throw dll_exception( "DLL Not Found" );
+         } // init( )
+
+   private: // data
+      std::string m_dll_name;
+      #ifdef _WIN32
+         HMODULE m_instance;
+      #elif defined( _DLSYM )
+         void*    m_instance;
+      #else
+         #error Unsupported Platform.   Please port me
+      #endif
+
+   }; // class dll_sentinel
+
+</pre></body></html>

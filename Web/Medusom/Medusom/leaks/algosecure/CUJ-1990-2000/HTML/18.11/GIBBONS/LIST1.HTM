@@ -1,0 +1,63 @@
+<HTML><HEAD>
+<TITLE>November 2000/A Portable "typeof" Operator/Listing 1</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 1: Portable typeof operator and test program</A></h4>
+<pre>
+//================== The "typeof" machinery ==================
+
+// no definition, only specializations
+template&lt;int N&gt; struct select_type;    
+
+template&lt;class T&gt; struct WrapType { typedef T WT; };
+
+#define REGISTER_TYPEOF(N,T)                          \
+    template&lt;&gt; struct select_type&lt;N&gt; {                \
+       typedef WrapType&lt;T&gt;::WT Type; };               \
+    char (*select_array(const WrapType&lt;T&gt;::WT &amp;))[N];
+
+#define typeof(x) select_type&lt;sizeof(*select_array(x))&gt;::Type
+
+
+//====== Registration of types to be used with "typeof" ======
+
+REGISTER_TYPEOF( 1,  char               )
+REGISTER_TYPEOF( 2,  signed char        )
+REGISTER_TYPEOF( 3,  unsigned char      )
+REGISTER_TYPEOF( 4,  short              )
+REGISTER_TYPEOF( 5,  unsigned short     )
+REGISTER_TYPEOF( 6,  int                )
+REGISTER_TYPEOF( 7,  unsigned int       )
+REGISTER_TYPEOF( 8,  long               )
+REGISTER_TYPEOF( 9,  unsigned long      )
+REGISTER_TYPEOF( 10, long long          )
+REGISTER_TYPEOF( 11, unsigned long long )
+REGISTER_TYPEOF( 12, float              )
+REGISTER_TYPEOF( 13, double             )
+REGISTER_TYPEOF( 14, wchar_t            )
+REGISTER_TYPEOF( 15, int (*)()          )
+
+
+//======================= Test program =======================
+
+#include &lt;iostream.h&gt;
+#include &lt;typeinfo.h&gt;
+
+int main()
+{    
+    short a;
+    long b;
+    typeof(a) c;
+    typeof(b) d;
+    typeof(1.0) e;
+    typeof(main) f;
+    
+    cout &lt;&lt; "c is " &lt;&lt; typeid(c).name() &lt;&lt; '\n';
+    cout &lt;&lt; "d is " &lt;&lt; typeid(d).name() &lt;&lt; '\n';
+    cout &lt;&lt; "e is " &lt;&lt; typeid(e).name() &lt;&lt; '\n';
+    cout &lt;&lt; "f is " &lt;&lt; typeid(f).name() &lt;&lt; '\n';
+
+    return 0;
+}
+</pre></body></html>

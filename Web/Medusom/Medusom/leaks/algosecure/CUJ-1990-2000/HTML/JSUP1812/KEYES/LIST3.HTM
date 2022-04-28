@@ -1,0 +1,27 @@
+<HTML><HEAD>
+<TITLE>December 2000 Java Solutions/Increasing Java Performance/Listing 3</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 3: A Logger singleton class that can be configured not to generate code in release mode</A></h4>
+<pre>
+public class Logger {
+  // the instance of this class
+  private static Logger theLogger = null;
+
+  // this is the controller for debug messages
+  // set to true to allow debug messages, false otherwise    
+  public static final boolean CAN_DEBUG = true;
+
+  /** private constructor -- permit only one instance */
+  private Logger() {}
+
+  /** returns the only instance of this class created. */
+  public static Logger getInstance() {
+    if(theLogger == null) { theLogger = new Logger(); }
+    return theLogger;
+  }
+
+  public void debugMsg(String msg) { System.out.println(msg); }
+}
+</pre></body></html>

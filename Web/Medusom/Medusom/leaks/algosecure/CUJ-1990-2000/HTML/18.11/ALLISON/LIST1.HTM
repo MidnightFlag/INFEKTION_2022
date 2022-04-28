@@ -1,0 +1,30 @@
+<HTML><HEAD>
+<TITLE>November 2000/import java.*/Listing 1</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 1: File CopyFile2.java &#151; Copies files or standard I/O</A></h4>
+<pre>
+import java.io.*;
+
+class CopyFile2
+{
+    public static void main(String[] args)
+        throws IOException
+    {
+        InputStream fin = System.in;
+        if (args.length &gt; 0)
+            fin = new FileInputStream(args[0]);
+        OutputStream fout = System.out;
+        if (args.length &gt; 1)
+            fout = new FileOutputStream(args[1]);
+
+        int b;
+        while ((b = fin.read()) != -1)
+            fout.write(b);
+
+        fin.close();
+        fout.close();
+    }
+}
+</pre></body></html>

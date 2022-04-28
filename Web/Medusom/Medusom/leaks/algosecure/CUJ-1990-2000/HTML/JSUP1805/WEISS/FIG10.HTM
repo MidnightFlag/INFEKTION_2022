@@ -1,0 +1,35 @@
+<HTML><HEAD>
+<TITLE>May 2000 Java Solutions/Understanding JavaBeans/Figure 10</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 10: A timer bean that contains a Thread object</A></h4>
+<pre>
+public class TimerBean implements Runnable {
+    private Thread runner;              
+    private static int theNumber;       
+    private volatile int theInterval;   
+    private int theCount;               
+    private Vector listeners;           
+                                        
+    private volatile boolean suspended;     
+    private boolean firstTime;
+    private boolean running = true;
+
+    public TimerBean() {                
+        this(++theNumber,1000);         
+                                        
+    }
+    public 
+    TimerBean(int number, int interval) {
+        theNumber = number;             
+        theInterval = interval;         
+        theCount = 0;                   
+        listeners = new Vector();
+        suspended = true;
+        firstTime = true;
+        runner = new Thread(this);      
+        runner.setDaemon(true);         
+    }
+}
+</pre></body></html>

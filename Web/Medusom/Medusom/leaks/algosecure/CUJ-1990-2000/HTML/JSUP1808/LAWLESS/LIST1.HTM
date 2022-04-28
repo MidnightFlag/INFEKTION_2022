@@ -1,0 +1,23 @@
+<HTML><HEAD>
+<TITLE>August 2000 Java Solutions/Using the Java Core Reflection API/Listing 1</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 1: Tests the example driver classes</A></h4>
+<pre>
+// ErrTest will test both the ConError
+// class and the GUIError class.
+
+public class ErrTest {
+   public static void main(String[] args) {
+      ConError c=new ConError();
+      GUIError g=new GUIError();
+
+      c.display("This is a console message.");
+      g.display("This is a GUI message.");
+
+      System.exit(0);
+   }
+}
+
+</pre></body></html>

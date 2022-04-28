@@ -1,0 +1,108 @@
+<HTML>   
+     <HEAD>
+<TITLE>September 2000 C++ Expert Forum/Obfuscated C++</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../18.09/tocsep.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   C++ Experts Forum</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Obfuscated C++</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Robert Murray</FONT></H3>
+
+<HR>
+<BLOCKQUOTE>
+
+
+<P><I>[This is the last installment of a column that was being published in </I>C++ Report<I> magazine. Since the magazine ceased publication before this installment could be published, Rob Murray was gracious enough to let us publish it on the </I>CUJ<I> website. The answer to this month's puzzler will appear in a subsequent posting on this website.&#151; mb]</I>
+
+<H4><FONT COLOR="#000080">Last Month's Puzzle</FONT></H4>
+
+<P>Last month we asked you to predict the output of the following program:
+
+<pre>
+#include &lt;iostream&gt;
+using namespace std;
+namespace N {
+    void g(int) { cout &lt;&lt; "g(int)\n"; }
+};
+
+using namespace N;
+
+namespace N {
+    void g(char){ cout &lt;&lt; "g(char)\n"; }
+};
+
+int main(){
+    g('x');
+    return 0;
+}
+</pre>
+
+<P>This program prints <B>g(char)</B>.  The answer hinges on whether the declaration of <B>g(char)</B> is in scope at the point of call. It is, because the <B>"using namespace N"</B> <I>using-directive</I> brings in all declarations in namespace <B>N</B> visible at the point of <I>call</I> -- not just those visible at the point the<I> using-directive </I>appears (as long as the call occurs after the <I>using-directive). </I>This means that the declaration of <B>g(char)</B> is in scope at the call of <B>g('x')</B>. Since <B>g(char)</B> is a better match than <B>g(int)</B>, <B>g(char)</B> is called.
+
+<H4><FONT COLOR="#000080">This Month's Puzzle</FONT></H4>
+
+<P>What, if anything, is printed by the following program?
+
+<pre>
+#include &lt;iostream&gt;
+using namespace std;
+
+struct C;
+
+struct D {
+    void operator*(D) { cout &lt;&lt; "one\n"; }
+} C;
+
+&nbsp;
+struct E {
+    void operator*(E) { cout &lt;&lt; "two\n"; }
+} F;
+
+struct F;
+
+int main(){
+    C* C;
+    F* F;
+    return 0;
+}</pre>
+
+
+<p><i>As Red Sky's Chief Technology Officer, <b>Rob Murray</b> is
+responsible for tracking and evaluating current and
+new Internet technologies. These technologies
+provide the "plumbing" that is critical to Web-based
+solutions that are full-featured, robust and fast.
+"Focus is key," he says. "New tools appear on the
+market every day. We identify and adopt those
+technologies that are the very best match for our
+skills and our customers' needs. Most don't make the
+cut." Before stepping into the CTO role, Mr. Murray
+was the Director of Systems Development for the
+Irvine office of Nuforia, where he was responsible for
+all fulfillment work in that office. An industry veteran,
+Mr. Murray spent the first 14 years of his career at
+AT&T Bell Laboratories, where he worked on
+object-oriented software and tools, including the first
+publicly released C++ compiler. He was the founding
+editor of the </i>C++ Report<i> in 1988, and has been a
+regular contributor to this respected trade magazine.
+Mr. Murray has been a prepublication reviewer for
+many technical textbooks, including important works
+by C++ inventor Bjarne Stroustrup and Java inventor
+James Gosling. His own book, </i>C++ Strategies and
+Tactics<i> (Addison-Wesley 1993), is currently in its
+seventh printing and has been translated into French
+and Japanese. His mission statement? "I have to
+keep three sets of people happy: my customers (who
+pay the bills); my employees and co-workers (who
+make successful projects happen); and my bosses
+(who sign my paycheck). One of the nice things
+about Red Sky is that if I take care of sets one and
+two, set three takes care of itself." Mr. Murray has a
+BS in Computer Science from Michigan State
+University, and a Master's in Computer Science from
+the University of Southern California.</i></p>
+</blockquote></body></html>
+
+

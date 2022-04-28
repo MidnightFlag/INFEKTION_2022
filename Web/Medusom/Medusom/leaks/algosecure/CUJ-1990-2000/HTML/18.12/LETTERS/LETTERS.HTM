@@ -1,0 +1,188 @@
+<HTML>   
+     <HEAD>
+<TITLE>December 2000/We Have Mail</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocdec.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   Departments</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">We Have Mail</FONT></H2>
+
+<HR>
+<BLOCKQUOTE>
+<p><I>Letters to the editor may be sent via email to </I>cujed@cmp.com<I>, or via the postal service to Letters to the Editor, </I>C/C++ Users Journal<I>, 1601 W. 23rd St., Ste 200, Lawrence, KS 66046-2700.</I></p>
+
+<hr><p><I>Correction: the acronyms TCP and UDP were incorrectly defined in a couple of places in the September 2000 issue of CUJ. The correct definitions are Transmission Control Protocol and User Datagram Protocol respectively. We regret the errors. &#151; mb</I></p>
+<hr><p><i>Alan Nash writes the following with respect to his article, "Introduction to Function Try Blocks," which was published in the October 2000 issue of C/C++ Users Journal:</i></p>
+<p><i>"As soon as my &#145;Introduction to Function Try Blocks' article was out, Herb Sutter pointed out to me that return statements within a function try block handler are not disallowed by the Standard. It turns out I had misread the Standard on this; return statements are only disallowed for constructors.</i></p>
+<p><i>Thus, several portions of the article are in error, including the code replacing a general function try block and the first paragraph under &#145;Recommended Use.' In particular, it does makes sense to use a function try block for a non-void function, although many would recommend against it.</i></p>
+<p><i>I am sorry for any confusion I might have caused."</i></p>
+<p><i>Alan Nash</i></p>
+
+<hr><p>Dear <I>CUJ,</I></p>
+<p>I feel better after hearing that <I>CUJ</I> has no plans to add a C# column.</p>
+<p>However, I have a question about that language: why didn't [Microsoft] name it "C@?" Does this imply that they are not really committed to Internet Programming?</p>
+<p>I'd love it if Stan Kelly-Bootle would comment on that in one of his coming articles. I'm sure that C# does mean something to the C/C++/Java Programming Community and I fear that recent advances in the Genoma project might bring nearer the days when the pigs fly.</p>
+<p>Yours,</p>
+<p>Alessandro Vesely</p>
+<p><I>Assuming your question is not facetious, I believe there already is (or was) a programming language named C@, or C@+, or something similar. As far as Stan is concerned, there's never any telling what he may write about, but I'll forward your comments to him. (Some of you may have noticed that his bimonthly column is missing from this month's issue. We have bumped his column schedule by a month; it will now run in the January 2001, March 2001, May 2001, etc. issues of </I>CUJ<I>.) Finally, for the benefit of readers struggling to understand your concern about pigs taking flight, or what that could possibly have to do with C#: at some point in the past I believe I said we'd start a column on Visual Basic "when pigs fly." It was my cute little way of expressing the absurdity of a VB column in CUJ. A C# column would be equally inappropriate for the time being, though not so absurd. Considering the wild things genetic engineers are doing these days, I had better start using a new criterion for absurdity.</I></p>
+
+<hr><p>Dear <I>CUJ,</I></p>
+<p>I like the new [C/C++ tips] feature. I have a comment on Craig Hicks' tip in the August 2000 <I>CUJ.</I> Mr. Hicks' <B>sort_idxtbl</B> function uses iterators for the range to sort, but it takes an <B>int*</B> as the destination of the data. I find that ironic. Why aren't the sorted indexes written through an output iterator?</p>
+<p>Changing the template function to the following will make it more flexible (not to mention more in keeping with the STL design):</p>
+
+<pre>
+template &lt;typename RAIt, typename OutIt&gt;
+OutIt sort_idxtbl(
+    RAIt first,
+    RAIt last,
+    OutIt destination);
+</pre>
+
+<p>The type of the output iterator will need to be compatible with the type the loop uses to create the set of indexes to sort. As implemented, the loop uses <B>int</B> for this type, so <B>OutIt::value_type</B> will need to be <B>int</B> or a type convertible from <B>int</B>. However, the loop type should really be <B>V::size_type</B>; or, since <B>V</B> is defined to be a <B>std::vector</B>, it could be simply <B>std::size_t</B>, so <B>OutIt::value_type</B> should be <B>std::size_t</B> or a type convertible from it.</p>
+<p>This change allows the function to be used in new ways, such as supplying an <B>ostream_iterator</B> for <B>cout</B> as the third parameter, thus dumping the sorted indexes to the console. What could be easier?</p>
+<p>Rob Stewart</p>
+
+<p><I>Thanks for the meta-tip. We got tons of feedback on the August 2000 tip; see the November 2000 issue for another implementation. I think it's about time to let this one drop and move on to something else. Thanks for writing. &#151;mb</I></p>
+
+<hr><p>Dear <I>CUJ,</I></p>
+<p>I am sending this letter to both the editor of <I>C/C++ User's Journal</I> (because it is about something I would like to see addressed in the magazine) and Thomas Becker (as author of the new STL column and therefore a potential [writer on this topic]).</p>
+<p>I really like the STL container classes and string classes, but I have noticed a problem that never seems to be discussed in books or magazine articles. At most there will be a little note about "binary incompatibility."</p>
+<p>The problem has to do with Windows DLLs (Dynamic Link Libraries). Unix has a similar mechanism, so I guess it has a similar problem.</p>
+<p>Suppose you have a producer/consumer sort of system: a DLL named <B>PRODUCE.DLL</B> that produces things (by getting stuff from somewhere, for instance news headlines coming in from a distant server) and a consumer named <B>CONSUME.EXE</B> that handles them.</p>
+<p>The producer contains something like this:</p>
+
+<pre>
+class Producer {
+   std::string getNextString();
+   };
+</pre>
+
+<p>and the consumer has this:</p>
+
+<pre>
+while (true) {
+   std::string nextString =
+      producer-&gt;GetNextString();
+   mainScreen.display(nextString);
+}
+</pre>
+
+<p>There would be no problem if <B>getNextString</B> returned a built-in type such as an <B>int</B>. Also there would be no problem if it returned [an object of] a class that did not allocate resources in its constructor or free any in its destructor. But in this example, the DLL allocates resources which the consumer frees, and that doesn't work.</p>
+<p>Early on you learn that as a general rule you can't allocate something in the DLL and free it outside of the DLL. But naively a string seems to be some sort of atomic thing that you can just pass across a DLL boundary, like an <B>int</B> or a pointer to a static zero-terminated character string. (So what's the point of using <B>std::string</B>s (the novice asks)? You might just as well use pointers to static buffers.)</p>
+<p>Here is another example:</p>
+<p>Producer:</p>
+
+<pre>
+__declspec(dllexport)
+std::queue&lt;int&gt; iq;
+
+__declspec(dllexport)
+void pushInt(void)
+{
+   iq.push(nCount&#151;);
+}
+</pre>
+
+<p>Consumer:</p>
+
+<pre>
+extern __declspec(dllimport)
+std::queue&lt;int&gt; iq;
+
+__declspec(dllimport)
+void pushInt(void);
+
+int n = 9999;
+while (n &gt; 0)
+{
+   pushInt();
+   while (!(iq.empty()))
+   {
+      n = iq.back();
+      cout &lt;&lt; n &lt;&lt; endl;
+      iq.pop();
+   }
+}
+</pre>
+
+<p>There are two reasons why this won't work.</p>
+<OL><LI>Functions <B>pop</B> and <B>push</B> use housekeeping information that is contained in the DLL. The consumer doesn't know where this information is; instead it queries and changes some random information in its own space.</p>
+<LI>If the <B>.exe</B> and the <B>.dll</B> were built with different compilers, or even different versions of the STL, there would be even worse incompatibilities.</LI></OL>
+
+<p>This implies that even if <B>publish.obj</B> and <B>consume.obj</B> were linked into the same executable, they may not work if they were built with different implementations of the STL.</p>
+<p>Okay, you already know all that, and so do I. Why am I complaining about this? Because the problem is not at all obvious to new users of the STL.  After all, the STL is part of the Standard library, and you don't have these problems with the rest of the Standard library, do you? In fact the Standard library <I>is</I> in a DLL. (But one compiler manufacturer's run-time library is not compatible with another's.)</p>
+<p>COM and CORBA are two solutions to the general problem of binary incompatibility of DLLs. But let's not get into that.</p>
+<p>I would like to see an article that tells how to safely use STL containers in projects where several object files (not necessarily compiled by the same compiler) are linked into a single executable; also how to do it when DLLs (or whatever they are called in other operating systems) are involved.</p>
+<p>Maybe the answer is "Don't do it; redesign things to use the Interface/Implementation pattern instead." That appears to be a complex solution to a seemingly simple problem, but maybe you can show why the problem is not so simple and the solution is not so complex.</p>
+<p>Mark Lutton</p>
+
+<p><I>Thomas Becker replies:</I></p>
+<p><I>Mark,</I></p>
+<p><I>Thank you for your email concerning STL containers and DLLs.</I></p>
+<p><I>First of all, I should tell you that for the past three years, I have been working on a Windows (NT, 95, 98) application that uses STL containers heavily and is also partioned into a large number of DLLs. This software has now been shipped and is being used by hundreds of people every day.</I></p>
+<p><I>The main issue you address in your email is the use of heap memory ([allocated/deallocated via] </I><B>new</B><I> and </I><B>delete</B><I>) across DLLs. When using STL containers across DLLs, this is of course happening all the time. The good news is that in 32-bit Windows programming, this is not a problem anymore at all. Heap memory and DLLs were a big issue in 16-bit Windows, but not anymore. Allocating memory in one DLL and freeing it in another is fine. That's because </I><B>new</B><I> and </I><B>delete</B><I> get their heap memory through the runtime library, which eventually gets it from the Win32 process heap. Once a DLL has been loaded &#151; and it does not matter whether it has been loaded explicitly or implicitly &#151; all calls to </I><B>new</B><I> and </I><B>delete</B><I> will go to that one process heap. If there were a problem with that, our application would not even start up. (Note: you must link with the "Multithreaded DLL" version of the runtime library.)</I></p>
+<p><I>In 32-bit Windows programming, there are in fact very few problems with "programming across DLLs." One obvious thing is that you have to be careful about is retrieving what Windows calls "resources," such as menus, dialogs, etc. However, this is not a very deep issue, and it has nothing to do with STL containers.</I></p>
+<p><I>So why do some of the STL containers that come with Microsoft Visual C++ not work across DLLs? The reason is really quite simple: there is at least one class in there that uses a static class member in a class template that's in a header file. It is clear that such a thing is not going to work across DLLs. Last time I checked, Microsoft was still shipping that version. However, P.J. Plauger has made a fix available on his website at </I><B>http://www.dinkumware.com/vc_fixes.html</B><I>. If you replace the Xtree and Set headers that came with Visual C++ with these new versions, your problems should go away.</I></p>
+<p><I>If problems with STL containers and Win32 DLLs remain after this fix, I would be very interested to know about them. The best thing is always to send compilable code that exhibits the problem.</I></p>
+<p><I>Sincerely,</I></p>
+<p><I>Thomas Becker</I></p>
+
+<hr><p><i>A letter to Early Ehlinger, author of the article, "Creating Truly Maintainable Class Factories," which appeared in the November 2000 issue of CUJ:</i></p>
+<p>Hi Early,</p>
+<p>Thanks for an interesting article. Like you and many others, I have come up against this problem. I wonder if my solution is a little easier to use and maintain than yours?</p>
+<p>Each class that must be "makeable" by the factory has an instance of itself as a static attribute. When this instance is created during startup, it registers with the factory <a href="#1">[1]</a>, passing an identifier and a pointer to itself. It also has a <B>Make</B> function, which accepts the same parameters as the normal constructor.</p>
+<p>The factory is passed a text message (in my example), from which it extracts an identifier. Using the identifier, it retrieves the pointer to the static instance of the appropriate class, and calls its <B>Make</B> function, passing the text message.</p>
+<p>Adding new classes is just a matter of copying the <B>.cpp</B> and <B>.h</B> files for an existing class, and changing it to fit. Deleting classes is achieved simply by deleting their source code files and rebuilding.</p>
+<p>The whole scheme is just a little tidier than I have described it, but I'm trying to keep my text simple. It works fine, and is portable across operating systems. If you're interested, I can send you some sample code, or answer your questions, if you have any.</p>
+<p>Regards,</p>
+<p>Steve Merrick</p>
+<p><a name="1"></a>[1] This is the weakest point of this scheme &#151; it must be possible to distinguish between the creation of the one and only static instance, and the creation of an "normal" instance of the class. In my case, it was easy, but this might not always be the case! I used a single constructor, but two would be just as good, if it was easier to do.</p>
+
+<p><I>Early Ehlinger replies:</I></p>
+<p><I>Steve,</I></p>
+<p><I>Thank you for your comments. The only problem with your approach is that C++ does not guarantee that the single static instance will be created during startup. Implementations are free to leave the singleton uninitialized until its first use, which will never occur in the scenario you describe.</I></p>
+<p><I>I actually used to use the exact solution you propose until I switched compilers and discovered, much to my dismay, that the new compiler optimized away the existence of my singleton because it was never referenced.</I></p>
+<p><I>Best Regards,</I></p>
+<p><I>Early Ehlinger</I></p>
+
+<hr><p>Dear <I>CUJ,</I></p>
+<p>MS Visual C++ v6.0 refuses to recognize the user-defined templated casting operator</p>
+
+<pre>
+template&lt;typename T&gt;
+operator T () const
+</pre>
+
+<p>in Fernando Cacciola's variant class (see "An Improved Variant Type Based on Member Templates," <I>CUJ,</I> October 2000, Listing 3). I assume this is semantically valid and I am experiencing a compiler limitation. Has anyone else experienced this, and is there any way around it?</p>
+<p>Andrew Becker</p>
+
+<p><I>I don't know if the following will fix the problems you're experiencing, but Fernando has updated his code to work with VC++ 6.0. He writes:</I></p>
+
+<p><I>Dear Marc,</I></p>
+<p><I>I've been receiving some email from Visual C++ users regarding incompatibilities of the variant code and Microsoft compiler. In particular, reader Jaroslav Bradik worked out all the details of the incompatibilities and as a result I've modified the code for </I><B>variant.h</B><I>, </I><B>variant_cc.h</B><I> and </I><B>variant_test.cpp</B><I>.</I></p>
+<p><I>I applied the following changes:</I></p>
+<OL><LI><I>I changed the functions taking </I><B>(T v)</B><I> with </I><B>(T const&amp; v)</B><I>. I realized that the extra copy (implicit in </I><B>T v</B><I>) is unnecessary since the second signature works fine with any type except for references, but </I><B>variant_t</B><I> cannot be instantiated with a reference (</I><B>variant_t&lt;int&amp;&gt;</B><I>) since it is not designed for that.</I>
+<LI><I>I added </I><B>std::</B><I> to the throw expression.</I>
+<LI><I>I removed the header </I><B>condefs.h</B><I> and the </I><B>#pragma hdrstop</B><I> which slipped into that code but are Borland specific.</I>
+<LI><I>I applied all the changes as suggested by Jaroslav to make it work under VC++ 6.0. (It doesn't work with VC++ 5.0 as reader Michael Maron found.)</I></OL>
+
+<p><I>Basically, some functions changed the signature to include an extra dummy parameter to help the compiler with the match lookup and two non-member functions were added. Unfortunately, I had to change the name of the second </I><B>is_type</B><I> method, now named </I><B>is_type_as</B><I>, because VC++ couldn't resolve the ambiguity.</I></p>
+<p><I>I haven't adapted the arglist code since that was mostly an example.</I></p>
+<p><I>Best Regards,</I></p>
+<p><I>Fernando Cacciola Sierra<br>
+s.r.l.<br>
+fcacciola@fibertel.com.ar</I></p>
+
+<p><i>We have updated Fernando's code on our website. (See </I><B>www.cuj.com/code/updates.html</B><I>.) &#151;mb</i></p>
+
+<hr><p>Hi,</p>
+<p>I just wanted to drop you a note thanking you for publishing the former columnists from C++ <I>Report.</I> [See "C++ Experts Forum" at <B>www.cuj.com/experts/</B>.] As a former subscriber I am grateful that someone is doing this.</p>
+<p>In case you were wondering I am already a (fairly long term) subscriber to <I>C/C++ UJ.</I></p>
+<p>If I could make just one suggestion, would it be possible to send email, as a reminder, that a new set of columns has been posted?</p>
+<p>Thanks very much.</p>
+<p>Louis A. Russ.</p>
+
+<p><I>Your wish is our command! We have just started an email newsletter that contains just this sort of information. To subscribe, point your browser to </I><B>www.cuj.com</B><I> and follow the simple instructions. &#151; mb </I></p>
+
+</blockquote></body></html>

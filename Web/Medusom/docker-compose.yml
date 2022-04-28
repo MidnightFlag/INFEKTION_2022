@@ -1,0 +1,30 @@
+version: "3.3"
+
+services:
+  orga:
+    container_name: orga
+    build:
+      context: ./orga
+    volumes:
+      - ./orga/html:/var/www/html
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      - "4490:4490"
+  mongo:
+    container_name: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    build:
+      context: ./mongo
+    volumes:
+      - ./mongo/db:/data/db
+  medusom:
+    container_name: medusom
+    restart: always
+    ports:
+      - "8080:80"
+    build:
+      context: ./Medusom

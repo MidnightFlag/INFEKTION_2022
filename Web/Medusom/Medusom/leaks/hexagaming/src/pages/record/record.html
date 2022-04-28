@@ -1,0 +1,39 @@
+<ion-content>
+    <div class="record-box">
+      <div class="icon">
+          <img class="reward" src="assets/img/reward.svg">
+      </div>
+      <div class="record-number" *ngIf="recordEasy">{{recordEasy}}</div>
+      <div class="record-number" *ngIf="!recordEasy">0</div>
+    </div>
+    <div class="record-box">
+      <div class="icon">
+          <img class="reward" src="assets/img/reward.svg" *ngIf="recordEasy >= 15">
+          <img class='lock' src="assets/img/lock.svg" *ngIf="recordEasy < 15">
+      </div>
+      <div class="record-number" *ngIf="recordEasy >= 15">{{recordNormal}}</div>
+      <div class="record-number" *ngIf="!recordEasy && recordEasy >= 15">0</div>
+    </div>
+    <div class="record-box">
+      <div class="icon">
+          <img class="reward" src="assets/img/reward.svg"  *ngIf="recordNormal >= 15">
+          <img class='lock' src="assets/img/lock.svg" *ngIf="recordNormal < 15">
+      </div>
+      <div class="record-number" *ngIf="recordNormal >= 15">{{recordHard}}</div>
+      <div class="record-number" *ngIf="!recordNormal && recordNormal >= 15">0</div>
+    </div>
+    <div class="record-box" *ngIf="recordHard >= 15">
+      <div class="icon">
+          <img class="reward" src="assets/img/reward.svg">
+      </div>
+      <div class="record-number" *ngIf="recordHard >= 15">{{recordDoom}}</div>
+      <div class="record-number" *ngIf="!recordHard && recordHard >= 15">0</div>
+    </div>
+
+      <button class='reward_home' ion-button block (click)="goToNavPage()">
+        <ion-icon ios="ios-home" md="md-home"></ion-icon>
+      </button>
+<div>
+
+</div>
+</ion-content>

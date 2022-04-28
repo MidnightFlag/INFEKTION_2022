@@ -1,0 +1,315 @@
+<HTML>   
+     <HEAD>
+<TITLE>December 2000/Uncaught Exceptions</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocdec.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   C/C++ Contributing Editors</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Uncaught Exceptions: No No .NET</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Bobby Schmidt</FONT></H3>
+
+<BLOCKQUOTE>
+<p>Bobby does a little moonlighting at the VC++ help desk, and battles some phantom foos in his spare time.</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+<p>Copyright &copy; 2000 Robert H. Schmidt</p>
+<p>I keep getting letters commenting that my various and sundry <B>lengthof</B> solutions such as</p>
+
+<pre>
+template&lt;typename T, size_t N&gt;
+size_t lengthof(T (&amp;)[N])
+    {
+    return N;
+    }
+</pre>
+
+<p>won't compile with Visual C++ v6. I know I've mentioned this before, but I apparently can't mention it enough: these examples <I>do not work</I> with Visual C++ v6! That compiler does not properly support the non-type template parameters <B>lengthof</B> requires.</p>
+<p>In my October column, I promised to discover if <B>lengthof</B> will work in Visual C++ v7, which we have rebranded Visual C++ .NET. From what I can tell, the answer is no, at least in recent internal builds.</p>
+<p>On a related note: as I write this, a prerelease of Visual C++ is now available for free download as part of the .NET Framework SDK <a href="#1">[1]</a>. I expect that by the time this column hits print, many of you will have tried the .NET compiler.</p>
+<p>Even so, when I write "Visual C++" in my column, I will continue to mean the released compiler Visual C++ v6. Once Visual C++ .NET is released <a href="#2">[2]</a>, I will start specifying which version I mean. After Visual C++ .NET is out for a while, I'll make that version my default.</p>
+
+<H4><FONT COLOR="#000080">The Phantom const</FONT></H4>
+<H4><FONT COLOR="#000080">Q</FONT></H4>
+<p> Bobby,</p>
+<p>Can you please look at the enclosed small examples, and tell me why the first compiles while the second does not? Sorry to say, I'm using Visual C++, which I know is your favorite compiler to be questioned on!</p>
+<p>Regards &#151; Jan Pringle</p>
+
+<H4><FONT COLOR="#000080">A</FONT></H4>
+<p> I've rewritten your first example as</p>
+
+<pre>
+void f(int /*const*/ n);
+void f(int   const   n);
+
+int main()
+    {
+    f(1);
+    return 0;
+    }
+</pre>
+
+<p>I'm declaring the same function <B>f</B> twice &#151; first with a <B>const</B> parameter, then with a non-<B>const</B> parameter. Note that these are not <B>f</B> overloads, but rather are multiple declarations of the same <B>f</B>. Because only one <B>f</B> is available &#151; multiply declared though it may be &#151; the compiler finds no ambiguity when resolving the call <B>f(1)</B>.</p>
+<p>I am thus able to declare the same function multiple times with different parameter lists. Such behavior is supported by the C++ Standard. From subclause 8.3.5/3, in reference to function declarations:</p>
+
+<BLOCKQUOTE>
+<p>Any <I>cv-qualifier</I> modifying a parameter type is deleted. [<I>Example:</I> the type <B>void(*)(const int)</B> becomes <B>void(*)(int)</B> &#151;<I>end example</I>] Such <I>cv-qualifiers</I> affect only the definition of the parameter within the body of the function; they do not affect the function type.</p>
+</BLOCKQUOTE>
+
+<p>The compiler treats the second <B>f</B> declaration as if I'd written it exactly like the first, sans <B>const</B>. The <B>const</B> does not affect the signature or type of <B>f</B>.</p>
+<p>Why does the Standard allow this behavior? Because the constness of <B>n</B> does not change the external semantics of <B>f</B> &#151; the fact that <B>n</B> may be const is <B>f</B>'s implementation detail. From the caller's perspective, <B>n</B> is a local object within <B>f</B>. Any changes to that local <B>n</B> do not affect the argument passed to <B>f</B>.</p>
+<p>As written, this program builds with all my test systems (including Visual C++). But as you found in your second example, the variation</p>
+
+<pre>
+void f(int /*const*/ n);
+void f(int   const   n);
+
+typedef void (*fp) (int);
+typedef void (*fpc)(int const);
+
+fp  p  = f; // OK
+fpc pc = f; // should be OK?
+
+int main()
+    {
+    f(1);
+    p(1);
+    pc(1);
+    return 0;
+    }
+</pre>
+
+<p>fails with Visual C++ (although it does work with my other systems). The compiler flags the definition of <B>pc</B> with the incomplete diagnostic</p>
+
+<pre>
+cannot convert '' to
+'void (*)(const int)'
+
+None of the functions with this 
+name in scope match the target type
+</pre>
+
+<p>(I just love error messages that reference type <B>''</B> &#151; so clean, so concise!)</p>
+<p>Is Visual C++ in error here? I think so, but my interpretation is based on a somewhat liberal reading of 8.3.5/3.</p>
+<p>The subclause covers declarations of functions, not declarations of pointers to functions. The subclause also discusses adjustment to parameters of those declared functions and gives a specific example of one such adjustment:</p>
+
+<BLOCKQUOTE>
+[<I>Example:</I> the type <B>void(*)(const int)</B> becomes <B>void (*)(int)</B> &#151;<I>end example</I>] </p>
+</BLOCKQUOTE>
+
+<p>I'm not certain whether this adjustment involves a parameter of type <B>const int</B> or a parameter of type <B>void(*)(const int)</B>. But I feel the intent is clear &#151; the two function pointer types are synonymous. I'll therefore go out on a small limb and assume that my second example should compile.</p>
+<p>On a hunch, I reversed the order of the two <B>f</B> declarations and then recompiled. The resulting Visual C++ error message changed to</p>
+
+<pre>
+cannot convert '' to 'void (*)(int)'
+
+None of the functions with this
+name in scope match the target type
+</pre>
+
+<p>This behavior implies that the compiler remembers the first <B>f</B> declaration it sees and then measures type compatibility literally against that first declaration. What I find interesting is that this literal comparison apparently affects only function pointer types, and not the function types themselves.</p>
+<p>I also find interesting that Visual C++ maps <B>p</B> and <B>pc</B> to the decorated names <B>?p@@3P6AXH@ZA</B> and <B>?pc@@3P6AXH@ZA</B>. That the names contain the same encoded type information implies that <B>p</B> and <B>pc</B> literally share the same type. This evidence strongly suggests that the type-matching error is simply a bug rather than "by design."</p>
+
+<H4><FONT COLOR="#000080">The Phantom this</FONT></H4>
+<H4><FONT COLOR="#000080">Q</FONT></H4>
+<p>Bobby,</p>
+<p>The enclosed program works fine, giving me the output</p>
+
+<pre>
+CFoo::Func1
+</pre>
+
+<p>Is this legal C++?</p>
+<p>Thanks &#151; Sandeep</p>
+
+<H4><FONT COLOR="#000080">A</FONT></H4>
+<p> (A variation of your program appears as <a href="list1.htm">Listing 1</a>.)</p>
+<p>Your program is "legal" in that the Standard does not forbid it. The program also yields undefined behavior. From subclause 9.3.1:</p>
+
+<BLOCKQUOTE>
+<p>If a nonstatic member function of a class <B>X</B> is called for an object that is not of type <B>X</B>, or of a type derived from <B>X</B>, the behavior is undefined.</p>
+</BLOCKQUOTE>
+
+<p><B>*pFoo</B> is not an object of type <B>CFoo</B>. Indeed, it's not an object of any type, since its lifetime has not yet started. From subclause 3.8:</p>
+
+<BLOCKQUOTE>
+<p>The <I>lifetime</I> of an object of type <B>T</B> begins when:</p>
+<p>&#151; storage with the proper alignment and size for type <B>T</B> is obtained, and</p>
+<p>&#151; if <B>T</B> is a class type with a non-trivial constructor, the constructor call has completed.</p>
+</p>
+<p>The properties ascribed to objects throughout this International Standard apply for a given object during its lifetime. [<I>Note:</I> in particular, before the lifetime of an object starts... there are significant restrictions on the use of the object, as described below...] </p>
+</BLOCKQUOTE>
+
+<p>The "significant restrictions" involve proto-objects that have storage but are not yet fully constructed. Since <B>*pFoo</B> has no storage, it does not enjoy even this restricted use as an object.</p>
+<p>Given that the program engages in undefined behavior, why does it apparently run with no ill effect? Probably because <B>Func1</B> doesn't reference the non-existent object <B>*pFoo</B>. If you change <B>Func1</B> to reference <B>*pFoo</B>:</p>
+
+<pre>
+void Func1()
+    {
+    i = 1; // really (*pFoo).i = 1
+    }
+</pre>
+
+<p>you may well see different results. On my test systems, the modified program crashes when run.</p>
+
+<H4><FONT COLOR="#000080">Nested Functions</FONT></H4>
+<H4><FONT COLOR="#000080">Q</FONT></H4>
+
+<p> I remember reading somewhere that you can use a functor (function object) as a callback function and simulate a Pascal nested function. I tried writing a test application but can't get it to compile under VC++ v6. With my enclosed code I get this error:</p>
+
+<pre>
+'TestCallback' :
+cannot convert parameter 1 from 'struct main::CFoo'
+to 'void (*)(void)'
+
+No user-defined-conversion operator
+available that can perform this conversion,
+or the operator cannot be called
+</pre>
+
+<p>Thanks &#151; Mike Retondo</p>
+
+<H4><FONT COLOR="#000080">A</FONT></H4>
+
+<p> Your code appears as <a href="list2.htm">Listing 2</a>.</p>
+<p>You're on the right track with <B>CFoo::operator()</B>, since that allows the expression</p>
+
+<pre>
+aFoo(); // same as aFoo.operator()();
+</pre>
+
+<p>just as if <B>aFoo</B> really were a function.</p>
+<p>However, your attempt to call</p>
+
+<pre>
+TestCallback(aFoo);
+</pre>
+
+<p>requires a conversion from the <B>aFoo</B> argument to <B>TestCallback</B>'s function pointer parameter. Real functions support this conversion implicitly; <B>CFoo</B> objects do not. As your compiler's error message suggests, the conversion must manifest as an explicit conversion operator:</p>
+
+<pre>
+struct CFoo
+    {
+    operator CallbackFuncPtr();
+    // ...
+    };
+</pre>
+
+<p>If you add this member, you'll find that your code builds and runs as you expect.</p>
+<p>While this solution works, it's not very adaptable. If you later add</p>
+
+<pre>
+typedef int (*CallbackFuncPtr2)();
+
+void TestCallback2 (CallbackFuncPtr2 pFunc);
+</pre>
+
+<p>you'll need to retrofit a second conversion operator:</p>
+
+<pre>
+struct CFoo
+    {
+    operator CallbackFuncPtr();
+    operator CallbackFuncPtr2();
+    // ...
+    };
+
+CFoo aFoo;
+TestCallback(aFoo);  // OK
+TestCallback2(aFoo); // OK
+</pre>
+
+<p>A more adaptable solution is to make <B>TestCallback</B> a function template:</p>
+
+<pre>
+template&lt;typename Pred&gt;
+void TestCallback(Pred p)
+    {
+    p();
+    }
+</pre>
+
+<p>This template works for any type <B>Pred</B> that supports the <B>()</B> operator. The technique mimics STL algorithms (such as <B>find_if</B> and <B>for_each</B>) that accept predicates. While those predicates can be functions or function pointers, they are often implemented by functors.</p>
+<p>Unfortunately for you, the original <B>CFoo</B> will not work with templates. That class is declared local to a function (<B>main</B>) &#151; and such local classes cannot be used as function template arguments (subclause 14.3.1). For <B>CFoo</B> to work as a template argument, you'd have to move it outside <B>main</B>, thereby defeating your desire to mimic local functions.</p>
+
+<H4><FONT COLOR="#000080">Round and Round Again</FONT></H4>
+<H4><FONT COLOR="#000080">Q</FONT></H4>
+
+<p> Hey Bobby,</p>
+<p>In the July issue of <I>CUJ</I>, you answer the question about initializing a variable with itself. One serious flaw with the language that allows exploitation of a class that you didn't touch upon is this failing in the language specification. Consider the following class definition:</p>
+
+<pre>
+class CFoo
+    {
+public:
+    CFoo(CSomeComplexClassType const x);
+    };
+</pre>
+
+<p>This <B>CFoo</B> class cannot be constructed without first constructing <B>CSomeComplexClassType</B>, right? So we would like to believe. By the above fiendish deception of the compiler, the following declaration is valid:</p>
+
+<pre>
+CFoo myFoo = myFoo;
+</pre>
+
+<p>While the results of this may be undetermined, it is portably indeterminant. All of the compilers that I've tried have allowed this construct, because, as you said, the Standard clearly does not prohibit it. Anyone out there not quaking from the ramifications of such a simple line of code obviously doesn't realize the magnitude of the breach. Essentially, any complex class may be constructed with invalid data.</p>
+<p>This is particularly insidious when considering mathematical primitives that contain only atomic types and have rigidly defined interfaces to prevent mishandling, but are terribly vulnerable to this sort of abuse. I stumbled upon this quirk by accident and tracked it down to some uninitialized values in a class without a default constructor. Stumped, I eventually had someone else look at the obvious assignment line (where I'd mixed up two similar variable names) and found the bug.</p>
+<p>Since then, I've been careful to not tell too many people about this, for fear it might become a practice of the reckless. Shame on you for publishing it! &lt;grin&gt; &#151; Jason Hughes</p>
+
+<H4><FONT COLOR="#000080">A</FONT></H4>
+
+<p> When I wrote up that column entry, I wasn't making an editorial on whether you should write</p>
+
+<pre>
+CFoo myFoo = myFoo;
+</pre>
+
+<p>or not. I was only validating that yes, the Standard allows this, and no, the Standard probably shouldn't try to make a special case of this one invalid initialization. I left it for readers to decide if this was a useful program form.</p>
+<p>But as they say in the NFL, upon further review, I've decided the referee should have flagged the play as out-of-bounds.</p>
+<p>The statement</p>
+
+<pre>
+CFoo myFoo = myFoo;
+</pre>
+
+<p>runs because <B>CFoo</B> has an accessible copy constructor. In the example you describe, where you've overtly given the class one (non-copy) constructor:</p>
+
+<pre>
+class CFoo
+    {
+public:
+    CFoo(CSomeComplexClassType
+        const x);
+    };
+</pre>
+
+<p><B>CFoo</B> still has an implicitly-declared copy constructor. So one easy way to avoid our dilemma is to hide the copy constructor:</p>
+
+<pre>
+class CFoo
+    {
+public:
+    CFoo(CSomeComplexClassType
+        const x);
+private:
+    CFoo(CFoo const &amp;);
+    };
+
+CFoo myFoo = myFoo; // error, at last!
+</pre>
+
+<p>This works, but at a price. Copy construction is a quite useful feature for a category; removing that feature to prevent one narrow class of problem seems extreme.</p>
+<p>I can offer an alternative: apply the canonical self-assignment guard we normally use in <B>operator=</B>. I show one possible implementation in <a href="list3.htm">Listing 3</a>.</p>
+<p>Note to Diligent Readers: After this month, I'm declaring a moratorium on <B>CFoo</B>s, <B>foo</B>s, <B>bar</B>s, <B>foobar</B>s, <B>FooBar</B>s, <B>DoveBar</B>s, and other related mutations. After all these decades of programming, surely we can be more creative than this!</p>
+
+<H4><FONT COLOR="#000080">Notes</FONT></H4>
+
+<p><a name="1"></a>[1]  <B>http://msdn.microsoft.com/code/sample.asp?url=/msdn-files/027/000/976/msdncompositedoc.xml</B></p>
+<p><a name="2"></a>[2]  To stave off email: no, I can't say when that release will be.</p>
+
+<p><i><B>Bobby Schmidt</B> is a freelance writer, teacher, consultant, and programmer. He is also an alumnus of Microsoft, a speaker at the Software Development and Embedded Systems Conferences, and an original "associate" of (Dan) Saks &amp; Associates. In other career incarnations, Bobby has been a pool hall operator, radio DJ, private investigator, and astronomer. You may summon him on the Internet via <B>BobbySchmidt@mac.com</B>.</i></p>
+
+<h4><a href="../../../source/2000/dec00/schmidt.zip">Get Article Source Code</a></h4>
+</blockquote></body></html>

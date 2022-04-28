@@ -1,0 +1,38 @@
+<HTML><HEAD>
+<TITLE>Effective Contour Creation with OpenGL Texture Mapping/Listing 1</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 1: Creating a 1-D texture object in OpenGL</A></h4>
+<pre>
+void CContoursDoc::CreateTextureObject()
+{
+    // Define texture image
+    unsigned char Texture8[8][3] =
+    {
+        { 0x00, 0x00, 0xa0 },   // Dark Blue 
+        { 0x00, 0x00, 0xff },   // Blue 
+        { 0x00, 0xa0, 0xff },   // Indigo 
+        { 0x00, 0xa0, 0x40 },   // Dark Green 
+        { 0x00, 0xff, 0x00 },   // Green 
+        { 0xff, 0xff, 0x00 },   // Yellow 
+        { 0xff, 0xcc, 0x00 },   // Orange 
+        { 0xff, 0x00, 0x00 }    // Red 
+    };
+
+    // Set pixel storage mode 
+    ::glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    // Generate a texture name
+    ::glGenTextures(1, m_nTexName);
+
+    // Create a texture object
+    ::glBindTexture(GL_TEXTURE_1D, m_nTexName[0]);
+    ::glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER,
+        GL_NEAREST);
+    ::glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER,
+        GL_NEAREST);
+    ::glTexImage1D(GL_TEXTURE_1D, 0, 3, 8, 0, GL_RGB, 
+        GL_UNSIGNED_BYTE, Texture8);
+}
+</pre></body></html>

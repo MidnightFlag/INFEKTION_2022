@@ -1,0 +1,58 @@
+<HTML><HEAD>
+<TITLE>November 2000/import java.*/Listing 13</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 13: File ParseClassNames.java &#151; extracts class names</A></h4>
+<pre>
+import java.io.*;
+
+class ParseClassNames
+{
+    public static void main(String[] args)
+        throws IOException
+    {
+        // Read Standard Input:
+        StreamTokenizer in =
+            new StreamTokenizer(
+                new InputStreamReader(System.in)
+                );
+
+        in.slashSlashComments(true);
+        in.slashStarComments(true);
+
+        while (in.nextToken() !=
+                   StreamTokenizer.TT_EOF)
+            if (in.ttype == StreamTokenizer.TT_WORD &amp;&amp;
+                in.sval.equals("class"))
+            {
+                // Attempt to read class name:
+                if (in.nextToken() ==
+                        StreamTokenizer.TT_EOF)
+                {
+                    System.err.println("Unexpected EOF");
+                    System.exit(1);
+                }
+                else if (in.ttype !=
+                             StreamTokenizer.TT_WORD)
+                {
+                    System.err.println(
+                        "Syntax error in line " +
+                        in.lineno()
+                        );
+                    System.exit(1);
+                }
+                else
+                    System.out.println("Found class " +
+                                       in.sval);
+            }
+    }
+}
+
+/* Output from processing SerializationTest.java:
+Found class Name
+Found class CarbonUnit
+Found class Person
+Found class SerializationTest
+*/
+</pre></body></html>

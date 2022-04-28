@@ -1,0 +1,4 @@
+system-monitor/system-monitor@linuxdeepin.com /usr/share/gnome-shell/extensions/
+system-monitor/org.gnome.shell.extensions.system-monitor.gschema.xml /usr/share/glib-2.0/schemas/
+system-monitor/system-monitor-applet-config /usr/bin/
+system-monitor/system-monitor-applet-config.desktop /usr/share/applications/

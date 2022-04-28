@@ -1,0 +1,123 @@
+<HTML>   
+     <HEAD>
+<TITLE>May 2000 Java Solutions/Understanding JavaBeans</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocjmay.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   Java Solutions</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Understanding JavaBeans</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Don Weiss</FONT></H3>
+
+<BLOCKQUOTE>
+<p>There's nothing really magic about JavaBeans, but you can grow some interesting things from them.</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+
+<H4><FONT COLOR="#000080">Introduction</FONT></H4>
+
+<p>Code reuse is a lot like the weather. Everybody talks about it, but not too many people are actually doing anything about it. Componentware finally made code reuse popular and convenient. JavaBeans extends the concept of component architecture to Java.</p>
+<p>Componentware made its debut about ten years ago with a little-known product at the time called Visual Basic. There were two things about Visual Basic that contributed greatly to its success: it was easy to use, and it had a large selection of ready-made components that you could drag from the toolbox onto a form. You could then readily customize the component through property sheets.</p>
+<p>Visual Basic implemented components in a novel way as well. It reused compiled code, not source code. This immediately solved two large problems that had plagued code reuse. The first problem was that in order to reuse the component, you had to understand the source code. The second problem was that in order to customize the behavior of the component, you had to modify the source code. Trust me on this, code reuse isn't really code reuse if you have to modify the code each time you want to use it. Code reuse isn't of much value either if you can't find the code to reuse it. Putting a component in a toolbox makes it easier to find than searching through a code library with thousands of entries.</p>
+<p>JavaBeans is a component architecture for Java that solves the problem of real code reuse in much the same manner as the old VBX components. JavaBeans, however, solves the problem in Java's typical platform-independent fashion.</p>
+
+<H4><FONT COLOR="#000080">Defining a JavaBean</FONT></H4>
+
+<p>Following are a few typical questions about JavaBeans:</p>
+<p><I>What exactly is a JavaBean?</I></p>
+<p>A JavaBean is piece of compiled code that can be customized through properties, can be acted upon with methods, and can generate events to let others know that things have happened. A JavaBean is written in Java. It does not use any extensions or features outside the language, but conforms to certain specifications, such as naming conventions for functions that get and set properties.</p>
+<p><I>When is a Bean a Bean?</I></p>
+<p>Technically, Java code can be considered a bean even if it has only one property that can be customized. The bean in <a href="fig1.htm">Figure 1</a> is about as simple a JavaBean as you can get. Using the bean is no different than using other Java code. As <a href="fig2.htm">Figure 2</a> shows, it isn't any harder either.</p>
+<p><I>What is a property and why isn't it data?</I></p>
+<p>The bean shown in <a href="fig1.htm">Figure 1</a> has a property called Count. The property is called Count, not <B>counter</B>, because a property is defined by method names, not data names. If you were to add this bean to an IDE (Integrated Development Environment), the development tool would perform a process called Introspection on the methods of the bean, looking for a set of methods that match a get/set naming convention. From the names of the methods, the tool infers the name of the property.</p>
+<p>In this particular case, there is a method called <B>getCount</B>. The IDE assumes, at this point, that there is an integer property called Count, and that it is a read property. When the IDE continues its analysis of the bean, it finds the <B>setCount</B> method, and notes that the Count part of the name matches the previously-found property called Count, and that the parameter type of <B>int</B> matches the return type of the <B>getCount</B> method. Therefore, the IDE determines that there is an <B>int</B> property called Count that is both a read and write property. The fact that both methods use a piece of data called <B>counter</B> is inconsequential to the name and data type of the property. This decoupling allows the mechanism for storing the data internally to change without affecting users of the bean.</p>
+<p>Additionally, properties may be arrays, referenced by an index, bound, and constrained. A full discussion of these array characteristics is beyond the scope of this article. Suffice it to say that a bound property is one that notifies other code that the data has been changed, similar in nature to a typical data-bound control in other languages. A property's value can also be constrained by other outside code to fall within a certain range or meet other criteria.</p>
+<p><I>What about methods?</I></p>
+<p>JavaBeans can contain methods, exactly like methods in any other Java class. They are simply there to make the bean do things. Beyond the methods used to access properties, there are no naming conventions or other restrictions on methods inside a bean.</p>
+<p><I>What is an event?</I></p>
+<p>An event is something that happens. The bean generates an event object describing the event to let anyone who cares know about it. Events occur all the time, for example, a war breaks out somewhere. Consider the next issue of <I>Time</I> magazine. The war is the event, and the article in <I>Time</I> is an event object that describes the event. The magazine article just describes the event, but is not the actual event itself. After the article is written, a copy of the magazine is mailed to its subscriber list. When you pull the magazine out of the mailbox, you read all about it, and know that an event occurred.</p>
+
+<H4><FONT COLOR="#000080">A Bean Example</FONT></H4>
+
+<p>One basic need of many GUI programs is a timer. What would Solitaire be without an occasionally smiling sun? When would a browser know when to give up waiting for a site to respond? When would my word processor know to autosave this article? All these tasks require a timer. In this section I show how to build a JavaBean to act as a general-purpose timer. Along the way, I also cover a few of the concepts of multithread programming in Java, just because that's how a timer works. There's no requirement that a JavaBean include a separate thread.</p>
+<p>The timer bean can be used in any Java program that needs to do something on a regularly scheduled basis. For example, I recently wrote a Java program for my own use to receive stock quotes over the Internet every five minutes, and display a running total of the value of the portfolio. A timer bean drives the code to call the stock quote provider.</p>
+<p>The timer bean needs a property called Interval, that controls how often the timer fires (see <a href="fig3.htm">Figure 3</a>). Although the name of the property is Interval, the data belonging to the property is actually stored in an integer called <B>theInterval</B>.</p>
+<p><a href="fig3.htm">Figure 3</a> also shows another boolean property called Suspended. Naming conventions allow for a slightly different naming pattern for boolean properties. Instead of a <B>getSuspended</B> method, the pattern calls for an <B>isSuspended</B> method. Other than that, a boolean property is exactly the same as a property of any other data type.</p>
+<p>I reserve the discussion of <B>synchronized</B> and <B>notifyAll</B> until I have delved more deeply into the thread portion of the timer.</p>
+
+<H4><FONT COLOR="#000080">The Publisher/Subscriber Event Model</FONT></H4>
+
+<p>JavaBeans use a publisher/subscriber mechanism for notifying the user of a bean that events have happened. The mechanism is analogous the process described earlier concerning magazines. If you want to be notified of the events that a bean produces, you must become a subscriber to the bean's events. The scenario for a magazine works like this. You are standing around the grocery store looking at the magazine rack and happen to see a magazine (this one, perhaps) that looks interesting. You fill out the subscription card and send in some money. About six weeks later, copies of magazine start appearing in your mailbox.</p>
+<p>What seems like a simple process is actually a bit more complicated. Not everyone can subscribe to a magazine. At the very minimum, two things are usually necessary: you must have an address capable of receiving mail, and you must send in some money. In the case of a JavaBean, the subscriber also must meet some qualifications before the bean will agree to start sending events to the subscriber. Since the notification mechanism uses callbacks, the bean must be guaranteed that the subscriber actually has the correct method for the callback. JavaBeans use interfaces to guarantee subscriber qualifications.</p>
+
+<H4><FONT COLOR="#000080">The Role of Interfaces</FONT></H4>
+
+<p>Interfaces are used extensively by Java to guarantee that a class contains the methods other code expects to be there. Since Java does not support multiple inheritance, it must use another mechanism to guarantee that specific method signatures are present in the target code. In many ways, an interface is a lot like an abstract class that contains only abstract methods. Just as a concrete class inherits an abstract method signature from a superclass, the class that implements an interface must contain a concrete method that implements the signature defined by that interface, otherwise the program will not compile.</p>
+<p>To enable user code to subscribe to the events generated by the bean, the bean provides an <B>addxxxListener</B> method with a single parameter of type <B>xxxListener</B>, where <B>xxxListener</B> is the name of the interface. The bean doesn't really care what kind of object subscribes to its events, just that the object has the appropriate callback methods. Defining the parameter as an object that implements an interface fits the bill perfectly (See <a href="fig4.htm">Figure 4</a>).</p>
+<p>In our case, the <B>TimerBean</B> is expecting that the events will be sent to an object implementing the <B>TimerListener</B> interface (<a href="fig5.htm">Figure 5</a>), thus ensuring that the callback method, <B>timerFired</B>, exists.</p>
+
+<H4><FONT COLOR="#000080">The Mailing List</FONT></H4>
+
+<p>The references to the subscribing users are stored in a <B>Vector</B>, allowing the bean to cycle sequentially through the list (see <a href="fig6.htm">Figure 6</a>). First, an event object is created containing all the information relevant to event (see <a href="fig7.htm">Figure 7</a>). In this case, the event object contains a reference to the timer creating the event, the number assigned to this timer, and a counter representing the event number.</p>
+<p>When you subscribe to a magazine, it usually takes four to six weeks to get the first issue. Why does it take that long? Why can't you get the very next issue? Part of the answer lies with the mailing list. Imagine a scenario where the current mailing list is spun off to a tape and mailed to a company that prints mailing labels. Even though you may have subscribed before the current issue is printed and mailed, you may not have been a subscriber at the time the tape was cut. Hence the delay. It doesn't work well to print mailing labels from a live list. There's too much potential for error while names are continually added and deleted from the list. It's easier to freeze the list, make a copy, and work from the copy. Since your name will be in the next list, you get the next issue. The code in <a href="fig6.htm">Figure 6</a> works the same way. Make a copy of the list stored in the vector, then cycle through the list, calling the <B>timerNotified</B> method on each listener. The <B>synchronized</B> keyword prevents any change to the subscriber list during the time it takes to make the copy. I cover the <B>synchronized</B> keyword later.</p>
+
+<H4><FONT COLOR="#000080">Customizing an Existing Bean</FONT></H4>
+
+<p>One other nifty feature of JavaBeans is the ability to customize the properties of a JavaBean before you ship it to your customer. It's one thing to be able to customize the properties of a component during the development stage of a program, but it's quite another to be able to deliver the customized version of the bean to a customer. The new values for the customized properties must be remembered somewhere so that when the standard bean is loaded into memory, the customized values for the properties overwrite the standard values. With JavaBeans, the values for the properties are serialized to a file with a <B>ser</B> extension, essentially the same as writing the bean object to disk. If you want to load a customized instance of the bean, your code looks to the disk to find the <B>.ser</B> file. When the file is read in, the object is created and the standard data is overwritten with the customized data in the <B>.ser</B> file. This provides instant customization of the bean. In the code shown, if the appropriate <B>.ser</B> file cannot be found, the default constructor for the bean is called to instantiate the bean.</p>
+<p><a href="fig8.htm">Figure 8</a> modifies the simple client used earlier in <a href="fig2.htm">Figure 2</a>. The new code writes the simple bean object to disk after changing the value of the Count property. When the bean is loaded back into memory in <a href="fig9.htm">Figure 9</a>, Count still has a value of 33. Also note that the mechanism for creating the bean has been changed. Instead of using the normal, default constructor, the <B>Beans.instantiate</B> method reads the bean in from disk, along with its customized values.</p>
+
+<H4><FONT COLOR="#000080">Delivering the Goods</FONT></H4>
+
+<p>JavaBeans are typically delivered to a user via a jar (Java archive) file, which includes the bean, any support classes used by the bean, and customized values contained in a <B>.ser</B> file. The jar file uses exactly the same compression technology as zip files, and thus can be read by any tool that reads standard zip files.</p>
+<p>The jar file includes one additional file, a manifest, which describes to an IDE tool using the bean which classes in the jar file are the actual beans. A manifest for the timer bean would look something like this:</p>
+
+<pre>
+Manifest-Version: 1.0
+
+Name: TimerBean.class
+Java-Bean: True
+</pre>
+
+<p>Creating the jar file is done using a simple command-line utility, as shown here:</p>
+
+<pre>
+jar cvfm timer.jar manifest.txt 
+   *.class *.ser
+</pre>
+
+<p>The flags <B>cvfm</B> indicate that we want to <I>create</I> a jar file, to generate <I>verbose</I> output, to specify the <I>file name</I> of the archive, and to include a <I>manifest.</I> The name of the resulting output is <B>timer.jar</B>. The name of the manifest is <B>manifest.txt</B>. That last two tokens on the command line tell the utility to include in the jar file everything in the current directory that ends with <B>class</B> or <B>ser</B>.</p>
+<p>I have now covered all the basics for creating, customizing, and delivering simple JavaBeans. The rest of this article quickly covers the aspects of threading used by the timer bean.</p>
+
+<H4><FONT COLOR="#000080">Threads, Briefly</FONT></H4>
+
+<p>Simply stated, a thread in Java is an object that extends the <B>Thread</B> class and overrides the <B>run</B> method. Once started, the thread continues to exist until the code falls out the bottom of the <B>run</B> method. The code in <a href="fig10.htm">Figure 10</a> shows a more common variation, in which the timer bean contains an object of class <B>Thread</B> and the bean implements the <B>Runnable</B> interface. When the <B>Thread</B> object is instantiated, a reference to the bean object is passed to the constructor, which directs the thread to use the delegated <B>run</B> method of the bean, rather than an overridden <B>run</B> method. Note also the <B>setDaemon</B> method, which designates the thread as a worker-bee thread. If for some reason the main thread, such as the user interface thread, goes away and only worker-bee threads are left running, the program will still terminate. It doesn't do much good to have a timer running forever with no one listening to timer events.</p>
+<p>The user calls the bean's <B>init</B> method (<a href="fig11.htm">Figure 11</a>) to start the timer. When the <B>runner.start</B> method is called, all the threading housekeeping is performed and control is passed to the delegated <B>run</B> method.</p>
+<p>The heart of the thread is the <B>run</B> method shown in <a href="fig11.htm">Figure 11</a>. The code stays in the <B>while</B> loop until the <B>running</B> flag is set to <B>false</B> by calling the bean's <B>destroy</B> method.</p>
+<p>The method goes to sleep for the time specified by <B>theInterval</B>. When the timer awakes, it executes the <B>notifyFired</B> method (<a href="fig6.htm">Figure 6</a>) to inform all subscribers that the designated time has passed.</p>
+
+<H4><FONT COLOR="#000080">Stop and Go</FONT></H4>
+
+<p>This timer bean has been enhanced to allow a user to temporarily suspend and resume the timer by calling the <B>setSuspended</B> method (<a href="fig3.htm">Figure 3</a>) with a <B>true</B> parameter to suspend and <B>false</B> to resume. Note an important aspect of this architectural design: the bean receives a request to suspend itself; it is not arbitrarily suspended by an outside force. The bean is in control of when the request is executed &#151; in this case, at the top of the <B>while</B> loop. The bean suspends itself only when it is in a quiescent state, rather than, say, in the middle of notifying users of events. When the bean user requests that the bean suspend itself, the <B>wait</B> method inside <B>checkIfSuspended</B> executes (see <a href="fig12.htm">Figure 12</a>). All activity in the bean is suspended until <B>notifyAll</B> is called (see <a href="fig3.htm">Figure 3</a>). The <B>notifyAll</B> method wakes up all suspended threads that are waiting on the monitor.</p>
+
+<H4><FONT COLOR="#000080">Synchronization</FONT></H4>
+
+<p>If you ever had two people with two separate checkbooks writing checks on a single account, you will have an instinctive understanding for the need for a monitor and the <B>synchronized</B> keyword. Trust me on this one too. The voice of experience is speaking. It is virtually impossible to balance such an account or to know at any time exactly how much money is in the account. To control the account, there must be just one checkbook, and the only person who can be allowed to write checks is the one who has physical possession of the checkbook. The checkbook is analogous to a monitor, and the timer thread is analogous to the checking account.</p>
+<p>To affect the state of the timer, client code must have the monitor in its possession. The keyword <B>synchronized</B> guarantees that once a client has access to the timer object, no other user will be able to affect the timer until the current user has completed execution of the synchronized method.</p>
+<p>To ask the timer to suspend itself via the <B>wait</B> call (<a href="fig3.htm">Figure 3</a>), the client code must have exclusive control over the timer. To make the timer resume operation, the client code must again have exclusive control while calling the <B>notifyAll</B> method.</p>
+
+<H4><FONT COLOR="#000080">Conclusion</FONT></H4>
+
+<p>There's really nothing difficult about writing a JavaBean. The JavaBeans specification defines a standard set of coding conventions for properties, methods, and handling events. The specification also defines a simple method of delivering beans to the customer along with customized values for properties. There is also a well-defined procedure for creating property sheets for use by IDEs, but that's another entire article. On the <I>CUJ</I> ftp site I provide a simple application to use the JavaBean created in this article. (See p. 2 for downloading instructions.)</p>
+
+<H4><FONT COLOR="#000080">Reference</FONT></H4>
+
+<p>Robert Englander. <I>Developing Java Beans</I> (O'Reilly, 1997).</p>
+
+<p><i><B>Don Weiss</B> is the president and founder of Step1, Inc., a company specializing in client/server programming training. With 27 years in the industry, Don has been teaching and developing Java courseware for the last three-and-a-half years. You can email Don at <B>dweiss@step1inc.com</B>.</i></p>
+
+<h4><a href="../../../source/2000/jmay00/weiss.zip">Get Article Source Code</a></h4>
+
+
+</blockquote></body></html>

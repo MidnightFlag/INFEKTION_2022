@@ -1,0 +1,8 @@
+# Dependency directory
+node_modules/
+platforms/
+plugins/
+www/
+.DS_Store
+build.json
+hexagame.key.p12

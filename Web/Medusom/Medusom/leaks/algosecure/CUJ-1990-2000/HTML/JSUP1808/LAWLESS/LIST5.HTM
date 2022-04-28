@@ -1,0 +1,92 @@
+<HTML><HEAD>
+<TITLE>August 2000 Java Solutions/Using the Java Core Reflection API/Listing 5</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 5: Simple "guess a random number game" with debug scripting support</A></h4>
+<pre>
+// Simple "guess a random number" game
+// with debug scripting support.
+
+import javax.swing.*;
+
+public class Guess {
+
+      // These attributes can be seen / modified by
+      // the Script object, since they are public.
+   public int number;
+   public int guess;
+   public String title;
+   public Script scr;
+
+
+   public static void main(String[] args) throws Exception  {
+      new Guess().go();
+   }
+
+   public void go() throws Exception {
+      String s;
+      String msg;
+
+         // Create script object.
+      scr=new Script(this,"scr.prop");
+      title=
+         "Number game : Please enter a number (1-100)";
+
+      for(;;) {
+            // Generate the random number
+         number=(int)(Math.random()*101+1);
+
+            // Call AfterInit hook
+         scr.doHook("AfterInit");
+
+         msg=title;
+         for(;;) {
+            s=JOptionPane.showInputDialog(msg);
+
+               // If the user canceled, get out.
+            if( s == null )
+               break;
+
+               // Convert the user's guess to an int.
+            guess=Integer.parseInt(s);
+
+               // Call the UserInput hook
+            scr.doHook("UserInput");
+            if( guess == number ) {
+               JOptionPane.showMessageDialog(null,
+                  "Correct!");
+               break;
+            }
+            else
+            if( guess &lt; number ) {
+               msg = "Too low! Guess again.\n" + title;
+            }
+            else
+            if( guess &gt; number ) {
+               msg = "Too high! Guess again.\n" + title;
+            }
+         }
+
+            // Call the PlayAgain hook
+         scr.doHook("PlayAgain");
+         s=JOptionPane.showInputDialog(
+            "Would you like to play again?");
+         if( (s.charAt(0) == 'y')||(s.charAt(0)=='Y'))
+            continue;
+         break;
+      }
+         // Close the program.
+      terminate();
+   }
+
+
+      // Convenient wrapper for exit method.  This is
+      // provided so that it can be called from the
+      // scripting system as well as other parts of the
+      // code.
+   public void terminate() {
+      System.exit(0);
+   }
+}
+</pre></body></html>

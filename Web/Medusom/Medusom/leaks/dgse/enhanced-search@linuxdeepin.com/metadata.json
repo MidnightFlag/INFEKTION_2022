@@ -1,0 +1,7 @@
+{
+    "shell-version": ["3.2"],
+    "uuid": "enhanced-search@linuxdeepin.com",
+    "name": "Enhanced Search",
+    "description": "Provide enhanced search utils in overview",
+    "url": "http://www.linuxdeepin.com"
+}

@@ -1,0 +1,22 @@
+<HTML><HEAD>
+<TITLE>May 2000 Java Solutions/Understanding JavaBeans/Figure 9</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 9: Reading a bean's properties back from a file</A></h4>
+<pre>
+import java.beans.*;
+
+public class SimpleTest3 {
+    public static void main(String[] args) {
+        try {
+            SimpleBean bean = 
+                (SimpleBean) Beans.instantiate(null,"SimpleBean");
+            int cnt = bean.getCount();
+            System.out.println("Bean count = " + cnt);
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+    }
+}
+</pre></body></html>

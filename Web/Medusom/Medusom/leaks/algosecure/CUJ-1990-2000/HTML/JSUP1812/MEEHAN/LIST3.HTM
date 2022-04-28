@@ -1,0 +1,100 @@
+<HTML><HEAD>
+<TITLE>December 2000 Java Solutions/Developing for the PalmOS Platform using J2ME/Listing 3</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 3: The CameraSelector spotlet</A></h4>
+<pre>
+/* @author Peter Meehan  Copyright(c) 2000 */
+
+import com.sun.kjava.*;
+import java.util.Hashtable;
+
+public class CameraSelector extends Spotlet {
+
+    /* Display constants */
+    public static final int SCREEN_WIDTH = 160;
+    public static final int SCREEN_HEIGHT = 160;
+    Graphics g = Graphics.getGraphics();
+    
+    /* CameraClient dispatches events to imageviewer */
+    CameraClient dispatcher = null;
+
+    /* Preset views and corresponding URLs */
+    String presets[][] = {
+
+    {"Living Room", "http://.../halfsize.jpg?camera=2"},
+    {"Minireef",
+     "http://.../halfsize.jpg?camera=5&amp;pan=0&amp;tilt=2&amp;zoom=1"},
+
+    ...
+
+    {"Sea Sponge",
+     "http://.../halfsize.jpg?camera=5&amp;pan=-14&amp;tilt=-6&amp;zoom=725"}
+    };
+    Hashtable presetURLs = new Hashtable();
+
+    /* UI */
+    String title = "SELECT A CAMERA VIEW";
+    SelectScrollTextBox scrolledList = null;
+
+    /* Construct the list of presets from the preset definitions.
+     * Pass this string to the SelectScrolltextBox contructor */
+    public CameraSelector(CameraClient dispatcher) {
+        /* Store CameraClient for event dispatching */
+        this.dispatcher = dispatcher;
+
+        /* Build list of preset camera names and 
+         * hash corresponding urls */
+        StringBuffer buffer = new StringBuffer();
+        for (int i=0;i&lt;presets.length;i++) {
+            buffer.append(presets[i][0]);
+            buffer.append('\n');
+            presetURLs.put(presets[i][0],presets[i][1]);
+        }
+        /* Calculate scrolltextbox geometry */
+        int titleHeight = g.getHeight(title);
+        scrolledList = 
+            new SelectScrollTextBox(buffer.toString(),
+                                    0, titleHeight,
+                                    SCREEN_WIDTH,
+                                    SCREEN_HEIGHT-titleHeight);
+    }
+    /* Paint the spotlet */
+    public void paint() {
+
+        g.clearScreen(); // erase current screen contents
+
+        /* Paint title */
+        int titleWidth = g.getWidth(title);
+        int x = (SCREEN_WIDTH-titleWidth)/2;
+        g.drawString(title,x,0,Graphics.INVERT);
+        /* Paint scrolledlist */
+        scrolledList.paint();
+    }
+
+    /* Handle key and character entry events
+     * @param keycode the key that was pressed or 
+     * character that was entered */
+    public void keyDown(int keycode) {
+        if (keycode == Spotlet.KEY_HARD1) 
+            System.exit(0);
+    }
+
+    /* Handle pen down events. Pass event coordinates to 
+     * Scrolled List and retrieve selection. If selection 
+     * valid (non-null) pass to imageviewer.
+     * @param keycode the key that was pressed or character 
+     * that was entered */
+    public void penDown(int x,int y) {
+        String desc = scrolledList.getSelection(x,y);
+        if (desc != null &amp;&amp; desc.length()  0) {
+            /* Get corresponding url */
+            String url = (String)presetURLs.get(desc);
+            dispatcher.handleImageRequest(desc,url);
+        }
+        else 
+            Graphics.playSound(Graphics.SOUND_ERROR);
+    }
+}
+</pre></body></html>

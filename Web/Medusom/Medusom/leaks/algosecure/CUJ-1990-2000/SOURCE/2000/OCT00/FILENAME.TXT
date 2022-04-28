@@ -1,0 +1,80 @@
+Keywords: Oct2000, C, C++, variant, member template, function try block,
+string, optimization, generic
+
+The code listings for the October 2000 issue of C/C++ Users Journal
+include source code for Fernando Cacciola's article, "An Improved
+Variant Type Based on Member Templates," Andrew Queisser's article,
+"Classes for Reading and Writing Parameter Blocks," and Todd Niec's
+article, "Optimizing Substring Operations in String Classes." Also
+included are listings from Pete Becker's column, "The Journeyman's
+Shop," Bobby Schmidt's column, "Uncaught Exceptions," and Letters to the
+Editor.
+
+*************************  FILE DESCRIPTION **********************************
+
+The following files are included in the disk:
+
+FILENAME		AUTHOR-NAME	    TITLE			       
+(Zip archive/
+subdirectory name)
+-------------------------------------------------------------------------------
+cacciola                Fernando Cacciola   An Improved Variant Type
+                                            Based on Member Templates
+
+    variant0.h              Listing 1, Definition of class variant0_t
+    variant1.h              Listing 2, Definition of class variant1_t
+    variant2.h              Listing 3, Definition of class variant2_t
+    variant_t               Listing 4, The final variant_t definition
+    variant_test.cpp        Listing 5, A test program that demonstrates
+                                       The various uses of variant_t
+    arglist.h               Listing 6, The class ArgumentList
+    test_arglist.cpp        Listing 7, A test program that demonstrates
+                                       various uses of the ArgumentList
+                                       class
+    variant_cc.h            not listed, Alternative variant implementation
+                                        that performs "copy on copy"
+
+
+queisser                Andrew Queisser     Classes for Reading and
+                                            Writing Parameter Blocks
+    
+    NamedVal.h              Listing 1, Defines classes SimpleDB,
+                                       IOAble, IOParamBlock, and template
+                                       class NamedVal
+    Sample.cpp              Listing 2, Sample uses of NamedVal and macros
+    TestBlock.h             Listing 3, TestBlock class and sample use
+    Observer.h              Listing 4, Simple subject and observer classes
+    DynamicDialog.h         Listing 5, Implementation of dynamic dialog
+                                       classes
+
+niec                    Todd Niec           Optimizing Substring Operations
+                                            in String Classes
+
+    StrTst.cpp              not listed, Includes string class and
+                                        test code
+
+                                                
+pbecker                 Pete Becker         The Journeyman's Shop:
+                                            When Bad Things Happen to
+                                            Good Numbers
+
+    fp.h                    Listing 1, The new version of the header
+                                       fp.h, that defines classes for
+                                       the floating-point emulator
+    fp.cpp                  not listed, The new implementation file
+                                        for the floating-point emulator
+    4bang.cpp               not listed, Command-line four function
+                                        calculator that tests
+                                        floating-point emulator
+
+schmidt                 Bobby Schmidt       Uncaught Exceptions:
+                                            Sunshine Superman
+
+    tempspec.h              Listing 1, Function template specialization
+
+letters                 Editors             Letters to the Editor
+
+    tree.c              Listing 1, Creux's tree traversal algorithm
+                                   modified to handle root nodes the same
+                                   as others
+    

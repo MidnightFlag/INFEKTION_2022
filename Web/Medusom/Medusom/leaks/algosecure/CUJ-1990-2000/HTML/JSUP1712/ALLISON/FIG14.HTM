@@ -1,0 +1,20 @@
+<HTML><HEAD>
+<TITLE>December 1999 Java Solutions/The Java 2 Collections -- Finally, Some News You Can Use/Figure 14</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 14: The SortedSet interface</A></h4>
+<pre>
+Interface SortedSet extends Set
+{
+   Comparator comparator();
+   Object first();
+   SortedSet headSet(Object toElement);
+   Object last();
+   SortedSet subSet(Object fromElement, Object toElement);
+   SortedSet tailSet(Object fromElement);
+}
+</B>
+</pre>
+</BODY>
+</HTML>

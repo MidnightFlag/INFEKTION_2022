@@ -1,0 +1,26 @@
+<HTML><HEAD>
+<TITLE>May 2000 Java Solutions/Understanding JavaBeans/Figure 3</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 3: Methods of the timer bean (enclosing class not shown)</A></h4>
+<pre>
+public synchronized int getInterval() {
+    return theInterval;
+}
+
+public synchronized void setInterval(int interval) {
+    theInterval = interval;
+}
+
+public synchronized boolean isSuspended() {
+    return suspended;
+}
+
+public synchronized void setSuspended(boolean flag) {
+    suspended = flag;
+    if (!suspended) {
+        notifyAll();
+    }
+}
+</pre></body></html>

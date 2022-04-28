@@ -1,0 +1,119 @@
+<HTML><HEAD>
+<TITLE>November 2000/import java.*/Listing 8</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 8: File SerializationTest.java &#151; serializes Objects</A></h4>
+<pre>
+import java.io.*;
+import java.util.*;
+
+class Name implements Serializable
+{
+    private String last;
+    private String first;
+
+    public Name(String last, String first)
+    {
+        this.last = last;
+        this.first = first;
+    }
+    public String getLast()
+    {
+        return last;
+    }
+    public String getFirst()
+    {
+        return first;
+    }
+    public String toString()
+    {
+        return first + " " + last;
+    }
+}
+
+class CarbonUnit implements Serializable
+{
+    private static long nextID = 0;
+    private long id;
+
+    public CarbonUnit()
+    {
+        id = nextID++;
+    }
+    public long getID()
+    {
+        return id;
+    }
+}
+
+class Person extends CarbonUnit
+{
+    private Name name;
+    private Date birth;
+
+    public Person(Name name, Date birth)
+    {
+        // super();
+        this.name = name;
+        this.birth = birth;
+    }
+    public String toString()
+    {
+        return "{" + name + ", " + birth +
+            ", " + getID() + "}";
+    }
+}
+
+class SerializationTest
+{
+    public static void main(String[] args)
+        throws Exception
+    {
+        // Create new Persons:
+        System.out.println("Creating new persons:");
+        Person p1 =
+            new Person(new Name("John", "Doe"),
+                       new Date());
+        System.out.println(p1);
+        Person p2 =
+            new Person(new Name("Jane", "Doe"),
+                       new Date());
+        System.out.println(p2);
+
+        // Serialize to a file:
+        System.out.println("\nSerializing...");
+        ObjectOutputStream out =
+            new ObjectOutputStream(
+                new FileOutputStream("person.dat")
+                );
+        out.writeObject(p1);
+        out.writeObject(p2);
+        out.close();
+
+        // Deserialize and verify:
+        System.out.println("\nDeserializing...");
+        ObjectInputStream in =
+            new ObjectInputStream(
+                new FileInputStream("person.dat")
+                );
+        Person p3 = (Person)in.readObject();
+        System.out.println(p3);
+        Person p4 = (Person)in.readObject();
+        System.out.println(p4);
+        in.close();
+    }
+}
+
+/* Output:
+Creating new persons:
+{Doe John, Thu Aug 17 15:49:36 MDT 2000, 0}
+{Doe Jane, Thu Aug 17 15:49:36 MDT 2000, 1}
+
+Serializing...
+
+Deserializing...
+{Doe John, Thu Aug 17 15:49:36 MDT 2000, 0}
+{Doe Jane, Thu Aug 17 15:49:36 MDT 2000, 1}
+*/
+</pre></body></html>

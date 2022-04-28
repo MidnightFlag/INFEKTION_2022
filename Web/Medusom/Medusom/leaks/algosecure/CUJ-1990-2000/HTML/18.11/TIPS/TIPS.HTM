@@ -1,0 +1,81 @@
+<HTML>   
+     <HEAD>
+<TITLE>November 2000/C/C++ Tip #3: Creating an Index Table in STL, Take 2</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocnov.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   C/C++ Tips</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">C/C++ Tip #3: Creating an Index Table in STL, Take 2</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Sol Foster</FONT></H3>
+
+<HR>
+<BLOCKQUOTE>
+<p>In "Creating an Index Table in STL," ("C/C++ Tips #1," August 2000) Craig Hicks points out that an index table is a useful tool with no direct support in the Standard C++ library. However, there is a simple and flexible way to indirectly create one.</p>
+<p>An index table is simply a specialized version of a common STL entity &#151; a sequence of pointers. As everyone who has tried to sort a vector of pointers knows, by default, they will be sorted according to the order of the pointers &#151; the ordering of the addresses in memory. Most of the time you'd rather sort them according to the ordering of the objects pointed to. The simplest way to do this is to define an <B>operator&lt;</B> for the pointers:</p>
+
+<pre>
+bool operator &lt; (Widget const *a, Widget const *b)
+   { return *a &lt; *b; }
+</pre>
+
+<p>This solution won't work for an index table, because you can't redefine <B>operator&lt;</B> on built-in integer types, and you wouldn't want to if you could. Luckily, the STL authors anticipated the need to sort using other criteria. You are allowed to pass a comparison function or function object to the sort routines.</p>
+<p>In this case, the comparison function needs to know the index value and the sequence that is being indexed. This solution requires a function object to store the information pertaining to what is being sorted. Though my solution uses only the <B>begin</B> iterator, I also store the <B>end</B> iterator. That feels more natural to me, and the <B>end</B> iterator could be used for error-checking, so it's a good idea to have it available. Note that the iterators must be random-access iterators for this to work.</p>
+
+<pre>
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+#include &lt;iostream&gt;
+
+template &lt;class random_iterator&gt;
+class IndexedComparison
+{
+   public:
+      IndexedComparison (random_iterator begin,
+         random_iterator end)
+         : p_begin (begin), p_end (end) {}
+      bool operator () (unsigned int a, unsigned int b) const
+         { return *(p_begin + a) &lt; *(p_begin + b); }
+
+   private:
+      random_iterator const p_begin;
+      random_iterator const p_end;
+};
+
+// Setup and reporting code below by Craig Hicks
+
+int main()
+{
+   unsigned int i;
+   int ai[10] = { 15,12,13,14,18,11,10,17,16,19 };
+
+   std::cout &lt;&lt; "#################" &lt;&lt; std::endl;
+   std::vector&lt;int&gt; vecai(ai, ai+10);
+
+   std::vector&lt;unsigned int&gt; indices(vecai.size ());
+   for (i = 0; i &lt; indices.size (); i++)
+      indices [i] = i;
+
+   std::sort (indices.begin (), indices.end (),
+      IndexedComparison&lt;std::vector&lt;int&gt;::const_iterator&gt;
+         (vecai.begin (), vecai.end ()));
+
+   for (i=0; i&lt;10; i++)
+      std::cout &lt;&lt; "i=" &lt;&lt; i
+                &lt;&lt; ", aidxtbl[i]=" &lt;&lt; indices[i]
+                &lt;&lt; ", ai[aidxtbl[i]]=" &lt;&lt; ai[indices[i]]
+                &lt;&lt; std::endl;
+   std::cout &lt;&lt; "#################" &lt;&lt; std::endl;
+   return 0;
+}
+</pre>
+
+<p>The <B>sort</B> call becomes a bit long-winded, but it does the job admirably. It creates a temporary <B>IndexedComparison</B> object, keyed to the <B>const_iterator</B> of the sequence being indexed, and initialized with its <B>begin</B> and <B>end</B> iterators. That function object then ensures that the index sequence is sorted properly.</p>
+<p>Any kind of STL sort can be used this way. The <B>IndexedComparison</B> object can also be extended to allow you to pass in a comparison function for the objects being indexed, which would make this solution every bit as flexible as the STL sorts themselves.</p>
+<p><I>Herb Sutter pointed out a disadvantage of this approach: "it pushes logic out into the calling code, which now has to loop to build the array and then call </I><B>sort</B><I> with the correctly typed predicate &#151; and this has to be repeated everywhere this is going to be used. The original was better encapsulated, with just a single function call that included the setup."</I></p>
+<p><I>Herb adds, "However, exposing </I><B>sort</B><I> does give a benefit, to wit, the ability to replace the sorting function to be used, which was a question left for readers on the original."</I></p>
+<p><I>Several other readers have contributed interesting solutions in response to Tip #1, which we may explore in future Tips. Some of those solutions, like Craig Hicks' solution, require creation of a temporary table of iterators &#151; potentially costly in terms of space and performance. I like the solution above because it doesn't require creation of any intermediate tables. &#151; mb</I></p>
+
+<p><i>Thanks to <B>Sol Foster</B> for this tip. If you have a C/C++ programming tip and can write it up in 400 words or less, send it to <B>mbriand@cmp.com</B>. If we print your tip, we'll send you a nice </I>CUJ<I> shirt and a copy of the </I>CUJ<I> CD-ROM.</I></p>
+
+</blockquote></body></html>

@@ -1,0 +1,112 @@
+Keywords: Apr2000, C, C++, COM, Excel, views, logging, iostream, HTML 
+
+The code listings for the April 2000 issue of C/C++ Users Journal
+include source code for Philippe LaCoude and Grum Ketema's article,
+"Programming Excel COM Objects in C++," Panos Kougiouris' article,
+"Stressing Your COM Objects," Gary Powell and Martin Weiser's article,
+"Views, A New Form of Container Adaptor," Brad Offer's article, "Error
+Logging with Iostreams," Michal Niklas' article, "A Class for Scanning
+Directories," and Giovanni Bavestrelli's article, "Building HTML
+Documents with C++." Also included are listings from P.J. Plauger's
+column, "Standard C/C++," and Bobby Schmidt's column, "Uncaught
+Exceptions."
+ 
+*************************  FILE DESCRIPTION **********************************
+
+The following files are included in the disk:
+
+FILENAME		AUTHOR-NAME	    TITLE			       
+(Zip archive/
+subdirectory name)
+-------------------------------------------------------------------------------
+plauger                 P.J. Plauger        Standard C/C++:
+                                            Testing C++ Library Conformance
+
+    clause17.cpp        Listing 1, A Clause 17 test
+
+lacoude                 Philippe LaCoude    Programming Excel COM Objects
+                        and Grum Kemeta     in C++
+
+    Updated 2 May 2000
+
+    faq.txt             not listed, Frequently asked questions
+                                    about project
+    code.zip            not listed, Source code and makefiles for
+                                    spreadsheet
+
+
+kougiour                Panos Kougiouris    Stressing Your COM Objects
+
+    Complete source code and auxiliary files,
+    too numerous to list here
+
+powell                  Gary Powel and      Views, A New Form of Container
+                        Martin Weiser       Adaptors
+
+    Under subdirectory code:
+
+        Complete source code -- files too numerous to list
+
+    Under subdirectory test:
+
+        Code to test Views library -- files too numerous to list
+
+    Under subdirectory docs:
+ 
+        Documentation of Views library -- files too numerous to list
+
+
+offer                   Brad Offer      Error Logging with Iostreams
+
+    errstrea.h         Listing 1, Definition of Errstream class
+    errstrea.C         Listing 2, Implementation of Errstream class
+    driver.C           Listing 3, Driver program for testing Errstream
+                                   class
+
+niklas                  Michal Niklas   A Class for Scanning Directories
+
+    cdir.h              Listing 1, Declaration of class CFileList
+    cdir.cpp            Listing 2, CFileList member function definitions
+    sflre.cpp           Listing 3, Implementation of Simple File List
+                                   Regular Expressions
+    myrm.cpp            Listing 4, A sample remove utility based on
+                                   CFileList
+
+    makefile            not listed
+    makefile2           not listed
+    addfname.cpp        not listed
+    sflre.h             not listed
+    readme.txt          not listed
+
+bavestre                Giovanni        Building HTML Documents with C++
+                        Bavestrelli
+
+    sample.cpp          Listing 1, Generating HTML with the htmltag class
+    HtmlTags.h          Listing 2, Header file for the htmltag class
+    HtmlTags.cpp        Listing 3, Implementation of htmltag class
+    StdAfx.h            not listed
+    Sample.dsp          not listed
+    Sample.dsw          not listed
+
+schmidt                 Bobby Schmidt   Uncaught Exceptions:
+                                        Standard Deviation
+
+    functry.cpp         Listing 1, Function try block example    
+
+letters                 Guy Alfandry    We Have Mail
+
+    Updated 2 May 2000
+
+    Alternative LU Decomposition code contributed by reader Guy Alfandry
+    in response to reading the article, "Manipulating Sparse Matrices,"
+    by Mark C. Peterson, which appeared in the December 1999 issue
+    of CUJ.
+
+
+    guassj.c            not listed
+    guassj.exe          not listed
+    ludecomp.h          not listed
+    smatrix.h           not listed
+    test_guassj.c       not listed
+    test_sm.cxx         not listed
+    test_sm.exe         not listed

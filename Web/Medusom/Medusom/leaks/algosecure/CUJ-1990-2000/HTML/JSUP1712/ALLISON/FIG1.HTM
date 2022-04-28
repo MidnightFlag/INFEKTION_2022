@@ -1,0 +1,89 @@
+<HTML><HEAD>
+<TITLE>December 1999 Java Solutions/The Java 2 Collections -- Finally, Some News You Can Use/Figure 1</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 1: Illustrates the algorithms in java.util.Arrays</A></h4>
+<pre>
+import java.util.*;
+
+class ArraysTest
+{
+    static void printArray(int[] a)
+    {
+        System.out.print("[");
+        for (int i = 0; i &lt; a.length; ++i)
+        {
+            System.out.print(a[i]);
+            if (i &lt; a.length-1)
+                System.out.print(",");
+        }
+        System.out.println("]");
+    }
+    static void search(int[] a, int n)
+    {
+        int where = Arrays.binarySearch(a, n);
+        if (where &lt; 0)
+        {
+            where = -(where + 1);
+            if (where == a.length)
+                System.out.println("Append " + n +
+                                   " to end of list");
+            else
+                System.out.println("Insert " + n +
+                                   " before " +
+                                   a[where]);
+        }
+        else
+            System.out.println("Found " + n +
+                               " in position " +
+                               where);
+    }
+    public static void main(String[] args)
+    {
+        // Build Array:
+        int[] array = {88, 17, -10, 34, 27, 0, -2};
+        System.out.print("Before sorting: ");
+        printArray(array);
+
+        // Sort:
+        Arrays.sort(array);
+        System.out.print("After sorting: ");
+        printArray(array);
+
+        // Search:
+        search(array, -10);
+        search(array, -1);
+        search(array, 0);
+        search(array, 1);
+        search(array, 34);
+        search(array, 100);
+
+        // Equals:
+        System.out.println("array == array? " +
+                           Arrays.equals(array,
+                                         array));
+        int[] ones = new int[array.length];
+        Arrays.fill(ones, 1);
+        System.out.println("array == ones? " +
+                           Arrays.equals(array,
+                                         ones));
+    }
+}
+
+/* Output:
+Before sorting: [88,17,-10,34,27,0,-2]
+After sorting: [-10,-2,0,17,27,34,88]
+Found -10 in position 0
+Insert -1 before 0
+Found 0 in position 2
+Insert 1 before 17
+Found 34 in position 5
+Append 100 to end of list
+array == array? true
+array == ones? false
+*/
+
+</pre>
+</BODY>
+</HTML>

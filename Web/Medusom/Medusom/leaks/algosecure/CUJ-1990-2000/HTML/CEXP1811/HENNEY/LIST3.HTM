@@ -1,0 +1,55 @@
+<HTML><HEAD>
+<TITLE>November 2000 C++ Experts Forum/From Mechanism to Method/Listing 3</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 3: Smart function pointer representation and basic construction</A></h4>
+<pre>
+class function_ptr
+{
+public:
+    function_ptr()
+      : body(0)
+    {
+    }
+    template&lt;typename nullary_function&gt;
+    function_ptr(nullary_function function)
+      : body(new adaptor&lt;nullary_function&gt;(function))
+    {
+    }
+    ~function_ptr()
+    {
+        delete body;
+    }
+    ...
+private:
+    class callable
+    {
+    public:
+        virtual ~callable()
+        {
+        }
+        virtual callable *clone() const = 0;
+        virtual void call() = 0;
+    };
+    template&lt;typename nullary_function&gt;
+    class adaptor : public callable
+    {
+    public:
+        adaptor(nullary_function function)
+          : adaptee(function)
+        {
+        }
+        virtual callable *clone() const
+        {
+            return new adaptor(adaptee);
+        }
+        virtual void call()
+        {
+            adaptee();
+        }
+        nullary_function adaptee;
+    };
+    callable *body;
+};</pre>
+</pre></body></html>

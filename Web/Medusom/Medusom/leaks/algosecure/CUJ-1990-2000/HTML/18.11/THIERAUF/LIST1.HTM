@@ -1,0 +1,27 @@
+<HTML><HEAD>
+<TITLE>November 2000/Extracting Data from X-Y Plots/Listing 1</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 1: Partial listing of class CAxis</A></h4>
+<pre>
+class CAxis : public CObject
+{
+   public:
+      CAxis();
+      virtual ~CAxis();
+      BOOL SetScale(); 
+      double GetPhysVal (CPoint &amp;);  
+      // set and get functions for private data members
+      // ...
+
+   private:
+      CPoint A, B;    // axis defining points
+      double vA, vB;  // physical values
+      BOOL fLogScale; // TRUE if logarithmic
+      void project_data_point (CPoint &amp;, double &amp;, double &amp;);
+      double get_physical_value (double, double );
+      // more private data members
+      // ...
+};
+</pre></body></html>

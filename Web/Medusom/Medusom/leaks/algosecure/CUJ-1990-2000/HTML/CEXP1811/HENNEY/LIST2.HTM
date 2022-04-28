@@ -1,0 +1,19 @@
+<HTML><HEAD>
+<TITLE>November 2000 C++ Experts Forum/From Mechanism to Method/Listing 2</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 2:  Smart function pointer interface</A></h4>
+
+<pre>class function_ptr
+{
+public:
+    function_ptr();
+    function_ptr(const function_ptr &amp;other);
+    template&lt;typename nullary_function&gt;
+      function_ptr(nullary_function function);
+    ~function_ptr();
+    function_ptr &amp;operator=(const function_ptr &amp;rhs)
+    void operator()() const;
+    ...
+};</pre></pre></body></html>

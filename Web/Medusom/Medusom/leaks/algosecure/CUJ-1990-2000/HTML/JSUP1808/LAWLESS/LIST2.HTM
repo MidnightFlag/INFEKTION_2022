@@ -1,0 +1,61 @@
+<HTML><HEAD>
+<TITLE>August 2000 Java Solutions/Using the Java Core Reflection API/Listing 2</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 2: Tests dynamic loading of driver classes</A></h4>
+<pre>
+// This program will dynamically utilize the ConError 
+// or GUIError objects as defined by the property
+// file "DynTest.prop".
+
+import java.io.*;
+import java.util.Properties;
+
+public class DynTest {
+   public static void main(String[] args) {
+      Properties props=new Properties();
+      
+         // load property settings.
+      try {
+         props.load( new FileInputStream(
+            new File("DynTest.prop")));
+      }
+      catch(IOException x) {
+         System.err.println(
+            "Unable to open property file.");
+         System.exit(1);
+      }
+
+      String s=(String) props.get("ErrorDriver");
+
+         // create generic reference to ErrorBase
+         // family using the base class.
+
+      ErrorBase e=null;
+
+         // Dynamically load the class and instantiate
+         // an object
+      try {
+         e=(ErrorBase) Class.forName(s).newInstance();
+      }
+      catch(ClassNotFoundException x) {
+         System.err.println("Class not found.");
+         System.exit(1);
+      }
+      catch(InstantiationException x) {
+         System.err.println("Can't create object.");
+         System.exit(1);
+      }
+      catch(IllegalAccessException x) {
+         System.err.println("Access violation.");
+         System.exit(1);
+      }
+
+         // Display error message
+      e.display("This is a dynamic message.");
+      System.exit(0);
+
+   }
+}
+</pre></body></html>

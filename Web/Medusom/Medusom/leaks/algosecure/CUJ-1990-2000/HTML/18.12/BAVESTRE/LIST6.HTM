@@ -1,0 +1,48 @@
+<HTML><HEAD>
+<TITLE>December 2000/A Class Template for N-Dimensional Generic Resizable Arrays/Listing 6</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 6: Resize member function</A></h4>
+<pre>
+// Set the size of each array dimension
+bool resize(const unsigned int (&amp;Dimensions)[N], 
+            const T &amp; Init=T(), 
+            bool PreserveElems=false)
+{
+  Array&lt;T,N&gt; Temp; 
+
+  // Calculate all the information you need to use the array
+  Temp.m_nArrayElements=1;
+  for (int i=0; i&lt;N; i++)
+  {
+     if (Dimensions[i]==0) 
+        return false;    // Check that no dimension was zero 
+     Temp.m_nArrayElements*=Dimensions[i]; 
+     Temp.m_NDimensions[i]=Dimensions[i];
+     Temp.m_SubArrayLen[i]=1;              
+     for (int k=N-1; k&gt;i; k--)
+        Temp.m_SubArrayLen[i]*=Dimensions[k];
+  }  
+
+  // Allocate new elements, let exception propagate 
+  Temp.m_pArrayElements=new T[Temp.m_nArrayElements];
+
+  // Some compilers might not
+  // throw exception if allocation fails
+  if (!Temp.m_pArrayElements)
+     return false;
+
+  // Copy the elements from the previous array if requested
+  if (PreserveElems &amp;&amp; !empty())
+      Temp.copy(*this, Init);
+  // Otherwise initialize them to the specified value
+  else 
+      Temp.initialize(Init);
+
+  // Now swap this object with the temporary
+  swap(Temp);
+
+  return true; 
+}
+</pre></body></html>

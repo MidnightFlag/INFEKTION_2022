@@ -1,0 +1,7 @@
+{
+    "shell-version": ["3.2.1"], 
+    "uuid": "record-desktop@linuxdeepin.com", 
+    "name": "Record Desktop Icon", 
+    "description": "Show an icon in systray to start/stop recording desktop",
+    "url": "http://www.linuxdeepin.com/"
+}

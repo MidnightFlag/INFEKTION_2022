@@ -1,0 +1,47 @@
+Keywords: supplement, Java, Java2D, JavaBeans, timer, Java Solutions
+
+The code listings for the Java Solutions supplement to the May 2000
+C/C++ Users Journal include source code for Peter Meehan's article,
+"Java2D -- Device-Independent Graphics for Java 2," and Don Weiss's
+article, "Understanding JavaBeans."
+ 
+*************************  FILE DESCRIPTION **********************************
+
+The following files are included in the disk:
+
+FILENAME		AUTHOR-NAME	    TITLE			       
+(Zip archive/
+subdirectory name)
+-------------------------------------------------------------------------------
+meehan                  Peter Meehan        Java2D -- Device-Independent
+                                            Graphics
+
+    Shamrock.java       not listed, Uses curves to produce shamrock figure
+    Strokes.java        not listed, Draws various lines of various
+                                    stroke types
+    Gradients.java      not listed, Displays gradient shadings
+    Texture.java        not listed, Illustrates use of texture
+    Composite.java      not listed, Combines two bitmaps to create a
+                                    composite image
+    Antialias.java      not listed, Illustrates antialiasing
+    Convolutions.java   not listed, Illustrates use of convolution
+
+weiss                   Don Weiss           Understanding JavaBeans
+
+    SimpleBean.java     Figure 1, A simple JavaBean
+    SimpleTest.java     Figure 2, Using a JavaBean
+    TimerListener.java  Figure 5, The TimerListener interface
+    TimerEvent.java     Figure 7, A TimerEvent class
+    SimpleTest2.java    Figure 8, A JavaBean client that saves the bean's
+                                  properties in a file
+    SimpleTest3.java    Figure 9, Reading a bean's properties back from
+                                  a file
+    TimerBean.java      Figure 10, A timer bean that contains a thread
+                                   object
+    TimerTest.java      not listed, Test program for timer bean
+
+
+
+
+
+

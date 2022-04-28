@@ -1,0 +1,97 @@
+<ion-content>
+<img class="record" src="assets/img/reward-circle.svg" (click)="goToRecordPage()">
+<ion-slides loop="false" autoplay="false" zoom="false" pager='true'>
+    <ion-slide class='nav1 nav'>
+      <div class="header-page">
+        <h1>Easy mode</h1>
+        <div class="img-level">
+          <img src="assets/img/easy.svg">
+        </div>
+      </div>
+      <div class="sub-button">
+        <div class="ico-block">
+          <div class="btn-play" (click)="goToEasyPage()">
+            <ion-icon ios="md-play" md="md-play"></ion-icon>
+          </div>
+          <div class="btn-help" (click)="toggleHelp('easy')" [ngClass]="{'active': helpEasy}">
+            <ion-icon ios="md-help" md="md-help"></ion-icon>
+          </div>
+        </div>
+      </div>
+      <div class="helper" *ngIf="helpEasy">
+        <span>
+          Trouvez la bonne couleur à partir de son nom en haut de l'écran
+        </span>
+      </div>
+    </ion-slide>
+    <ion-slide class='nav2 nav'>
+      <div class='page-lock' *ngIf="recordEasy < 15">Nécéssite un score de 15 en mode Easy</div>
+      <div class="header-page">
+        <h1>Normal mode</h1>
+        <div class="img-level">
+          <img src="assets/img/normal.svg">
+        </div>
+      </div>
+      <div class="sub-button">
+        <div class="ico-block" >
+          <div class="btn-play" (click)="goToNormalPage()">
+            <ion-icon ios="md-play" md="md-play" *ngIf="recordEasy > 14"></ion-icon>
+            <ion-icon ios="ios-lock" md="md-lock" *ngIf="recordEasy < 15"></ion-icon>
+          </div>
+          <div class="btn-help" (click)="toggleHelp('normal')" [ngClass]="{'active': helpNormal}">
+            <ion-icon ios="md-help" md="md-help"></ion-icon>
+          </div>
+        </div>
+      </div>
+      <div class="helper" *ngIf="helpNormal">
+        <span>Trouvez la bonne couleur à partir de son nom en haut de l'écran en moins de 3 secondes !</span>
+      </div>
+    </ion-slide>
+
+    <ion-slide class='nav3 nav'>
+      <div class='page-lock' *ngIf="recordNormal < 15">Nécéssite un score de 15 en mode Normal</div>
+      <div class="header-page">
+        <h1>Hard mode</h1>
+        <div class="img-level">
+          <img src="assets/img/hard.svg">
+        </div>
+      </div>
+      <div class="sub-button">
+        <div class="ico-block">
+          <div class="btn-play" (click)="goToHardPage()">
+            <ion-icon ios="md-play" md="md-play" *ngIf="recordNormal > 14"></ion-icon>
+            <ion-icon ios="ios-lock" md="md-lock" *ngIf="recordNormal < 15"></ion-icon>
+          </div>
+          <div class="btn-help" (click)="toggleHelp('hard')" [ngClass]="{'active': helpHard}">
+            <ion-icon ios="md-help" md="md-help"></ion-icon>
+          </div>
+        </div>
+      </div>
+      <div class="helper" *ngIf="helpHard">
+        <span>Trouvez la bonne couleur à partir de son nom en haut de l'écran en moins de 3 secondes !</span>
+      </div>
+    </ion-slide>
+
+    <ion-slide class='nav4 nav' *ngIf="recordHard >= 15">
+      <div class="header-page">
+        <h1>Doom mode</h1>
+        <div class="img-level">
+          <img src="assets/img/doom.svg">
+        </div>
+      </div>
+      <div class="sub-button">
+        <div class="ico-block">
+          <div class="btn-play" (click)="goToDoomPage()">
+            <ion-icon ios="md-play" md="md-play"></ion-icon>
+          </div>
+          <div class="btn-help" (click)="toggleHelp('doom')" [ngClass]="{'active': helpDoom}">
+            <ion-icon ios="md-help" md="md-help"></ion-icon>
+          </div>
+        </div>
+      </div>
+      <div class="helper" *ngIf="helpDoom">
+        <span>Trouvez la bonne couleur à partir de son code Hexadécimal en haut de l'écran</span>
+      </div>
+    </ion-slide>
+  </ion-slides>
+</ion-content>

@@ -1,0 +1,316 @@
+<HTML>   
+     <HEAD>
+<TITLE>November 2000/A Portable "typeof" Operator</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocnov.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   Features</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">A Portable "typeof" Operator</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Bill Gibbons</FONT></H3>
+
+<BLOCKQUOTE>
+<p>Here's a not-so-stupid template trick that mostly meets the need for a typeof operator.</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+
+<H4><FONT COLOR="#000080">The Problem</FONT></H4>
+
+<p>Sometimes it is useful to declare a variable with a type that is not known directly, but is known to be "the type of this expression." For example:</p>
+
+<pre>
+void f(LibClass *p) {
+   typeof(p-&gt;value) value = p-&gt;value;
+   /* ... */
+}
+</pre>
+
+<p>where <B>typeof(p-&gt;value)</B> yields a type that is used to declare the local <B>value</B>. This is particularly useful in templates, where many of the types in use are not known ahead of time. (For example, suppose <B>LibClass</B> above had been a template type parameter.)</p>
+<p>Some compilers implement a <B>typeof</B> keyword as an extension, but code that uses such an extension is not portable. This article describes a portable way to write a <B>typeof</B> operator.</p>
+
+<H4><FONT COLOR="#000080">Almost Enough</FONT></H4>
+
+<p>C++ has almost enough functionality to make <B>typeof</B> easy. Function templates can be used to extract a type from an expression and declare a typedef of that type:</p>
+
+<pre>
+template&lt;class T&gt; void f(T) {
+   typedef T TheType;
+}
+void g() { f(123); } // TheType is "int"
+</pre>
+
+<p>Here the typedef <B>TheType</B> in the instantiated function template <B>f&lt;int&gt;</B> has the same type as the expression <B>123</B>. But there is no way to export the type from the function, so by itself this is not useful for implementing <B>typeof</B>.</p>
+<p>Similarly, overloading can be used to select a function that contains a typedef that matches the type:</p>
+
+<pre>
+void f(char) {
+   typedef int TheType;
+}
+void f(short)(
+   typedef short TheType;
+}
+void g() { f('x'); }   // TheType is "char"
+</pre>
+
+<p>but again there is no way to extract that type.</p>
+<p>Class templates can be used to map a value or type to another value or type, as in:</p>
+
+<pre>
+// no definition needed
+template&lt;class T&gt; struct Unsigned;
+
+template&lt;&gt; struct Unsigned&lt;char&gt; {
+   typedef unsigned char type;
+};
+template&lt;&gt; struct Unsigned&lt;short&gt; {
+   typedef unsigned short type;
+};
+void f() {
+   Unsigned&lt;char&gt;::type a;   // unsigned char
+   Unsigned&lt;short&gt;::type b;  // unsigned short
+}
+</pre>
+
+<p>But you cannot use a class template to extract a type from an expression, as you can with function templates or overloading. (If the expression is a name with external linkage it is possible to implement <B>typeof</B> with class templates by using a template non-type parameter, but this is not very useful.)</p>
+<p>Function templates and overloaded functions can also map an expression of one type into an expression of another type, as in:</p>
+
+<pre>
+unsigned char Unsigned(char x)
+{ return x; }
+unsigned short Unsigned(short x)
+{ return x; }
+void f() {
+   short s = 0;
+   s;           // the expression "s" 
+                // has type "short"
+   Unsigned(s); // the expression "Unsigned(s)"
+                // has type "unsigned short"
+}
+</pre>
+
+<p>This is also not sufficient, although it turns out to be part of the solution.</p>
+<p>We need some way to map the type of an expression to something that can be used as a template argument. The only construct in the language that can do this is <B>sizeof</B>. It happens that <B>sizeof</B> is sufficient as the basis of a solution.</p>
+
+<H4><FONT COLOR="#000080">The Solution</FONT></H4>
+
+<p>The trick is to map each type to a unique integer value using overloaded functions and <B>sizeof</B>. Then template specializations can map the integer value to the right type:</p>
+
+<UL><LI>   The expression is passed to an overloaded function.
+<LI>   The return type of the particular function selected is "pointer to array of <B>char</B>," with the array size being unique to the type.
+<LI>   The <B>sizeof</B> operator extracts the array size as a constant. The function is never actually called and so does not need a definition.
+<LI>   The constant is used to select a class template among a set of specializations; the selected class template contains a typedef with the right type.</UL>
+
+<H4><FONT COLOR="#000080">Simple Example</FONT></H4>
+
+<p>The following example shows a simple <B>typeof</B> that handles expressions of type <B>short</B>, <B>int</B>, and <B>long</B>.</p>
+
+<pre>
+// No definition, only specializations
+template&lt;int N&gt; struct select_type;
+
+template&lt;&gt; struct select_type &lt;1&gt; { typedef short Type; };
+template&lt;&gt; struct select_type &lt;2&gt; { typedef int Type; };
+template&lt;&gt; struct select_type &lt;3&gt; { typedef long Type; };
+typedef char CharArrayOf1[1];
+typedef char CharArrayOf2[2];
+typedef char CharArrayOf3[3];
+
+typedef CharArrayOf1 *PtrCharArrayOf1;
+typedef CharArrayOf2 *PtrCharArrayOf2;
+typedef CharArrayOf3 *PtrCharArrayOf3;
+
+PtrCharArrayOf1 select_array(short); // No definitions needed
+PtrCharArrayOf2 select_array(int);
+PtrCharArrayOf3 select_array(long);
+
+#define typeof(x)                               \
+   select_type &lt;sizeof(*select_array(x))&gt;::Type
+</pre>
+
+<p>Consider what happens to <B>typeof(123L)</B>:</p>
+
+<UL><LI>   The macro expands to
+<pre>
+select_type
+  &lt;sizeof(*select_array(123L))&gt;::Type.
+</pre>
+<LI>   The call <B>select_array(123L)</B> selects the following declaration from the set of overloaded function declarations:
+<pre>
+PtrCharArrayOf3 select_array(long);
+</pre>
+
+<LI>   The type of <B>select_array(123L)</B> is <B>PtrCharArrayOf3</B>, or "pointer to array of <B>char</B> length 3."
+<LI>   The type of <B>*select_array(123L)</B> is "array of <B>char</B> length 3."
+<LI>   The expression <B>sizeof(*select_array(123L))</B> is an integral constant expression with the value 3. Since the operand of <B>sizeof</B> is not evaluated there is no need to have a definition for <B>select_array</B>.
+<LI>   The template-id <B>select_type&lt;sizeof(*select_array(123L))&gt;</B> is effectively <B>select_type&lt;3&gt;</B>, which selects the specialization
+<pre>
+template&lt;&gt; struct select_type&lt;3&gt; 
+{ typedef long Type; };
+</pre>
+
+<LI>   The qualified-id <B>select_type&lt;sizeof(*select_array(123L))&gt;::Type</B> is the above typedef, which has type <B>long</B>.
+<LI>   So <B>typeof(123L)</B> refers to a typedef of type <B>long</B>.</UL>
+
+<p>Note that all of these operations happen at compile time. The generated code will be the same as if the type were written as "<B>long</B>" instead of "<B>typeof(123L)</B>."</p>
+
+<H4><FONT COLOR="#000080">Improvements</FONT></H4>
+
+<p>The typedefs in the above example are not really necessary and they pollute the global namespace. We can eliminate them at the risk of confusing human readers (and maybe a few compilers):</p>
+
+<pre>
+char (*select_array(short))[1]; // function returning pointer
+                                // to array of char length 1
+char (*select_array(int  ))[2]; // length 2
+char (*select_array(long ))[3]; // length 3
+</pre>
+
+<p>If we declare the parameters as references to const instead of using simple pass by value, it becomes possible to use expressions that cannot be passed by value &#151; for example, objects of classes with private copy constructors. So in the general case, given type <B>T</B>, we want to write the <B>select_array</B> declaration for <B>T</B> as:</p>
+
+<pre>
+char (*select_array(const T &amp;))[nnn];
+</pre>
+
+<p>Declaring the required specializations and functions can be handled much more easily with a macro:</p>
+
+<pre>
+#define REGISTER_TYPEOF(N,T)                             \
+   template&lt;&gt; struct select_type&lt;N&gt; { typedef T Type; }; \
+   char (*select_array(const T &amp;))[N];
+</pre>
+
+<p>However, we run into trouble with some compound types. For example, if we expand:</p>
+
+<pre>
+REGISTER_TYPEOF( 3, void (*)() )
+</pre>
+
+<p>we get:</p>
+
+<pre>
+template&lt;&gt; struct select_type&lt;3&gt; { typedef void (*)() Type; };
+char (*select_array(const void (*)() &amp;))[3];
+</pre>
+
+<p>Both of these declarations are ill formed because combining C++ types is not as simple as substituting a type for a type name. We can make the macro work again by introducing another class template:</p>
+
+<pre>
+template&lt;class T&gt; struct WrapType { typedef T WT; };
+</pre>
+
+<p>This template takes advantage of the fact that when you instantiate a template with a compound type, e.g.</p>
+
+<pre>
+WrapType&lt;void (*)()&gt;
+</pre>
+
+<p>you create a simple name (the template parameter, in this case <B>T</B>) for the type. We can't get to <B>T</B> directly from outside the template but we can get to the typedef <B>WT</B> which has the same type. In this example,</p>
+
+<pre>
+WrapType&lt;void (*)()&gt; :: WT
+</pre>
+
+<p>has type <B>void (*)()</B>. So if we replace instances of <B>T</B> in the macro with <B>WrapType&lt;T&gt;::WT</B> we have the original type but in a form that we can use to build other types.</p>
+<p>Our macro now looks like this:</p>
+
+<pre>
+#define REGISTER_TYPEOF(N,T)                         \
+   template&lt;&gt; struct select_type&lt;N&gt; {                \
+      typedef WrapType&lt;T&gt;::WT Type; };               \
+   char (*select_array(const WrapType&lt;T&gt;::WT &amp;))[N];
+</pre>
+
+<p>Note that the <B>WrapType</B> template could have been written as a member template of <B>select_type</B> to avoid putting the name in the global namespace.</p>
+<p>See <a href="list1.htm">Listing 1</a> for a more complete example using the above macro and several test types.</p>
+
+<H4><FONT COLOR="#000080">Limitations</FONT></H4>
+
+<p>This approach does require that each type that might be used in <B>typeof</B> be explicitly registered with the <B>REGISTER_TYPEOF</B> macro. This limits, or at least places additional burden, on the use of this technique in general-purpose template libraries.</p>
+<p>The need to assign a distinct ordinal to each type could be a nuisance. If all of the <B>REGISTER_TYPEOF</B> uses are in a single include file the macro could be simplified by using <B>__LINE__</B> instead of <B>N</B>:</p>
+
+<pre>
+#define REGISTER_TYPEOF_ONE_FILE(T)\
+REGISTER_TYPEOF(T,__LINE__)
+</pre>
+
+<p>It does not matter that the ordinals may be large and/or discontiguous; the only restriction is that they be positive and distinct.</p>
+<p>Another limitation: if the type of the expression given to <B>typeof</B> has not been registered, the resulting error message may be somewhat cryptic; but it should at least refer to the name <B>select_array</B> which should give a clue to the problem.</p>
+
+<H4><FONT COLOR="#000080">Related Techniques</FONT></H4>
+
+<p>The map-through-<B>sizeof</B> approach may be used in other places. For example, function overloading can be used to distinguish whether one class is derived from another, and the result can be used to select a specialization of a class template using the above approach.</p>
+<p>For example, using Andrei Alexandrescu's <B>SUPERSUBCLASS</B> mechanism <a href="#ref1">[1]</a> you can get a compile-time Boolean constant which says whether one class is derived from another. That value may be used to select one of two template specializations. For example:</p>
+
+<pre>
+struct A { };
+struct B : A { };  // B is derived
+                   // from A
+struct C { };      // C is not derived from A
+
+template&lt;bool derived&gt; struct D;
+template&lt;&gt; struct D&lt;true&gt; {
+   template&lt;class X, class Y&gt;
+   struct SelectedTemplate {
+      int which() { return 1; }
+   };
+};
+template&lt;&gt; struct D&lt;false&gt; {
+   template&lt;class X, class Y&gt;
+   struct SelectedTemplate {
+      int which() { return 2; }
+   };
+};
+template&lt;class T, class U&gt; int f(T t, U u) {
+   D&lt;SUPERSUBCLASS(T,U)&gt;::SelectedTemplate&lt;T,U&gt; d;
+   // Just to show which one was selected
+   return d.which();
+}
+
+void g(A a, B b, C c) {
+   f(a,b);  // returns 1
+   f(a,c);  // returns 2
+}
+</pre>
+
+<p>If <B>U</B> is derived from <B>T</B> then the first <B>SelectedTemplate</B> is used, else the second one is used. The first one can rely on <B>Y</B> being derived from <B>X</B>; the second one cannot.</p>
+<p>In some cases template specialization isn't needed at all. For example:</p>
+
+<pre>
+// Note: it is platform-dependent whether char is signed or not
+char (*sign_fct(char              ))[2];
+char (*sign_fct(signed char       ))[2];
+char (*sign_fct(unsigned char     ))[1];
+char (*sign_fct(short             ))[2];
+char (*sign_fct(unsigned short    ))[1];
+char (*sign_fct(int               ))[2];
+char (*sign_fct(unsigned int      ))[1];
+char (*sign_fct(long              ))[2];
+char (*sign_fct(unsigned long     ))[1];
+char (*sign_fct(long long         ))[2];
+char (*sign_fct(unsigned long long))[1];
+
+#define isSigned(x) (sizeof(*sign_fct(x)) == 2)
+</pre>
+
+<p>The value of <B>isSigned(expression)</B> will be true if and only if the type of expression is signed. Of course this could also be done as <B>numeric_limits&lt;typeof(expression)&gt;::is_signed</B> using the standard library class <B>numeric_limits</B>.</p>
+
+<H4><FONT COLOR="#000080">Earlier Work</FONT></H4>
+
+<p>Brian Parker posted an article in 1997 on comp.std.c++ <a href="#ref1">[1]</a> which uses the same basic technique. Andrei Alexandrescu has also explored this technique in a posting on comp.std.c++ and in an article on the <I>CUJ</I> website <a href="#ref2">[2]</a>.</p>
+
+<H4><FONT COLOR="#000080">Conclusion</FONT></H4>
+
+<p>For applications that need a typeof operator the technique described above provides most of the power of a compiler extension while keeping the code portable. The general approach of using function overloading and <B>sizeof</B> to extract type information about an expression may be used in other places as well.</p>
+<p>The implementation details of this technique can be somewhat obscure but the actual uses (such as reference to typeof) can be kept simple. Since all of these operations occur at compile time there is no run-time cost for using them.</p>
+
+<H4><FONT COLOR="#000080">References</FONT></H4>
+
+<p><a name="ref1">[1]</a>  Brian Parker. "Poor Man's <B>typeof()</B> Implementation," Comp.std.c++, 10 November 1997.</p>
+<p><a name="ref2">[2]</a>  Andrei Alexandrescu. "On Mappings Between Types and Values," <I>C++ Experts Forum,</I> <B>www.cuj.com/experts/1810/alexandr.html</B>.</p>
+
+<p><i><B>Bill Gibbons</B> has been active in the C++ community since working on Apple's port of CFront 2.0 in 1988 and joining the C++ standards committee in 1990. He has done compiler, embedded, and numerics work for numerous companies including HP, Apple, Taligent, Palm, and Asymetrix. He is currently working at Pixo on Internet technologies for cellular phones.</i></p>
+
+<h4><a href="../../../source/2000/nov00/gibbons.zip">Get Article Source Code</a></h4>
+
+</blockquote></body></html>

@@ -1,0 +1,8 @@
+{
+    "uuid": "no-a11y@linuxdeepin.com",
+    "name": "Hide Accessibility Button",
+    "localedir": "/usr/share/locale",
+    "description": "Hides the accessibility button",
+    "shell-version": [ "3.2" ],
+    "url": "http://www.linuxdeepin.com/"
+}

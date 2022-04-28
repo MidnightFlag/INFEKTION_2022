@@ -1,0 +1,77 @@
+<HTML><HEAD>
+<TITLE>December 1999 Java Solutions/The Java 2 Collections -- Finally, Some News You Can Use/Figure 2</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 2: Sorts/searches Integers in descending order</A></h4>
+<pre>
+import java.util.*;
+
+class ArraysTest2
+{
+    static Descending desc = new Descending();
+
+    static void printArray(Object[] a)
+    {
+        // (same as in Figure 1)
+    }
+    static void search(Object[] a, Object n)
+    {
+        int where = Arrays.binarySearch(a, n, desc);
+        if (where &lt; 0)
+        {
+            where = -(where + 1);
+            if (where == a.length)
+                System.out.println("Append " + n +
+                                   " to end of list");
+            else
+                System.out.println("Insert " + n +
+                                   " before " +
+                                   a[where]);
+        }
+        else
+            System.out.println("Found " + n +
+                               " in position " +
+                               where);
+    }
+    public static void main(String[] args)
+    {
+        // Build Array:
+        Integer[] array = {new Integer(88),
+            new Integer(17), new Integer(-10),
+            new Integer(34), new Integer(27),
+            new Integer(0), new Integer(-2)};
+        System.out.println("Before sorting:");
+        printArray(array);
+
+        // Sort:
+        Arrays.sort(array, desc);
+        System.out.println("After sorting:");
+        printArray(array);
+
+        // Search:
+        search(array, new Integer(-10));
+        search(array, new Integer(-1));
+        search(array, new Integer(0));
+        search(array, new Integer(1));
+        search(array, new Integer(34));
+        search(array, new Integer(10));
+    }
+}
+
+/* Output:
+Before sorting:
+[88,17,-10,34,27,0,-2]
+After sorting:
+[88,34,27,17,0,-2,-10]
+Found -10 in position 6
+Insert -1 before -2
+Found 0 in position 4
+Insert 1 before 0
+Found 34 in position 1
+Insert 10 before 0
+*/
+
+</pre>
+</BODY>
+</HTML>

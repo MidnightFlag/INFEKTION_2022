@@ -1,0 +1,79 @@
+<HTML><HEAD>
+<TITLE>November 2000/Creating Truly Maintainable Class Factories/Listing 6</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 6: The stack calculator engine</A></h4>
+<pre>
+#include &lt;factory.h&gt;
+#include "engine.h"
+
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;stack&gt;
+using namespace std;
+
+#ifdef _WIN32
+   string const factory_dll( "dll.dll" );
+#elif defined( _DLSYM )
+   string const factory_dll( "./dll" );
+#else
+   #error Unsupported Platform.   Please port me
+#endif
+
+class stackimpl : public calculator_stack
+   {
+   public:
+      virtual void push( int i ) { m_data.push( i ); }
+      virtual int pop( )
+         {
+         if ( m_data.size() )
+            {
+            int i = top( );
+            m_data.pop( );
+            return i;
+            }
+         return 0;
+         } // pop( )
+      virtual int top( ) 
+         { 
+         if ( m_data.size() ) 
+            return m_data.top( ); 
+         else 
+            return 0;
+         } // top( )
+      virtual int size( ) { return m_data.size(); }
+   private:
+      stack&lt; int &gt; m_data;
+   }; // stackimpl
+
+typedef factory&lt; operation &gt; op_factory;
+
+int main( int , char** )
+   {
+   stackimpl      numbers;
+   string         line;
+   op_factory    
+      factory( factory_dll , STRING( FACTORY_PREFIX ) );
+ 
+   while( 1 )
+      {
+      cin &gt;&gt; line;
+      if ( line == "bye" )
+         break;
+      if ( factory.class_exists( line ) )
+         {
+         op_factory::object_ptr 
+            object( factory.instantiate( line ) );
+         cout &lt;&lt; object-&gt;operate( &amp;numbers ) &lt;&lt; endl;
+         }
+      else
+         {
+         int number = atoi( line.c_str() );
+         numbers.push( number );
+         }
+      }
+
+   return 0;   
+   }
+</pre></body></html>

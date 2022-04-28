@@ -1,0 +1,156 @@
+<HTML><HEAD>
+<TITLE>November 2000/Secure Web-Based Licensing/Listing 2</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 2: Encryption support functions</A></h4>
+<pre>
+#include "stdafx.h"
+#include &lt;windows.h&gt;
+#include &lt;wincrypt.h&gt;
+#include &lt;malloc.h&gt;
+#include &lt;iostream.h&gt;
+
+// Compute cyclic redundancy checksum - from Binstock &amp; Rex
+unsigned short BinstockRexCRC(unsigned short crc, short data)
+{
+    int i = 0;
+    data &lt;&lt;= 8;
+    for(i=8; i&gt;0; i--)
+    {
+        if((data ^ crc) &amp;0x8000)
+            crc = (crc &lt;&lt; 1) ^ 0x1021;
+        else
+            crc &lt;&lt;= 1;
+        data &lt;&lt;= 1;
+    }
+    return(crc);
+}
+
+unsigned short ComputeCRC(long data)
+{
+    unsigned short crc = 0;
+    char *d = (char*)&amp;data;
+    for(int i=0; i&lt;sizeof(long); i++) 
+        crc = BinstockRexCRC(crc, d[i]);
+
+    return crc;
+}
+
+// Encrypt data with key
+bool Encrypt(const char *data,const char *key,char *ret,long size)
+{
+    HCRYPTPROV hProv = 0;
+    HCRYPTHASH hHash = 0;
+    HCRYPTKEY hKey = 0;
+    BYTE *pbData = NULL;
+    DWORD dwDataLen;
+
+    if (!data || !key || !ret)
+        return false;
+
+    // Initialize CryptoAPI
+    CryptAcquireContext(&amp;hProv, NULL, MS_DEF_PROV,
+        PROV_RSA_FULL, CRYPT_VERIFYCONTEXT);
+    CryptCreateHash(hProv, CALG_MD5, 0, 0, &amp;hHash); 
+    CryptHashData(hHash, (BYTE*)key, strlen(key), 0);
+    CryptDeriveKey(hProv, CALG_RC2, hHash, 0, &amp;hKey);
+    
+    // How big a buffer do I need?
+    dwDataLen = strlen(data)+1;
+    CryptEncrypt(hKey,NULL,TRUE,0,NULL,&amp;dwDataLen,0);
+    
+    // If the size is greater than half our buffer length, 
+    // we don't have enough room
+    if (dwDataLen &gt; (unsigned long) size/2)
+    {
+        if(pbData !=NULL) free(pbData);
+        if(hHash) CryptDestroyHash(hHash);
+        if(hKey) CryptDestroyKey(hKey);
+        if(hProv) CryptReleaseContext(hProv,0);
+        return false;
+    }
+
+    pbData = (BYTE*)malloc(dwDataLen);
+    strcpy ((char*)pbData,data);
+    DWORD inputBufferSize = dwDataLen;
+    dwDataLen = strlen(data)+1;
+
+    // Encrypt the data
+    CryptEncrypt(hKey,NULL,TRUE,0,pbData,&amp;dwDataLen,
+        inputBufferSize);
+    
+    // Copy the encrypted data to a hex string
+    char szBuf[3];
+    ret[0] = 0;
+    for (int j=0; j&lt; (int)dwDataLen; j++)
+    {
+        sprintf (szBuf,"%02X",pbData[j]);
+        strcat(ret,szBuf);
+    }
+
+    if(pbData !=NULL) free(pbData);
+    if(hHash) CryptDestroyHash(hHash);
+    if(hKey) CryptDestroyKey(hKey);
+    if(hProv) CryptReleaseContext(hProv,0);
+    return true;
+}
+
+// Decrypt data with key
+bool Decrypt(const char *data,const char *key,char *ret,long size)
+{
+    HCRYPTPROV hProv = 0;
+    HCRYPTHASH hHash = 0;
+    HCRYPTKEY hKey = 0;
+    BYTE *pbData = NULL;
+    DWORD dwDataLen;
+
+    if (!data || !key ||!ret || strlen(data)%2)
+        return false;
+
+    // Convert the string from hex to bin
+    pbData = (BYTE*)malloc(strlen(data)/2+10);
+    
+    char szBuf[3];
+    for (int j=0; j&lt;(int)strlen(data); j+=2)
+    {
+        szBuf[0] = data[j];
+        szBuf[1] = data[j+1];
+        szBuf[2] = 0;
+
+        sscanf (szBuf,"%02X",pbData+j/2);
+    }
+
+    // Initialize the CryptoAPI
+    CryptAcquireContext(&amp;hProv, NULL, MS_DEF_PROV,
+        PROV_RSA_FULL, CRYPT_VERIFYCONTEXT);
+    CryptCreateHash(hProv, CALG_MD5, 0, 0, &amp;hHash);
+    CryptHashData(hHash, (BYTE*)key, strlen(key), 0);
+    CryptDeriveKey(hProv, CALG_RC2, hHash, 0, &amp;hKey);
+    
+    dwDataLen = strlen(data)/2;
+
+    // Decrypt the data
+    CryptDecrypt(hKey,0,TRUE,0,pbData,&amp;dwDataLen);
+    
+    // Is the return buffer big enough?
+    if (dwDataLen &gt; (unsigned long)size/2)
+    {
+        if(pbData !=NULL) free(pbData);
+        if(hHash) CryptDestroyHash(hHash);
+        if(hKey) CryptDestroyKey(hKey);
+        if(hProv) CryptReleaseContext(hProv,0);
+        return false;
+    }
+
+    strcpy(ret,(const char*)pbData);
+
+    if(pbData !=NULL) free(pbData);
+    if(hHash) CryptDestroyHash(hHash);
+    if(hKey) CryptDestroyKey(hKey);
+    if(hProv) CryptReleaseContext(hProv,0);
+
+    return true;
+}
+
+</pre></body></html>

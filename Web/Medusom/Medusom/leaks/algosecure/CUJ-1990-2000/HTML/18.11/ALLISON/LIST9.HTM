@@ -1,0 +1,37 @@
+<HTML><HEAD>
+<TITLE>November 2000/import java.*/Listing 9</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 9: NumberLines.java &#151; reads lines with a BufferedReader</A></h4>
+<pre>
+import java.io.*;
+
+class NumberLines
+{
+    public static void main(String[] args)
+        throws IOException
+    {
+        BufferedReader fin =
+            new BufferedReader(
+                new InputStreamReader(
+                    System.in
+                    )
+                );
+
+        int lineno = 0;
+        String line;
+        while ((line = fin.readLine()) != null)
+            System.out.println(++lineno + "\t"
+                               +line);
+
+        fin.close();
+    }
+}
+
+/* Output from "java NumberLines &lt; log1.txt":
+1      line 1,1
+2      line 1,2
+3      line 1,3
+*/
+</pre></body></html>

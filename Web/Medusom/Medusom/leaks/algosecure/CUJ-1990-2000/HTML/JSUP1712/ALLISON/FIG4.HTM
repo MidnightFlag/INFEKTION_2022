@@ -1,0 +1,64 @@
+<HTML><HEAD>
+<TITLE>December 1999 Java Solutions/The Java 2 Collections -- Finally, Some News You Can Use/Figure 4</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 4: Sorts/searches an array of Person objects</A></H4>
+<pre>
+import java.util.*;
+
+class ArraysTest3
+{
+    static void printArray(Object[] a)
+    {
+        System.out.print("[");
+        for (int i = 0; i &lt; a.length; ++i)
+        {
+            System.out.print(a[i]);
+            if (i &lt; a.length-1)
+                System.out.println(",");
+            else
+                System.out.println("]");
+        }
+    }
+    static void search(Object[] a, Object n)
+    {
+        // (same as in Figure 2)
+    }
+    public static void main(String[] args)
+    {
+        // Build Array:
+        Person[] array = new Person[3];
+        array[0] = new Person("Horatio", 1835,12,6);
+        array[1] = new Person("Charles",1897,3,11);
+        array[2] = new Person("Albert",1901,1,20);
+        System.out.println("Before sorting:");
+        printArray(array);
+
+        // Sort:
+        Arrays.sort(array);
+        System.out.println("After sorting:");
+        printArray(array);
+
+        // Search:
+        search(array, array[1].clone());
+        search(array,
+               new Person("Gregory", 1582, 10, 15));
+    }
+}
+
+/* Output:
+Before sorting:
+[{Horatio,12/6/1835},
+{Charles,3/11/1897},
+{Albert,1/20/1901}]
+After sorting:
+[{Albert,1/20/1901},
+{Charles,3/11/1897},
+{Horatio,12/6/1835}]
+Found {Charles,3/11/1897} in position 1
+Insert {Gregory,10/15/1582} before {Horatio,12/6/1835}
+*/
+</B></pre>
+</BODY>
+</HTML>

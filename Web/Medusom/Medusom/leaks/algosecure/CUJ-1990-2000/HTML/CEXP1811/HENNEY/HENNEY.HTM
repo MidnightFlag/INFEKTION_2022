@@ -1,0 +1,205 @@
+<HTML>   
+     <HEAD>
+<TITLE>November 2000 C++ Experts Forum/From Mechanism to Method</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../18.11/tocnov.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   C++ Experts Forum</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">From Mechanism to Method: Function Follows Form</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Kevlin Henney</FONT></H3>
+
+<HR>
+<BLOCKQUOTE>
+
+<P>Is programming the manufacture of code? I would suggest that of all the metaphors applied to the development of software, manufacturing rates is perhaps one of the least useful and most harmful. Where in the manufacturing metaphor is the idea that programming is an act of communication? And not just with the compiler. Code is more often read than written, and writing code is just that: writing. You are an author with an audience; today it may be just you and the compiler, but tomorrow it will include others, which includes you: the "What was I thinking when I wrote this?" or "Which idiot wrote this? ... Oh" syndrome.<P>
+<P>This perspective lends a quite different weight to the use of language features in a program. In C++, we have a formal notation for working with concepts as close to or as far from the metal as we choose. The compiler cares little for how clearly we write the code, how fit for the purpose it is, or how we work in teams to develop systems. It cares only for the well-formedness of the code as C++ (or at least the compiler's closest approximation). All those other, nonfunctional considerations are about code as a means of communication with others.<P>
+<P>C++ offers an extensive shopping list of mechanisms. It is left to the programmer to make sense &#151; and sensible use &#151; of these, bringing method and clarity to bear on the expression of code and coding to communicate intent idiomatically to others. But too often we find that code looks like, well, code: a cipher whose key is known privately and exclusively to its author &#151; and sometimes, alas, even this much is not true.<P>
+<P>Overloading &#151; especially operator overloading &#151; is one of those mechanisms that, when first encountered, can raise eyebrows and open mouths. This response comes in two opposing flavors: "Great! I can see that we could use this all over the system" or "Oh no, I don't think that's for us. Sounds different to what we normally do... too radical." The former can often lead to the most cunning of ciphers with the clarity of hieroglyphics (pre-Rosetta Stone); the latter can lead to verbose code that misses the effectiveness of established idioms and the benefits of template-based generic programming. There is, however, a center ground of practice between these two.<P>
+
+<H4><FONT COLOR="#000080">Principles</FONT></H4>
+
+<P><I>Express coordinate ideas in similar form.</I><P>
+<P><I>This principle, that of parallel construction, requires that expressions similar in context and function be outwardly similar. The likeness of form enables the reader to recognize more readily the likeness of content and function.</I><P>
+<P>&#151; Strunk and White. <a href="#ref1">[1]</a><P>
+
+<P>This advice works as well with the written keyword as it does with the written word. It expresses the idea that similar constructs should have similar meanings, a goodness of fit between intent and realization, interface and implementation, reader and writer. This principle of substitutability <a href="#ref2">[2]</a> is often expressed with respect to inheritance and runtime polymorphism <a href="#ref3">[3]</a>, but applies equally well to the compile-time polymorphism you have with conversions, overloads, and templates <a href="#ref4">[4]</a>.<P></DIR>
+
+<P><B>Common Name Implies Common Purpose</B><P>
+
+<P>The principle that overloaded functions work to similar ends is the one that makes the most sense of this feature. As a practice, it frees programmers from mangling names to distinguish otherwise similar functions with differing argument lists. (This is the job of the compiler.)<P>
+<P>Following well-established conventions, where possible, clearly makes sense. For instance, the C++ Standard library establishes a common set of names and semantics, conventions clarifying that <b>empty</b> means "is empty?" not "to empty," <b>clear</b> means "to clear" and not "is clear? ," etc. Note that judgement and resourcefulness are still needed:<P></DIR>
+
+<UL>
+<LI>The standard defines a relatively small set of names, clearly not enough to cover your whole domain of application.
+<LI>The standard is not always consistent in its use of names, e.g., the unhelpfully named <b>get</b> member function in <b>auto_ptr</b> is a query without a side effect, whereas <b>get</b> on a <b>basic_istream</b> is a query with a significant side effect.
+<LI>There are other well-established sources of terminology that provide names you can draw upon. There may be times these clash with the standard. For example, depending on context, <b>begin</b> yields an iterator or initiates a transaction. It is for you to determine whether or not such overloading of meaning, as well as name, is clear.</UL>
+
+<P><B>Operator Underloading</B><P>
+
+<P>Whatever care is applied to the use of named function overloading applies doubly so to operator overloading. It can be a fertile ground for fertile imaginations, an opportunity to communicate clearly or to resurrect a Tower of Babel.<P>
+<P>The built-in types both set expectations in the reader and offer a spec for the writer: "When in doubt, do as the <b>int</b>s do" <a href="#ref5">[5]</a>. As with any style principle, this one is elasticated: <b>operator+</b> for the standard <b>basic_string</b> is not commutative, but its meaning is clear nonetheless. Bitshift operators, <b>operator&lt;&lt;</b> and <b>operator&gt;&gt;</b>, for I/O stream insertion and extraction stretches the elastic taut by an appeal to scripting notations. However, the long history and established presence in the standard library qualifies this idiom as <I>effectively</I> built-in. Do not assume the same distinguished fate awaits any other "creative" operator deployment! So, as a corollary, it may be worth considering that when in serious doubt, do not do it.<P>
+<P>In deciding the suitability or otherwise of operator overloading, keep in mind that it only really makes sense for value-based <a href="#ref6">[6]</a> rather than indirection-based objects. Value-based objects represent fine-grained information concepts, typically live on the stack or embedded within other objects, and are passed around by copy or <b>const</b> reference. Syntactically, this emphasizes their value and allows easy use of operators. Indirection-based objects, by contrast, represent more significant chunks of system information or behavior, typically live on the heap, and are passed around by pointer. Syntactically, this emphasizes their identity but makes use of operators awkward; having to dereference the pointer explicitly before being able to use an operator somewhat defeats the intended transparency of operator overloading.<P></DIR>
+
+<H4><FONT COLOR="#000080">Smart Pointers</FONT></H4>
+
+<P>One of the most common C++ idioms involving overloading is the smart pointer, ranging from reference-counted pointers to the essentially simple but surprisingly intricate standard <b>auto_ptr</b>. However, it is a common myth that all smart pointers are concerned with memory management, and that all smart pointers support <b>operator-&gt;</b> and <b>operator*</b> as their pointer-like operations.<P></DIR>
+
+<P><B>The Three Rs</B><P>
+
+<P>Use determines definition, and clearly not all smart pointers are intended for the same use. We can consider operators for pointers in three categories, the three Rs: (de)referencing, relational, and arithmetic. According to purpose, we can select if and how we provide these:<P></DIR>
+
+<UL>
+<LI>Dereferencing comes in the familiar forms of <b>operator*</b> and <b>operator-&gt;</b>, as well as the less familiar and often overlooked <b>operator-&gt;*</b> <a href="#ref7">[7]</a> and <b>operator().</b>
+<LI>Relational operators make sense for pointers or smart pointers that have a natural ordering, such as raw pointers in the same array or random access iterators. Having only equality (and hence inequality) comparison makes sense for many other pointers, such as reference-counted pointers. They typically test for identity rather than value, which is why <b>auto_ptr</b> does not support such comparison; exclusive ownership means that in a well-formed system <b>auto_ptr</b> equality comparison will always return <b>false</b>.
+<LI>Pointer arithmetic, such as <b>operator++</b> and <b>operator+</b>, makes sense for smart pointers that encapsulate some concept of interval or progression, such as iterators.</UL>
+
+<H4><FONT COLOR="#000080">Function Objects</FONT></H4>
+
+<P>A common piece of advice offered to developers making a transition from procedural to object-oriented code is that a class should not model a function. Such classes are often named as actions and typically sport a principal or single member function named "do such and such." While this advice does guard against a common pitfall, it is not always poor practice. Those that have taken this rule of thumb to heart as a legalistic rule need to unlearn a little to appreciate how objects can encapsulate tasks and, in particular, mimic functions. The Command pattern <a href="#ref8">[8]</a> demonstrates the power of task-based objects. The Functor idiom <a href="#ref3">[3]</a> focuses on functional objects that overload <b>operator()</b> to achieve the appearance and transparency of use of conventional functions.<P>
+<P>The standard library provides for the use of function objects with generic functions and templated containers, categorizing them as unary or binary functions. It also defines specific function object classes (e.g., <b>less</b> for ordered comparison) and function object adaptors (e.g., <b>pointer_to_unary_function</b> to wrap up naked function pointers). The Boost library <a href="#ref9">[9]</a> extends this with other function object classes, adaptors, and the <I>nullary</I> function category, for function objects taking no arguments.<P></DIR>
+
+<P><B>Re-Member</B><P>
+
+<P>As an example of a function object class, focusing on the nullary form for <b>void</b> returning functions, <a href="list1.htm">Listing 1</a> shows code for a member function adaptor. You may have already come across the <b>mem_fun_t</b> family of adaptors in the standard library. However, there are key differences:<P></DIR>
+
+<UL>
+<LI>A <b>remember_function</b> bundles a target object together with a member function pointer for later callback through <b>nullary operator()</b>, whereas a <b>mem_fun_t</b> object simply holds a member function pointer and uses the argument to <b>operator()</b> as its target.
+<LI>Although it is of little practical consequence for a nullary, <b>void</b>-returning function, a variant for <b>const</b> member functions is not required because the member pointer's type is parameterized as a whole.
+<LI>The target pointer type need not be a raw pointer; smart pointers supporting <b>operator-&gt;*</b> will also work.
+<LI>The member pointer type need not be a member function pointer; a member data pointer that points to a nullary function object will also work.</UL>
+
+<P>The <b>remember</b> template function is a helper that simplifies composition of <b>remember_function</b> objects, automatically deducing the parameter types in the manner of <b>make_pair</b> for <b>pair</b>, <b>bind2nd</b> for <b>binder2nd</b>, or <b>ptr_fun</b> for <b>pointer_to_unary_function</b> and <b>pointer_to_binary_function</b>.<P></DIR>
+
+<H4><FONT COLOR="#000080">Generalized Function Pointer</FONT></H4>
+
+<P>The need for event-driven callbacks, such as timer-triggered actions, is often met with pointers to functions or an implementation of Observer <a href="#ref8">[8]</a>. The former approach is fine for simple event handlers:<P></DIR>
+
+<pre>
+class timer
+{
+public:
+    void set(const time &amp;delay, void (*callback)());
+    ...
+};
+</pre>
+
+<P>But it is inflexible, handling only functions and not context objects. The Observer-based solution introduces a base class that a concrete handler class must implement:<P></DIR>
+
+<pre>
+class handler
+{
+public:
+    virtual void run() = 0;
+    ...
+};
+class timer
+{
+public:
+    void set(const time &amp;delay, handler *callback);
+    ...
+};
+</pre>
+
+<P>However, this introduces a level of indirection that leads to additional memory-management responsibilities and imposes an intrusive base class participation on users for what is a relatively simple scenario. Using arbitrary objects or functions for callback would be preferred. Overloading multiple <b>set</b> member functions in <b>timer</b> is a kitchen-sink solution, leading to a wide interface that attempts to please all people and an awkward <b>timer</b> implementation.<P>
+<P>Function objects at first appear to offer a route out: A nullary function pointer or object could be passed in, including a <b>remember_function</b> binding of member to target, and later called back. A member template function would accommodate the substitutability of all the variations:<P></DIR>
+
+<pre>
+class timer
+{
+public:
+    template&lt;typename nullary_function&gt;
+      void set(const time &amp;delay, nullary_function callback);
+    ...
+};
+</pre>
+
+<P>However, this raises a fundamental problem: How does a <b>timer</b> object later execute the <b>callback</b> passed in? Unlike many examples of member template functions in the standard library, this one does not execute the function or function object immediately &#151; it would not be much of a timer if it did! The <b>timer</b> needs to store the callback for later use. Without parameterizing the whole <b>timer</b> class on the <b>nullary_function</b> type rather than just the <b>set</b> member, this does not appear to be possible. Templating the whole class is undesirable because it means that for each different type of callback, a different <b>timer</b> class instantiation is needed.<P>
+<P>A further problem with the member template approach is that a member template function cannot be declared <b>virtual</b>. This would be significant if the <b>timer</b> class were an abstract rather than a concrete class (i.e., an interface to timer features rather than a single implementation). The attempt to decouple both the mechanism of the timer and the target type like this would lead to the following illegal code:<P></DIR>
+
+<pre>
+class timer
+{
+public:
+    template&lt;typename nullary_function&gt; // illegal
+      virtual void set(
+        const time &amp;delay, nullary_function callback) = 0;
+    ...
+};</pre>
+
+<P><B>On the Outside</B><P>
+
+<P>It is possible to resolve the tension in the design by approaching it from a different angle. We can take a step back and ask what simple interface to <b>timer</b> would also simplify its implementation. What is needed is some kind of abstraction of a function pointer that is both generic and generic: generic in the sense of supporting the generic programming style of the STL, and generic in the sense that it is general purpose and easily used in any context:<P></DIR>
+
+<pre>
+class timer
+{
+public:
+    void set(const time &amp;delay, const function_ptr &amp;callback);
+    ...
+};
+</pre>
+
+<P>To satisfy the requirements for simplicity in <b>timer</b> and our expectations of a function pointer, <b>function_ptr</b> needs to support syntax for initialization, assignment, and execution. <a name=r2></a><a href="list2.htm">Listing 2</a> shows such an interface.<P></DIR>
+
+<P><B>On the Inside</B><P>
+
+<P>This is all very well, but it has yet to solve the problem fully: It looks nice, but how is it implemented? How can a <b>function_ptr</b> object hold arbitrary representation, constrained only by the requirement that it must support an <b>operator()</b> with no arguments? The technique used is based on the External Polymorphism pattern <a href="#ref10">[10]</a>, in particular the use of inheritance and runtime polymorphism to adapt template-based genericity for value-based objects through a level of indirection <a href="#ref6">[6]</a>. <a name=r3></a><a href="list3.htm">Listing 3</a> opens up <b>function_ptr</b> to show this collaboration in practice, including the conversion (i.e., initialization) from any arbitrary nullary function object or pointer.<P></DIR>
+
+<P><B>Clone Me</B><P>
+
+<P><b>function_ptr</b> is a value type, so it stands to reason that it should support copying through construction and assignment &#151; an identity form of inward conversion <a href="#ref6">[6]</a>. The body of a <b>function_ptr</b> cannot be copied directly because of the decoupling of interface from implementation, which leads to the polymorphic copying, or cloning, technique shown in <a name=r4></a><a href="list4.htm">Listing 4</a>. The assignment operator uses the Copy Before Release idiom <a href="#ref11">[11]</a> for exception- and self-assignment-safety. A non-throwing <b>swap</b> could also be used for this <a href="#ref12">[12]</a>, but for this article the interface to <b>function_ptr</b> is being kept small and based only on operators.<P></DIR>
+
+<P><B>Call Me</B><P>
+
+<P>The final piece of the jigsaw is to dereference a <b>function_ptr</b> &#151; fetch and execute. A raw function pointer supports dereferencing through <b>operator*</b>, which is the identity operation on a function pointer, <b>operator()</b>, which can be called directly on a function pointer without using <b>operator*</b>, but not <b>operator-&gt;</b>. This is the model that <b>function_ptr</b> should follow and does so in <a name=r5></a><a href="list5.htm">Listing 5</a>. For a null pointer, the execution assumes that for no function there is no function, as opposed to undefined behavior as per built-in pointers.<P>
+
+<P><B>Remember Me?</B><P>
+
+<P>A focus on forms of substitutability &#151; in this case derivation, overloading, and templates, each a way of establishing an interface &#151; can decouple a system, allowing greater suppleness and clearer code. Putting it all together, we can assemble a simple scenario based around the proposed <b>timer</b> interface. Consider the interface to a device that can be turned on or off at particular times (e.g., a heating or an air conditioning system):<P></DIR>
+
+<pre>class device
+{
+public:
+    virtual void turn_on() = 0;
+    virtual void turn_off() = 0;
+    ...
+};</pre>
+
+<P>The following example combines the concepts and features presented so far:<P>
+
+<pre>void set_up(
+    device *target, timer *scheduler,
+    const time &amp;on, const time &amp;off)
+{
+    scheduler-&gt;set(on, remember(target, &amp;device::turn_on));
+    scheduler-&gt;set(off, remember(target, &amp;device::turn_off));
+}
+</pre>
+
+<H4><FONT COLOR="#000080">Conclusion</FONT></H4>
+
+<P>There is little that excites programmers' passions more than discussions of style, but there is little that helps them more than common understanding. Overloading is a powerful feature whose reasoned use underpins many idioms at the heart of the modern C++ programmer's vocabulary: smart pointers, function objects, iterators, etc.<P>
+<P>Within each of these idioms, there is variation for expression rather than any simplistic, one-size-fits-all, cookie-cutter rule. A function object will support some form of <b>operator()</b>, and a smart pointer must support some form of dereferencing, but this does not by necessity include <b>operator-&gt;</b>, as demonstrated by <b>function_ptr</b>, a smart function pointer.<P></DIR>
+
+<H4><FONT COLOR="#000080">References</FONT></H4>
+
+<P><a name="ref1"></a>[1] William Strunk, Jr. and E. B. White. <I>The Elements of Style</I>, 3rd edition (Macmillan, 1979).<P>
+<P><a name="ref2"></a>[2] Barbara Liskov. "Data Abstraction and Hierarchy," <I>OOPSLA '87 Addendum to the Proceedings</I>, October 1987.<P>
+<P><a name="ref3"></a>[3] James O. Coplien. <I>Advanced C++: Programming Styles and Idioms</I> (Addison-Wesley, 1992).<P>
+<P><a name="ref4"></a>[4] Kevlin Henney. "From Mechanism to Method: Substitutability," <I>C++ Report</I>, May 2000, also available from <b>http://www.curbralan.com</b>.<P>
+<P><a name="ref5"></a>[5] Scott Meyers. <I>More Effective C++: 35 New Ways to Improve Your Programs and Designs</I> (Addison-Wesley, 1996). <P>
+<P><a name="ref6"></a>[6] Kevlin Henney. "From Mechanism to Method: Valued Conversions," <I>C++ Report</I>, May 2000, also available from <b>http://www.curbralan.com</b>.<P>
+<P><a name="ref7"></a>[7] Scott Meyers. "Implementing <b>operator-&gt;*</b> for Smart Pointers," <I>Dr. Dobb's Journal</I>, October 1999.<P>
+<P><a name="ref8"></a>[8] Erich Gamma, Richard Helm, Ralph Johnson, and John Vlissides. <I>Design Patterns: Elements of Reusable Object-Oriented Software</I> (Addison-Wesley, 1995).<P>
+<P><a name="ref9"></a>[9] Boost library website, <b>http://www.boost.org</b>.<P>
+<P><a name="ref10"></a>[10] Chris Cleeland, Douglas C. Schmidt, and Tim Harrison. "External Polymorphism," <I>Pattern Languages of Program Design 3</I>, edited by Robert Martin, Dirk Riehle, and Frank Buschmann (Addison-Wesley, 1998).<P>
+<P><a name="ref11"></a>[11] Kevlin Henney. "Creating Stable Assignments," <I>C++ Report</I>, June 1998, also available from <b>http://www.curbralan.com</b>.<P>
+<P><a name="ref12"></a>[12] Herb Sutter. <I>Exceptional C++</I> (Addison-Wesley, 2000).<P>
+
+<p><i><b>Kevlin Henney</b> is an independent consultant and trainer specializing in
+C++, Java, OO design, patterns, and software architecture.  He can be reached at
+<B>kevlin@curbralan.com</B>.</i></p>
+
+<h4><a href="../../../source/2000/cnov00/henney.zip">Get Article Source Code</a></h4>
+

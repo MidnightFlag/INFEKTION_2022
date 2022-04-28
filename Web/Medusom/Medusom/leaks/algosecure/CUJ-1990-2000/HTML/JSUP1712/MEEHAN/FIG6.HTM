@@ -1,0 +1,26 @@
+<HTML><HEAD>
+<TITLE>December 1999 Java Solutions/Handling Non-User Events in Swing/Figure 6</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 6: The Comms constructor (error checking removed)</A></h4>
+<pre>
+class Comms extends Thread {
+   // ... local definitions not shown
+   Comms() {
+      Socket socket = new Socket("localhost",4444);
+
+      // Wrap inputstream in buffered reader
+      InputStream is = null;
+      is = socket.getInputStream();
+      InputStreamReader isr = new InputStreamReader(is);
+      BufferedReader reader = new BufferedReader(isr);
+
+      // Wrap outputstream in PrintWriter
+      PrintWriter writer = 
+         new PrintWriter(socket.getOutputStream(),true);
+   }
+}
+</pre>
+</BODY>
+</HTML>

@@ -1,0 +1,98 @@
+<HTML>   
+     <HEAD>
+<TITLE>August 2000 Java Solutions/Java Animation Techniques</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocjaug.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   Java Solutions</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Java Animation Techniques</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Pat Paternostro</FONT></H3>
+
+<BLOCKQUOTE>
+<p>Animation is a standard part of the Java Library, but it takes a bit of organizing to make use of it.</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+
+<H4><FONT COLOR="#000080">Introduction</FONT></H4>
+
+<p>"Computer Animation" is a broad term that could mean anything from a simple animated GIF <a href="#1">[1]</a> on a website to a full-blown feature-length movie. Java animation falls somewhere between these two extremes. Unlike animated GIFs, Java provides the flexibility to create truly dynamic animations, that is, animations that change in response to external events or user input. Dynamic animation is necessary for things like real-time displays, simulations, and games. Although Java may never be practical for producing feature-length movies, it is very handy for producing animations that are portable, either as web-based applets or stand-alone applications. This article details animation techniques that can be incorporated in a Java program. I show how to apply these techniques both to applets and applications.</p>
+
+<H4><FONT COLOR="#000080">Multithreading in Animations</FONT></H4>
+
+<p>Animation in Java should always occur in a separate thread of execution. This allows users to interact with the Java animation program without perceptibly degrading performance. There are two ways to create threads in Java. The first is to extend the <B>Thread</B> class and provide a specific implementation for the class's <B>run</B> method:</p>
+
+<pre>
+public class MyThread extends Thread
+{
+   public void run()
+   {
+      System.out.println
+         ("In a separate thread!");
+   }
+}
+</pre>
+
+<p>To start the thread, simply instantiate the extended class and call the <B>Thread</B> class's <B>start</B> method. The <B>start</B> method is what actually creates the separate thread of execution, which in turn calls the <B>run</B> method. When the <B>run</B> method executes to completion the thread is automatically stopped and its resources are freed.</p>
+<p>The second method involves implementing the <B>Runnable</B> interface on a class and providing a specific implementation for the interface's <B>run</B> method. Incidentally, the <B>Thread</B> class employs this technique.</p>
+<p>To start a thread with this method, use the <B>Thread</B> class constructor that accepts a <B>Runnable</B> target as a parameter (an instance of a class that implements the <B>Runnable</B> interface) and call the <B>Thread</B> class's <B>start</B> method:</p>
+
+<pre>
+public class MyClass
+   implements Runnable
+{
+   public static void
+   main(String args[])
+   {
+      new Thread
+             (new MyClass()).start();
+   }
+
+   public void run()
+   {
+      System.out.println
+         ("In a separate thread!");
+   }
+}
+</pre>
+
+<H4><FONT COLOR="#000080">Java-Specific Threading Issues</FONT></H4>
+
+<p>Animation threads usually run continuously and most often are coded with a <B>while(true)</B> loop construct placed inside the <B>run</B> method. Prior to JDK 1.2.x, a started thread could be prematurely stopped via the <B>Thread</B> class's <B>stop</B> method. However, that method has been deprecated in JDK 1.2.x and above because of its unsafe behavior. (See the JDK 1.2.x javadoc HTML help file on the <B>Thread</B> class's <B>stop</B> method for detailed information concerning deprecation of the method.) The preferred way to prematurely stop a continuously running thread is by setting a <B>boolean</B> flag or simply setting the <B>Thread</B> object reference to <B>null</B>. In this case, the <B>while(true)</B> loop construct changes to a <B>while(condition true)</B> loop construct.</p>
+<p>Animation threading is handled differently in a Java applet than in a Java application. In a Java applet, animation threads are normally started in the <B>Applet</B> class's <B>start</B> method and stopped in the <B>Applet</B> class's <B>stop</B> method. The <B>Applet</B>'s <B>start</B> method is called whenever a user visits an applet web page. The <B>stop</B> method is called whenever a user leaves the web page. A programmer can override these methods to perform any startup or cleanup actions respectively. In a Java program, animation threads are generally started either in a class's constructor or in response to some user action (i.e., a button press, menu selection, etc.) and are stopped when the program ends or in response to some user action.</p>
+<p>Some issues with thread synchronization have been omitted due to limited space in the magazine. See the readme file on the ftp site for this information.</p>
+
+<H4><FONT COLOR="#000080">Where to Animate</FONT></H4>
+
+<p>In Java, you draw on a graphics context; therefore, you should do all the animation within a component class's <B>paint</B> method, because that method is passed a <B>Graphics</B> object by the Java runtime system. The <B>Graphics</B> object represents the component's graphics context.</p>
+<p>This implies that you should derive your animation class (directly or indirectly) from the Java <B>Component</B> class, because <B>Component</B> is the ancestor of all graphics components and is the base class that defines the virtual <B>paint</B> method. (If you create an applet, you will automatically be deriving from the <B>Component</B> class.)</p>
+<p>You can override <B>paint</B> to perform the desired animation with a multitude of drawing methods from the <B>Graphics</B> class (e.g., drawRect, drawOval, drawImage, etc.). The animation thread's sole responsibility is to effect a change on the drawn image's state (e.g., change coordinates, change image) and to call the <B>Component</B> class's <B>repaint</B> method. Internally, <B>repaint</B> calls the <B>Component</B> class's <B>update</B> method, which clears the drawing area, and in turn calls your component's <B>paint</B> method.</p>
+
+<H4><FONT COLOR="#000080">Flicker-Free Animation</FONT></H4>
+
+<p>An annoying side effect in Java animations is screen flicker. It is caused by clearing the drawing area (in the <B>update</B> method called from <B>repaint</B>) prior to performing any drawing operations. To reduce this flicker, you can create an offscreen image and do all drawing operations on it (including clearing the drawing area). When all the offscreen operations are completed, you then draw the offscreen image to the viewable graphics context. This technique is known as double buffering and involves overriding the <B>Component</B> class's <B>update()</B> method.</p>
+<p>To create an offscreen image in Java, call the <B>Component</B> class's version of <B>createImage</B> that accepts two integer parameters. These integers represent the width and height of the drawing area. The <B>createImage</B> method returns an <B>Image</B> object. You then call this object's <B>getGraphics</B> method to retrieve the image's graphics context, which you'll need to perform the drawing operations.</p>
+<p>Unlike with most Java objects that are automatically garbage collected, you must explicitly dispose of any graphics context you create. That's because <B>getGraphics</B> allocates system resources that cannot be freed by the garbage collector. To free those resources, call the <B>Graphics</B> class's <B>dispose</B> method when you've finished using the graphics context. In a Java applet you normally call <B>dispose</B> in the applet's <B>destroy</B> method. This method is called by the browser's JVM (Java Virtual Machine) prior to removing an applet from its address space. In a Java application you call <B>dispose</B> when the application exits.</p>
+<p>In implementing double buffering, you will usually want to retrieve only one offscreen graphics context and reuse it. The best time to obtain an offscreen graphics context is just after a component has been rendered. A Java applet is fully rendered when its <B>init</B> method is called. However, other Java components (i.e., <B>Frame</B>, <B>Canvas</B>) are not fully rendered until they are displayed; that is, after the <B>Component</B> class's <B>setVisible</B> method is called.</p>
+<p>In the case of AWT (Abstract Windowing Toolkit) components, you can override their <B>addNotify</B> method to obtain the offscreen graphics context, as well as other information, such as the component's size and insets. The AWT component's <B>addNotify</B> method actually creates the component's peer, so be sure to call the superclass's <B>addNotify</B> method when overriding this method.</p>
+<p>I have included both a Java applet (see <a href="list1.htm">Listing 1</a>) and a Java application (see <a href="list2.htm">Listing 2</a>) that demonstrate the previously discussed techniques.</p>
+
+<H4><FONT COLOR="#000080">Conclusion</FONT></H4>
+
+<p>Animation is not generally used in real-world applications and is usually associated with applets. However, you can use animation in an About Dialog Box to add a little pizzazz to an otherwise boring display of information. Animation is not difficult to achieve as long as you adhere to the suggestions detailed here.</p>
+
+<H4><FONT COLOR="#000080">Note</FONT></H4>
+
+<p><a name="1"></a>[1]  Animated GIFs are web-based animations that are implemented in the GIF87a and GIF89a file formats. These file formats allow multiple GIF images to be stored within a single GIF file with the help of a GIF animation program (such as the GIF Construction Set available at <B>http://www.mindworkshop.com/alchemy/gifcon.html</B>).</p>
+
+<H4><FONT COLOR="#000080">Reference</FONT></H4>
+
+<p>Paul Tyma. "DEV-X Tip," <I>Multithreading Applets </I>&#151;<I> the Right Way</I>. <B>http://www.devx.com/registered/tips/tipview.asp?content_id=663</B>.</p>
+
+<p><i><B>Pat Paternostro</B> is an Associate Partner with the Tri-Com Consulting Group located in Rocky Hill, CT. Tri-Com provides programming services for a wide variety of development tasks. You can reach Pat at <B>ppaternostro@tricomgroup.com</B>.</i></p>
+
+<h4><a href="../../../source/2000/jaug00/paternos.zip">Get Article Source Code</a></h4>
+
+</blockquote></body></html>

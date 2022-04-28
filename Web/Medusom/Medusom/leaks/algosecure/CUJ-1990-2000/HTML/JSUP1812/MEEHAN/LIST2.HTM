@@ -1,0 +1,53 @@
+<HTML><HEAD>
+<TITLE>December 2000 Java Solutions/Developing for the PalmOS Platform using J2ME/Listing 2</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 2: The CameraClient class</A></h4>
+<pre>
+/* @author Peter Meehan  Copyright(c) 2000 */
+
+import com.sun.kjava.*;
+
+/* CameraClient creates and manages two Spotlet derivatives.
+ * CameraSelector allows the user to choose from a list
+ * of preset camera views. ImageViewer requests and retrieves the 
+ * actual image data from a camera server. */
+public class CameraClient {
+
+    CameraSelector selector = new CameraSelector(this);
+    ImageViewer viewer;
+
+    /* Clear screen to remove KVM icon
+     * Paint cameraselector to screen and register it for events 
+     */
+    public CameraClient() {
+        selector.paint();
+        selector.register(Spotlet.WANT_SYSTEM_KEYS);
+    }
+
+    /* request ImageViewer to retrieve image
+     * @param desc preset image description
+     * @param url preset image URL */
+    public void handleImageRequest(String desc,String url) {
+        selector = null;
+        System.gc();
+        viewer = new ImageViewer(this);
+        viewer.retrieveImage(desc,url);
+    }
+
+    /* On exit from imageViewer hand control to cameraselector */
+    public void handleViewerDone() {
+        viewer = null;
+        System.gc();
+        selector = new CameraSelector(this);
+        selector.paint();
+        selector.register(Spotlet.WANT_SYSTEM_KEYS);
+    }
+
+    /* Instantiate a CameraClient instance */
+    public static void main(String args[]) {
+        CameraClient client = new CameraClient();
+    }
+}
+</pre></body></html>

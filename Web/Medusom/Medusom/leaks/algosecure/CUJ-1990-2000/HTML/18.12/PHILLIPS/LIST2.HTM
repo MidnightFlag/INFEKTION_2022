@@ -1,0 +1,62 @@
+<HTML><HEAD>
+<TITLE>December 2000/Removing Image Noise with Adaptive Filters/Listing 2</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 2: The MMSE filter subroutine</A></h4>
+<pre>
+mmse(the_image, out_image,
+     rows, cols, size,
+     noise_variance)
+   int    size;
+   float  noise_variance;
+   short  **the_image,
+          **out_image;
+   long   rows, cols;
+{
+   float  first_moment, nvdv, second_moment,
+          sigma, variance;
+   int    i, j, sd2;
+
+   sd2 = size/2;
+
+      /***************************
+      *
+      *   Loop over image array
+      *
+      ****************************/
+
+   printf("\nmmse&gt;");
+   for(i=sd2; i&lt;rows-sd2; i++){
+      if( (i%10) == 0) printf("%d ", i);
+      for(j=sd2; j&lt;cols-sd2; j++){
+         moments(the_image, out_image,
+                 rows, cols, 
+                 size, size,
+                 i, j, 
+                 &amp;first_moment, &amp;second_moment,
+                 &amp;variance, &amp;sigma);
+         if(variance == -1.0){
+            out_image[i][j] = the_image[i][j];
+         }  /* ends if moments was out of bounds */
+         else{ /* else moments not out of bounds */
+            if(variance != 0.0){
+               nvdv = noise_variance/variance;
+               out_image[i][j] = 
+                   (1.0-nvdv)*(float)(the_image[i][j]) +
+                       (nvdv)*first_moment;
+            }  /* ends if variance not zero */
+            else
+               out_image[i][j] = the_image[i][j];
+         }  /* ends if moments not out of bounds */
+         if(out_image[i][j] &lt; 0)
+            out_image[i][j] = first_moment;
+         if(out_image[i][j] &gt; GRAY_LEVELS)
+            out_image[i][j] = first_moment;
+      }  /* ends loop over j */
+   }  /* ends loop over i */
+
+   fix_edges(out_image, sd2, rows-1, cols-1);
+
+}  /* ends mmse */
+</pre></body></html>

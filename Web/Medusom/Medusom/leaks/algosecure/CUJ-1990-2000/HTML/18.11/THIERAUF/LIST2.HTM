@@ -1,0 +1,110 @@
+<HTML><HEAD>
+<TITLE>November 2000/Extracting Data from X-Y Plots/Listing 2</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 2: The SetScale and GetPhysVal methods</A></h4>
+<pre>
+BOOL CAxis::SetScale()
+{
+   // check, if scale can be set
+   if (A == B) return FALSE;
+   if (vA == vB) return FALSE;
+ 
+   // calculate m, M, and c
+   // using epsilontik if necessary
+   double E = B.y - A.y;
+   double F = B.x - A.x;
+   if ( F == 0.0)
+   {
+      m = 100000.0;
+      M = 0.0;
+   }
+   else if ( E == 0.0 )
+   {
+      m = 0;
+      M = 100000.0;
+   }
+   else
+   {
+      m = E / F;
+      M = -1.0 / m;
+   }
+   c = (double) A.y - m * (double) A.x;
+
+   // calculate scaling factor s between 
+   // physical and device axis
+   double Delta = (B.x - A.x) * (B.x - A.x);
+   Delta += (B.y - A.y) * (B.y - A.y);
+   Delta = sqrt(Delta);
+   if (fLogScale)
+   {
+      s = ( log(vB) - log(vA) ) / Delta ;
+   }
+   else
+   {
+      s = (vB - vA) / Delta ;
+   }
+   return TRUE;
+}
+
+double CAxis::GetPhysVal(CPoint &amp;D)
+{
+   double v = 0, Px, Py;
+   project_data_point (D, Px, Py);
+   v = get_physical_value (Px, Py);
+   return v;
+}
+
+void CAxis::project_data_point (CPoint &amp;D, double &amp;Px, double &amp;Py)
+{
+   double C = (double) D.y - M * (double) D.x;
+   Px = (C - c)/(m - M);
+   Py = m * Px + c;
+}
+
+double CAxis::get_physical_value (double Px, double Py)
+{
+   double v;
+
+   // calculate distance A to P 
+   // in device coordinates
+   double PA_d = (Px - (double) A.x) * (Px - (double) A.x);
+   PA_d += (Py - (double) A.y) * (Py - (double) A.y);
+   PA_d = sqrt(PA_d);
+
+   // add or subtract?
+   double signum = (Px - A.x)*(B.x - A.x) 
+      + (Py - A.y)*(B.y - A.y);
+
+   // calculate distance A to P 
+   // in physical coordinates
+   double PA_p = PA_d * s;
+
+   // calculate physical value
+   if (fLogScale)
+   {
+      if (signum &gt; 0)
+      {
+         v = PA_d * s + log (vA);
+      }
+      else
+      {
+         v = -PA_d * s + log (vA);
+      }
+      v = exp (v);
+   }
+   else
+   {
+      if (signum &gt; 0)
+      {
+         v = PA_d * s + vA;
+      }
+      else
+      {
+         v = -PA_d * s + vA;
+      }  
+   }
+   return v;
+}
+</pre></body></html>

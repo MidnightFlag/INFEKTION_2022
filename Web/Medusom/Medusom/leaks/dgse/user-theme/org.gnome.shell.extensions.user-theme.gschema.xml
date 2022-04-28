@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="gnome-shell-extensions">
+  <schema path="/org/gnome/shell/extensions/user-theme/" id="org.gnome.shell.extensions.user-theme">
+    <key type="s" name="name">
+      <default>""</default>
+      <summary>Theme name</summary>
+      <description>The name of the theme, to be loaded from ~/.themes/name/gnome-shell</description>
+    </key>
+  </schema>
+</schemalist>

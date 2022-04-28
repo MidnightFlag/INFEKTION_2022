@@ -1,0 +1,22 @@
+<HTML><HEAD>
+<TITLE>December 2000 Java Solutions/Java Named Semaphores/Listing 3</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 3: The NamedSemaphore interface</A></h4>
+<pre>
+package Sem;
+
+import java.rmi.*;
+
+interface NamedSemaphore extends Remote
+{
+   public void 
+   create(String _name, int _initialValue, int _maxValue) 
+      throws RemoteException;
+   public void lock(String _name) throws RemoteException;
+   public void unlock(String _name) throws RemoteException;
+   public void remove(String _name) throws RemoteException;
+   public int getValue(String _name) throws RemoteException;
+} 
+</pre></body></html>

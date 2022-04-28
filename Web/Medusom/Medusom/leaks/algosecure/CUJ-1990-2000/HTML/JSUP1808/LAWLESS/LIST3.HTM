@@ -1,0 +1,66 @@
+<HTML><HEAD>
+<TITLE>August 2000 Java Solutions/Using the Java Core Reflection API/Listing 3</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 3: Exercises the Method and Field classes</A></h4>
+<pre>
+import java.io.*;
+import java.util.*;
+import java.lang.reflect.*;
+
+public class ReflectTest {
+
+      // Need testVar to be public to be accessible
+      // via the Field class.
+   public int testVar;
+
+   public void test() {
+      System.out.println("Hello, world!");
+   }
+
+      // Display string "s" "count" times.
+   public void test(String s, int count) {
+      while(--count&gt;=0) {
+         System.out.println(s);
+      }
+   }
+
+   public static void main(String[] args) throws Exception {
+      new ReflectTest().go();
+   }
+   
+
+   public void go() throws Exception{
+      Class c;
+      Method m;
+      Field f;
+      c=this.getClass();
+
+      System.out.println("Trying first test.");
+         // Find test(void) 
+      m=c.getMethod("test",null);
+         // ...and run it.
+      m.invoke(this,null);
+
+      System.out.println("\nTrying second test.");
+         // Find test(String, int)
+      m=c.getMethod("test",new Class[]{
+         new String().getClass(),Integer.TYPE });
+         // ...and run it.
+      m.invoke(this,new Object[] { "Hello",
+         new Integer(5) });
+
+         // now show that we can manipulate a field
+      System.out.println("\nTrying third test.");      
+      testVar=12;
+      f=c.getField("testVar");
+      System.out.println("The value of testVar is  " + 
+         f.getInt(this));
+      System.out.println(
+         "The generic toString value of testVar is  " +
+            f.get(this));
+      
+   }
+}
+</pre></body></html>

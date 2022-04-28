@@ -1,0 +1,62 @@
+<HTML><HEAD>
+<TITLE>December 2000 Java Solutions/Increasing Java Performance/Listing 5</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 5: TestLogger.java &#151; A sample implementation of an interface that defines a simple API</A></h4>
+<pre>
+/* Copyright (c) 2000 Stepping Stone Software Ltd, John Keyes */
+
+public class TestLogger implements LogAPI {
+  static Logger myLogger = Logger.getInstance();
+
+  StringBuffer msg = new StringBuffer();
+
+  public static void main(String args[]) {
+    String strLevel = System.getProperty("app.loglevel");
+    if(strLevel != null) {
+    int level = Integer.parseInt(strLevel);
+    myLogger.setLogLevel(level);
+    }
+    TestLogger testLog = new TestLogger();
+    testLog.test();
+  }
+
+  TestLogger() { }
+
+  public void test() {
+    int age = 24;
+    String name = "Joe";
+
+    if(myLogger.canDebug()) {
+      createMsg();
+      appendLog(" DEBUG\n Name:");
+      appendLog(name);
+      appendLog(" Age:");
+      appendLog(age);
+      logDebugMsg();
+    }
+
+    if(myLogger.canInfo()) {
+      createMsg();
+      appendLog(" INFO\n Name:");
+      appendLog(name);
+      appendLog(" Age:");
+      appendLog(age);
+      logInfoMsg();
+    }
+  }
+  
+  public void createMsg() { msg.setLength(0); }
+  public void appendLog(String str) { msg.append(str); }
+  public void appendLog(int i) { msg.append(i); }
+
+  public void logDebugMsg() { 
+    myLogger.debugMsg(msg.toString());
+  }
+
+  public void logInfoMsg() {
+    myLogger.infoMsg(msg.toString());
+  }
+}
+</pre></body></html>

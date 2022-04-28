@@ -1,0 +1,60 @@
+<HTML><HEAD>
+<TITLE>December 2000 Java Solutions/Increasing Java Performance/Listing 6</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 6: StringVector.java &#151; An example implementation of a String type collection</A></h4>
+<pre>
+/* Copyright (c) 2000 Stepping Stone Software Ltd, John Keyes */
+public class StringVector {
+
+  private String [] data;
+  private int count;
+
+  public StringVector() { this(10); // default size is 10 }
+
+  public StringVector(int initialSize) {
+    data = new String[initialSize];
+  }
+
+  public void add(String str) {
+    // ignore null strings
+    if(str == null) { return; }
+    ensureCapacity(count + 1);
+    data[count++] = str;
+  }
+
+  private void ensureCapacity(int minCapacity) {
+    int oldCapacity = data.length;
+    if (minCapacity &gt; oldCapacity) {
+      String oldData[] = data;
+      int newCapacity = oldCapacity * 2;
+      data = new String[newCapacity];
+      System.arraycopy(oldData, 0, data, 0, count);
+    }
+  }
+
+  public void remove(String str) {
+    if(str == null) { return // ignore null str }
+    for(int i = 0; i &lt; count; i++) {       
+      // check for a match
+      if(data[i].equals(str)) {
+    System.arraycopy(data,i+1,data,i,count-1); // copy data 
+        // allow previously valid array element be gc'd
+        data[--count] = null;
+    return;
+      }
+    }
+  }
+
+  public final String getStringAt(int index) {
+    if(index &lt; 0) { return null; }      
+    else if(index &gt; count) { 
+       return null; // index is &gt; # strings
+    }
+    else { return data[index]; // index is good }
+  }
+
+  // not shown: size(), toStringArray()
+}
+</pre></body></html>

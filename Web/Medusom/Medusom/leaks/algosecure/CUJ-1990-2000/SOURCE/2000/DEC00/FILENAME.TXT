@@ -1,0 +1,143 @@
+Keywords: Dec2000, C, C++, image processing, adaptive filter, OpenGL,
+contour, array, multithreading 
+
+The code listings for the December 2000 issue of C/C++ Users Journal
+include source code for Dwayne Phillips' article, "Removing Image Noise
+with Adaptive Filters," Wenfei Wu's article, "Effective Contour Creation
+with OpenGL Texture Mapping," Giovanni Bavestrelli's article, "A Class
+Template for N-Dimensional Generic Resizable Arrays," and Mark
+Peterson's article, "Self Destructing Threads." Also included are
+listings from Pete Becker's column, "The Journeyman's Shop," Thomas
+Becker's column, "STL & Generic Programming," and Bobby Schmidt's
+column, "Uncaught Exceptions."
+
+*************************  FILE DESCRIPTION **********************************
+
+The following files are included in the disk:
+
+FILENAME		AUTHOR-NAME	    TITLE			       
+(Zip archive/
+subdirectory name)
+-------------------------------------------------------------------------------
+phillips                Dwayne Phillips     Removing Image Noise with
+                                            Adaptive Filters
+
+    cips.h              not shown in magazine, header file for
+                          C Image Processing System
+    filter.c            not shown in magazine, filter utility functions
+    imageio.c           not shown in magazine, image I/O routines
+    afilter.c           not shown in magazine, partially shown as
+                          Listings 1-4
+    addsub.c            not shown in magazine, routines to perform
+                          image addition and subtraction
+    mafilter.c          partially shown as Listing 5, main routine
+                          to excercise filters
+    mainas.c            not shown in magazine, contains main routine
+                          to perform image addition and subtraction
+    mfilter.c           not shown in magazine, contains main routine
+                          to call spatial filtering functions
+    noise.c             not shown in magazine, creates noise images
+                          from histograms
+    side.c              not shown in magazine, contains main routine
+                          to composite images side-by-side or up-and-down
+    dwmg.bat            not shown in magazine
+    dwms.bat            not shown in magazine
+    meang.bat           not shown in magazine
+    means.bat           not shown in magazine
+    medg.bat            not shown in magazine
+    meds.bat            not shown in magazine
+    mmsee.bat           not shown in magazine
+    mmseg.bat           not shown in magazine
+    mmses.bat           not shown in magazine
+    samg.bat            not shown in magazine
+    sams.bat            not shown in magazine
+
+wu                      Wenfei Wu           Effective Contour Creation
+                                            with OpenGL Texture Mapping
+
+    Complete source code -- files too numerous to list
+
+bavestre                Giovanni            A Class Template for
+                        Bavestrelli         N-Dimensional Generic Resizable
+                                            Arrays
+
+    Under subdirectory Array/Faster:
+
+    Array.h
+    Sample.cpp
+
+    Under subdirectoy Array/Fastest:
+
+    Array.h
+    Sample.cpp
+
+    Under subdirectory Array/Smaller:
+
+    Array.h
+    Sample.cpp
+
+    Under subdirectory Array/Standard
+
+    Array.h
+    Sample.cpp
+
+    Under subdirectory Array/Visualc
+
+    Array.h
+    Sample.cpp
+    Sample.dsp
+    Sample.dsw
+
+peterson                Mark Peterson       C/C++ Tip #4: Self Destructing
+                                            Threads
+
+    main.cpp                Contains definition of thread base class,
+                            "Hello, world" thread, and calling program
+
+pbecker                 Pete Becker         The Journeyman's Shop:
+                                            Trap Handlers, Sticky Bits,
+                                            and Floating-Point Comparisons
+
+   close.h                  Listing 1, A template for determining if
+                                       two floating-point values are
+                                       "close enough"
+
+   4bang.cpp                not shown in magazine, four-function floating-
+                              point calculator
+   fp.h                     not shown in magazine, floating-point
+                              emulator header
+   fp.cpp                   not shown in magazine, floating-point
+                              emulator implementation
+
+tbecker                 Thomas Becker       STL & Generic Programming:
+                                            Introduction to the STL
+
+   readchar.cpp             Listing 1, A function to read a character
+                                       from the console in Win32
+   find.h                   Listing 2, Implementation of the find algorithm
+                                       in a popular version of the C++
+                                       Standard library
+
+schmidt                 Bobby Schmidt       Uncaught Exceptions:
+                                            No No .NET
+
+    nonobj.cpp              Listing 1, Referencing a non-existent object
+    nested.cpp              Listing 2, Attempt at nested functions
+    noself.cpp              Listing 3, Preventing self initialization
+
+------------------------------------------------------------------------
+Web-only Articles
+
+alexandr                Andrei              Generic<Programming>:
+                        Alexandrescu &      Change the Way You Write
+                        Petru Marginean     Exception-Safe Code -- Forever
+
+    ScopeGuard.h        Header for ScopeGuard template
+    Janitor.h           A more general, but less efficient implementation
+                        of ScopeGuard that can be used to create objects
+                        as member variables, objects to be stored in
+                        vectors, and allocated on the heap
+
+austern                 Matt Austern        What are Allocators Good For?
+
+    malloc_allocator.h  Listing 1, A custom allocator based on malloc

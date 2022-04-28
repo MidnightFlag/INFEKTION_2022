@@ -1,0 +1,37 @@
+Keywords: supplement, Java, Reflection, animation, multithreading
+
+The code listings for the Java Solutions supplement to the August 2000
+C/C++ Users Journal include source code for Jim Lawless' article, "Using
+the Java Core Reflection API," and Pat Paternostro's article, "Java
+Animation Techniques."
+ 
+*************************  FILE DESCRIPTION **********************************
+
+The following files are included in the disk:
+
+FILENAME		AUTHOR-NAME	    TITLE			       
+(Zip archive/
+subdirectory name)
+-------------------------------------------------------------------------------
+lawless                 Jim Lawless         Using the Java Core 
+                                            Reflection API
+
+    ErrTest.java        Listing 1, Tests the example driver classes
+    DynTest.java        Listing 2, Tests dynamic loading of driver classes
+    ReflectTest.java    Listing 3, Exercises the Method and Field classes
+    Script.java         Listing 4, The Script class, a simple script
+                                   interpreter
+    Guess.java          Listing 5, Simple "guess a random number game" with
+                                   debug scripting support
+    scr.prop            Figure 1, Properties for the script example
+    ConError.java       not shown in magazine
+    DynTest.prop        not shown in magazine
+    ErrorBase.java      not shown in magazine
+    GUIError.java       not shown in magazine
+
+paternos                Pat Paternostro     Java Animation Techniqes
+
+    BouncingBallApplet.java     Listing 1, Bouncing Ball Applet
+    BouncingBall.java           Listing 2, Bouncing Ball Application
+    readme.txt                  Extra discussion of thread synchronization
+                                issues

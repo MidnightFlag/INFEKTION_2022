@@ -1,0 +1,92 @@
+<HTML>   
+     <HEAD>
+<TITLE>November 2000/Extracting Data from X-Y Plots</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocnov.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   Scientific Numerical</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Extracting Data from X-Y Plots</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Rainer Thierauf</FONT></H3>
+
+<BLOCKQUOTE>
+<p>Scanners now input text with reasonable accuracy &#151; why not graphical data as well?</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+
+<H4><FONT COLOR="#000080">Introduction</FONT></H4>
+
+<p>It is often necessary for scientists working in their field's theoretical branch to understand data that their colleagues from the experimental branch have measured. To "understand" data, a theoretician usually works from a theoretical model and tries to derive a mathematical function that fits the experimental data. If there is a poor fit between the data and the function, then the model is apparently incorrect and needs either to be improved upon or entirely discarded. On the other hand, if the fit is good, then the model is vindicated and the data is "understood" within that theory.</p>
+<p>Experimental data is usually published in the form of a diagram such as shown in <a href="fig1.htm">Figure 1</a>. Theoreticians, however, prefer to have experimental data available in raw format, listing the x and y values of the data points, such as shown below:</p>
+
+<pre>
+16.7 81.4
+19.3 45.7
+22.6 24.6
+25.6 18.8
+28.4 17.6
+...
+</pre>
+
+<p>The above table lists the first five data points (from the left) shown in <a href="fig1.htm">Figure 1</a>. The theoretician needs the numerical values in order to compare theory (i.e., the mathematical function derived from the model) to fact (the experimental data). Extracting the data as accurately as possible from a diagram is a cumbersome and difficult task, and is usually delegated to a graduate student. As a graduate student in theoretical physics, I had to do this many times. When I asked fellow (suffering) graduate students for the best approach, they suggested the following algorithm:</p>
+<OL><LI>Use a photocopier to enlarge the diagram.
+<LI>Select a data point from the diagram and project it onto the y axis, yielding the y value of the data point.
+<LI>Repeat step 2 for the x axis, yielding the x value of the data point.
+<LI>Repeat steps 2 and 3 for the error bars (if any) of the data point.
+<LI>Repeat steps 2, 3, and 4 for all data points in the diagram.</OL>
+
+<p>I have run across diagrams that contained 50 or more data points, error bars being the rule rather than the exception. Such diagrams make data extraction a highly repetitive and mind-numbing job. Just the kind of job meant for computers.</p>
+
+<H4><FONT COLOR="#000080">Data Extraction with SCANDAT</FONT></H4>
+
+<p>When I was a graduate student, I wrote a program called SCANDAT, which implements the data extraction algorithm presented above. SCANDAT is a Windows MDI (Multiple-Document Interface) application. It uses MFC (Microsoft Foundation Classes) mostly for the MFC <B>CScrollView</B> class, which greatly simplifies the task of displaying the diagram in the client window. SCANDAT takes advantage of the device coordinate system of the client window and sets up a mapping between this coordinate system and the physical coordinate system of the diagram under consideration. When used with care, SCANDAT can save a great deal of time and extract data more precisely than the manual method, especially when logarithmic scales are involved (as in <a href="fig1.htm">Figure 1</a>).</p>
+<p>SCANDAT begins by displaying an empty document. As the first step, the user imports a diagram (menu selection: Edit-&gt;Import Bitmap), which was presumably scanned from a publication. Only device-independent bitmaps (Windows bitmaps, <B>*.BMP</B>) are supported. Initially, SCANDAT displays the bitmap to scale. The user can choose to magnify the diagram (menu selection: View-&gt;Zoom). In fact, I recommend using magnification for all of SCANDAT's operations, as this improves the accuracy of the extracted data.</p>
+<p>In the second step, the user sets up the mapping between the device and the physical coordinate system. To this end, the user defines the physical axes by marking two points on each axis. These defining points are labeled x_A, x_B, y_A, and y_B. The user begins by selecting "Define x_A" from the Edit menu and then moves the mouse to a tick mark on the physical x axis and left-clicks there. A dialog pops up, into which the user enters the physical value for the selected point, which can be read right off the tick mark itself. Point x_A is now defined. The user continues in the same way for points x_B, y_A, and y_B, each time selecting the proper item from the Edit menu, left-clicking the axis point and entering its physical value into the pop-up dialog. I recommend selecting the two points defining each axis as far apart as possible from each other. This improves accuracy.</p>
+<p>If either one or both of the axes use a logarithmic scale, the user needs to check the appropriate menu item from the Options menu (menu selection: Options-&gt;x log scale and Options-&gt;y log scale). SCANDAT records device and physical coordinates of the selected points, thereby setting the transformation scale between the device and the physical coordinate system. Note that both physical axes can now be expressed as linear functions in the device coordinate system. The general form for these functions is:</p>
+
+<pre>
+y<SUB>d</SUB>(x<SUB>d</SUB>) = m*x<SUB>d</SUB> + c                (1)
+</pre>
+
+<p>where <B>x<SUB>d</SUB></B> and <B>y<SUB>d</SUB></B> are device coordinates along one of the physical axes. The above equation describes a line in the device coordinate system. The coefficients <B>m</B> and <B>c</B> can be expressed entirely in terms of the device coordinates of the two points (<B>A</B> and <B>B</B>) defining the axis:</p>
+
+<pre>
+m = (B.y<SUB>d</SUB> - A.y<SUB>d</SUB>)/(B.x<SUB>d</SUB> - A.x<SUB>d</SUB>)  (2)
+c = A.y<SUB>d</SUB> + A.x<SUB>d</SUB>*m                (3)
+</pre>
+
+<p>where <B>A.x<SUB>d</SUB></B> and <B>B.x<SUB>d</SUB></B> are the x device coordinates and <B>A.y<SUB>d</SUB></B> and <B>B.y<SUB>d</SUB></B> are the y device coordinates of points <B>A</B> and <B>B</B>.</p>
+<p>During the third and final step, the user acquires the data. The user initiates this step by selecting the menu item Edit-&gt;Acquire Data and then left-clicks each data point in turn. The status bar at the bottom of the application window displays the device and physical coordinates of the current mouse position during this step. If the data points have no attached error bars (menu items Options-&gt;x error bars and Options-&gt;y error bars unchecked), then each mouse click marks one data point. At the position of the click, SCANDAT draws a small circle to mark the selection.</p>
+<p>If one error bar option has been selected, the tip of the error bar must be clicked after its data point. SCANDAT draws a line from the data point to the tip of the error bar. If both error bar options have been selected, the first click marks the data point; the second and third clicks mark the tips of the x and y error bars. Note that the error bar options refer only to the data points marked after the checking of the option. Therefore, it is possible to mark data points with and without error bars in the same diagram. Marking points and error bars can be undone and redone (menu selections: Edit-&gt;Undo and Edit-&gt;Redo).</p>
+<p>Once all data points have been marked, the user saves the data points to an ASCII file (menu selection: File-&gt;Export Data). The format for each data point is:</p>
+
+<pre>
+&lt;x-value&gt; &lt;y-value&gt; [&lt;dx&gt; &lt;dy&gt;]
+</pre>
+
+<p>where <B>dx</B> and <B>dy</B> are the sizes of the error bars (if any) in x and y direction. This is the data format I have found to be most useful. The source code (method <B>OnFileExport</B> of class <B>CScanDoc</B>) can easily be modified to support other formats.</p>
+<p>Some diagrams contain multiple series of data points that the user may want to extract to different files. In this case, the user should work with multiple documents, one for each series of data points.</p>
+<p>SCANDAT supports MFC serialization. This means that the user can save a SCANDAT-type document and reopen it later. The SCANDAT-type document contains all information entered by the user, such as the imported bitmap itself, the scales, the selected options, and the data points marked by the user. The opening of a SCANDAT-type document, however, should not be confused with the import of a bitmap <I>into</I> a document.</p>
+
+<H4><FONT COLOR="#000080">Implementation</FONT></H4>
+
+<p>SCANDAT sets up a 2-D coordinate transformation between the device coordinates of a data point and its physical coordinates. If you're interested in the math, see the sidebar <a href="sidebar.htm">"Walking through the Math</a>." The calculations are implemented by class <B>CAxis</B>, which represents an abstraction of a physical axis. <a href="list1.htm">Listing 1</a> shows the interface to <B>CAxis</B>, which consists mostly of <B>get</B> and <B>set</B> functions (omitted in the listing) to manipulate the private data members.</p>
+<p>The methods that actually do something are <B>SetScale</B> and <B>GetPhysValue</B>. <B>SetScale</B> sets up the mapping between the device coordinate and physical coordinate system. <B>GetPhysVal</B> calculates the physical value of data point <B>D</B> (input parameter) for the axis upon which the method was called. <B>GetPhysVal</B> calls two private member functions, <B>project_data_point</B> and <B>get_physical_value</B>. The first projects a data point onto an axis and determines the device coordinates of that projected point. The second calculates the physical coordinate of the projected point along the axis, given its device coordinates. <a href="list2.htm">Listing 2</a> shows the source code for these methods.</p>
+<p>Note that <B>SetScale</B> employs a trick to handle the possibility of division by zero. This can occur if the device x coordinates of the axis defining points are identical. This means that the slope of the corresponding axis is infinity. In other words, that axis is a vertical line. The trick in this case consists of replacing infinity with a very large number. This saves me from having to check for this special case at every step. Of course it introduces a certain amount of inaccuracy. This inaccuracy, however, disappears within the overall inaccuracy of the extraction, which I estimate at about one percent. Physicists use this kind of trick (some call it "Epsilontik") all the time, making mathematicians cringe.</p>
+<p>While MFC supports the loading of bitmap resources stored within the executable, MFC does not provide support for reading and writing bitmap files. For this purpose, I created a bare-bones bitmap class <B>CBMap</B>, which does just that. This class, as well as the full source code for SCANDAT, is provided in the <I>CUJ</I> online archives (see <B>www.cuj.com/code</B>).</p>
+
+<H4><FONT COLOR="#000080">Conclusion</FONT></H4>
+
+<p>SCANDAT provides a quick mechanism to extract data from (scanned) diagrams. When used carefully, users can achieve a one percent accuracy level, meaning that the data extracted with SCANDAT deviates by one percent or less from the original data. At this accuracy level, a reproduction of the original diagram using SCANDAT data cannot be distinguished from the original with the naked eye. The same could not be said of my best manual efforts. This accuracy level certainly allows theorists to use SCANDAT data when comparing theory to experiment. Furthermore, it allows theorists to publish their theoretical function and the SCANDAT extracted data in the same diagram.</p>
+
+<H4><FONT COLOR="#000080">Acknowledgements</FONT></H4>
+
+<p>The original version of SCANDAT was written in 1993 while I was a graduate student at the Institute of Theoretical Physics in Tuebingen, Germany. That application was developed using Borland Turbo C/C++ v3.1 for Windows 3.1. I would like to thank my former fellow graduate student Detlev Bueckers (Detlev, if you are reading this, get in touch with me), who pointed out that bitmaps can easily be displayed within a Windows application and who gave me my first introduction to Windows programming. Without his help, I would still be doing data extraction the hard way. </p>
+
+<p><i><B>Rainer Thierauf</B> has a Ph.D. in nuclear physics from the University of Tuebingen, Germany. He currently works as an independent contractor for COMSYS in Beaverton, Oregon. He can be reached at <B>rathierauf@aol.com</B>.</i></p>
+
+<h4><a href="../../../source/2000/nov00/thieraf.zip">Get Article Source Code</a></h4>
+
+</blockquote></body></html>

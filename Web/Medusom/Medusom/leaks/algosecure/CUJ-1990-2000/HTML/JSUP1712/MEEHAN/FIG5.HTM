@@ -1,0 +1,55 @@
+<HTML><HEAD>
+<TITLE>December 1999 Java Solutions/Handling Non-User Events in Swing/Figure 5</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 5:	Constructs user interface for application shown in <a href="fig3.htm">Figure 3</a></A></h4>
+<pre>
+// Call the build ui method and start the communications thread
+SwingClient() {
+   super("Swing Multi-threading");
+   buildUI();
+   comms.start();
+}
+
+// Build the user interface and register the cell renderer with 
+// the status display list component.
+void buildUI() {
+
+   // ... class StatusCellRenderer (not shown)
+
+   //menubar
+   exit.addActionListener
+      (
+       new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+             comms.exit();
+             System.exit(0);
+          }
+       }
+      );
+   fileMenu.add(exit);
+   menuBar.add(fileMenu);
+   setJMenuBar(menuBar);
+
+   //main panel
+   panel.setLayout(new BorderLayout());
+   panel.add(scroller,"Center");
+
+   // colors messages 
+   list.setCellRenderer(new StatusCellRenderer()); 
+   list.setBackground(Color.darkGray);
+      
+   getContentPane().add(panel);
+}
+
+// Create an instance of SwingClient and show it
+static public void main (String args[]) {
+   SwingClient client = new SwingClient();
+   client.pack();
+   client.show();
+}
+
+</pre>
+</BODY>
+</HTML>

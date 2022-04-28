@@ -1,0 +1,408 @@
+<HTML>   
+     <HEAD>
+<TITLE>October 2000 C++ Experts Forum/Generic&lt;Programming&gt;</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../18.10/tococt.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   C++ Experts Forum</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Generic&lt;Programming&gt;: Mappings between Types and Values</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Andrei Alexandrescu</FONT></H3>
+
+<HR>
+<BLOCKQUOTE>
+
+<P>The term "conversion" in C++ describes the process of obtaining a value of one type from a value of another type. However, sometimes you need a different kind of conversion: you might need to obtain a <I>value</I> when you have a <I>type</I>, or the other way around. Such conversions are unnatural to C++ because the world of types and that of values are separated by a thick boundary. In certain circumstances, however, you need to cross the border between the two, and this column discusses how to do that.<P>
+
+<H4><FONT COLOR="#000080">Mapping Integers to Types</FONT></H4>
+
+<P>A surprisingly simple template can be very helpful to many generic programming idioms:<P>
+
+<pre>
+template &lt;int v&gt;
+struct Int2Type
+{
+    enum { value = v };
+};
+</pre>
+
+<P><B>Int2Type</B> "generates" a distinct type for each distinct constant integral value passed. This is because different template instantiations are distinct types, so <B>Int2Type&lt;0&gt;</B> is different from <B>Int2Type&lt;1&gt;</B> and so on. In addition, the value that generated the type is "saved" in the <B>enum</B> member <B>value</B>.<P>
+<P>You might use <B>Int2Type</B> whenever you need to quickly "typify" an integral constant. Say, for example, that you design a <B>NiftyContainer</B> class template.<P>
+
+<pre>
+template &lt;typename T&gt;
+class NiftyContainer
+{
+    ...
+};
+</pre>
+
+<P><B>NiftyContainer</B> stores pointers to <B>T</B>. In some member functions of <B>NiftyContainer</B>, you need to clone objects of type <B>T</B>. If <B>T</B> is a non-polymorphic type, you would say:<P>
+
+<pre>
+T* pSomeObj = ...;
+T* pNewObj = new T(*pSomeObj);
+</pre>
+
+<P>With polymorphic types, the story is a bit more complicated, so let's say you establish the convention that all polymorphic types to be used with <B>NiftyContainer</B> must define a <B>Clone</B> virtual function. You can then clone objects like so:<P>
+
+<pre>
+T* pNewObj = pSomeObj-&gt;Clone();
+</pre>
+
+<P>Because your container must be able to accommodate both types, you must implement both cloning algorithms and select the appropriate one at compile time. You then communicate whether or not a type is polymorphic through a boolean (non-type) template parameter of <B>NiftyContainer</B> and rely on the programmer to pass the correct flag.<P>
+
+<pre>
+template &lt;typename T, bool isPolymorphicWithClone&gt;
+class NiftyContainer
+{
+    ...
+};
+
+NiftyContainer&lt;Widget, true&gt; widgetBag;
+NiftyContainer&lt;double, false&gt; numberBag;
+</pre>
+
+<P>If the type you store in <B>NiftyContainer</B> is not polymorphic, you can optimize many member functions of <B>NiftyContainer</B> because you can count on constant object size and value semantics. In all these member functions, you need to select one algorithm or another depending on the <B>isPolymorphic</B> template argument.<P>
+<P>At first glance, it seems like you can use a mere <B>if</B> statement.<P>
+
+<pre>
+template &lt;typename T, bool isPolymorphic&gt;
+class NiftyContainer
+{
+    ...
+    void DoSomething(T* pObj)
+    {
+        if (isPolymorphic)
+        {
+            ... polymorphic algorithm ...
+        }
+        else
+        {
+            ... non-polymorphic algorithm ...
+        }
+    }
+};
+</pre>
+
+<P>The problem is that the compiler won't let you get away with this code. For example, if the polymorphic algorithm uses <B>pObj-&gt;Clone</B>, then <B>NiftyContainer::DoSomething</B> does not compile for any type that doesn't define a member function <B>Clone</B>. True, it is obvious at compile time what branch of the <B>if</B> statement executes. However, that doesn't matter to the compiler, which diligently tries to compile both branches, even if the optimizer will later eliminate the dead code. If you try to call <B>DoSomething</B> for <B>NiftyContainer&lt;int, false&gt;</B>, the compiler stops at the <B>pObj-&gt;Clone</B> call and says, "huh?"<P>
+<P>But wait, there's more. If <B>T</B> is a polymorphic type, again the code might not compile. Assume <B>T</B> disables its copy constructor by making it <B>private</B> or <B>protected</B> &#151; as a well-behaved polymorphic class should do. Then, if the non-polymorphic code branch attempts <B>new T(*pObj)</B>, the code fails to compile.<P>
+<P>It would be nice if the compiler didn't bother with compiling dead code, but that's not the case, so what would be a satisfactory solution?<P>
+<P>As it turns out, there are a number of solutions, and <B>Int2Type</B> provides a particularly clean one. It can transform ad-hoc the boolean value <B>isPolymorphic</B> into two distinct types corresponding to <B>isPolymorphic</B>'s <B>true</B> and <B>false</B> values. Then you can use <B>Int2Type&lt;isPolymorphic&gt;</B> with simple overloading, and voil&agrave;!<P>
+<P>The incarnation of the "integral typifying" idiom is shown below.<P>
+
+<pre>
+template &lt;typename T, bool isPolymorphic&gt;
+class NiftyContainer
+{
+private:
+    void DoSomething(T* pObj, Int2Type&lt;true&gt;)
+    {
+        ... polymorphic algorithm ...
+    }
+    void DoSomething(T* pObj, Int2Type&lt;false&gt;)
+    {
+        ... non-polymorphic algorithm ...
+    }
+public:
+    void DoSomething(T* pObj)
+    {
+        DoSomething(pObj, Int2Type&lt;isPolymorphic&gt;());
+    }
+};
+</pre>
+
+<P>The code is simple and to the point. <B>DoSomething</B> calls a private overloaded function. Depending on the value of <B>isPolymorphic</B>, one of the two private overloads gets called, completing the dispatch. The dummy temporary variable of type <B>Int2Type&lt;isPolymorphic&gt;</B> isn't even used; it serves only for propagating type information.<P>
+
+<H4><FONT COLOR="#000080">Not So Fast, Skywalker!</FONT></H4>
+
+<P>Seeing the above, you might think there's a smarter way, by using some of those template specialization tricks. Why is that dummy temporary necessary? There's got to be a better way. Surprisingly, however, <B>Int2Type</B> is very hard to beat in simplicity, generality, and effectiveness.<P>
+<P>One attempt could involve specializing <B>NiftyContainer::DoSomething</B> for any <B>T</B> and the two possible values of <B>isPolymorphic</B>. This is the charter of partial template specialization, right?<P>
+
+<pre>
+template &lt;typename T&gt;
+void NiftyContainer&lt;T, true&gt;::DoSomething(T* pObj)
+{
+    ... polymorphic algorithm ...
+}
+
+template &lt;typename T&gt;
+void NiftyContainer&lt;T, false&gt;::DoSomething(T* pObj)
+{
+    ... non-polymorphic algorithm ...
+}
+</pre>
+
+<P>As nice as the code above might look, alas, it's not legal. There is no such thing as partially specializing one member function of a class template. You can partially specialize all of <B>NiftyContainer</B>:<P>
+
+<pre>
+template &lt;typename T&gt;
+class NiftyContainer&lt;T, false&gt;
+{
+    ... non-polymorphic NiftyContainer ...
+};
+</pre>
+
+<P>You also can totally specialize <B>DoSomething</B>:<P>
+
+<pre>
+template &lt;&gt;
+void NiftyContainer&lt;int, false&gt;::DoSomething(int* pObj)
+{
+    ... non-polymorphic algorithm ...
+}
+</pre>
+
+<P>but, oddly, you cannot do anything in between <a href="#note1">[1]</a>.<P>
+<P>Another solution might involve using traits <a href="#note2">[2]</a> and implementing <B>DoSomething</B> outside <B>NiftyContainer</B> (in the traits class). This can be awkward as it segregates part of <B>DoSomething</B>'s implementation.<P>
+<P>A third solution that attempts to still use traits, but tries to keep everything together, would be to define the traits class inside <B>NiftyContainer</B> as a private inner class. To make a long story short, this works, but by the time you manage to implement it, you come to realize just how much better the <B>Int2Type</B>-based idiom is. And maybe the nicest part of it is that you can actually put the little <B>Int2Type</B> template in a library and document its intended use.<P>
+
+<H4><FONT COLOR="#000080">Type-to-Type Mappings</FONT></H4>
+
+<P>Consider the function below:<P>
+
+<pre>
+template &lt;class T, class U&gt;
+T* Create(const U&amp; arg)
+{
+    return new T(arg);
+}
+</pre>
+
+<P><B>Create</B> makes a new object, passing an argument to its constructor.<P>
+<P>Now say there is a rule in your application: objects of type <B>Widget</B> are legacy code and must take two arguments upon construction, the second being a fixed value like -1. You don't have this problem in all classes derived from <B>Widget</B>.<P>
+<P>How can you specialize <B>Create</B> so that it treats <B>Widget</B> differently from all other types? You cannot partially specialize a function; that is, you can't say something like:<P>
+
+<pre>
+// Illegal code - don't try this at home
+template &lt;class U&gt;
+Widget* Create&lt;Widget, U&gt;(const U&amp; arg)
+{
+    return new Widget(arg, -1);
+}
+</pre>
+
+<P>In absence of partial specialization of functions, the only tool we have is, again, overloading. We might pass a dummy object of type <B>T</B> and rely on overloading.<P>
+
+<pre>
+// An implementation of Create relying on overloading
+template &lt;class T, class U&gt;
+T* Create(const U&amp; arg, T)
+{
+    return new T(arg);
+}
+template &lt;class U&gt;
+Widget* Create(const U&amp; arg, Widget)
+{
+    return new Widget(arg, -1);
+}
+// Use Create()
+String* pStr = Create("Hello", String());
+Widget* pW = Create(100, Widget());
+</pre>
+
+<P>The second parameter of <B>Create</B> serves only for selecting the appropriate overload. It also is the trouble with this would-be idiom: you waste time constructing an arbitrarily complex object that you don't use. Even if the optimizer might help you with that, nothing helps if <B>Widget</B> disables its default constructor.<P>
+<P>The proverbial extra level of indirection can help here, too. An idea is to pass <B>T*</B> instead of <B>T</B> as the dummy template parameter. At runtime, you can always pass the null pointer, which is reasonably cheap to construct.<P>
+
+<pre>
+template &lt;class T, class U&gt;
+T* Create(const U&amp; arg, T*)
+{
+    return new T(arg);
+}
+template &lt;class U&gt;
+Widget* Create(const U&amp; arg, Widget*)
+{
+    return new Widget(arg, -1);
+}
+// Use Create()
+String* pStr = Create("Hello", (String*)0);
+Widget* pW = Create(100, (Widget*)0);
+</pre>
+
+<P>This way is at best confusing for <B>Create</B>'s users. To eternalize this solution as an idiom, we can use a little template similar to <B>Int2Type</B>.<P>
+
+<pre>
+template &lt;typename T&gt;
+struct Type2Type
+{
+    typedef T OriginalType;
+};
+</pre>
+
+<P>Now you can write:<P>
+
+<pre>
+template &lt;class T, class U&gt;
+T* Create(const U&amp; arg, Type2Type&lt;T&gt;)
+{
+    return new T(arg);
+}
+template &lt;class U&gt;
+Widget* Create(const U&amp; arg, Type2Type&lt;Widget&gt;)
+{
+    return new Widget(arg, -1);
+}
+// Use Create()
+String* pStr = Create("Hello", Type2Type&lt;String&gt;());
+Widget* pW = Create(100, Type2Type&lt;Widget&gt;());
+</pre>
+
+<P>This certainly is more explanatory than an alternative solution. Again, you can include <B>Type2Type</B> in a library and document its intended use.<P>
+
+<H4><FONT COLOR="#000080">Detecting Convertibility and Inheritance</FONT></H4>
+
+<P>In implementing template functions and classes, a question that arises every so often is: given two arbitrary types <B>B</B> and <B>D</B>, how can you detect whether <B>D</B> inherits from <B>B</B> or not?<P>
+<P>Discovering such relationships at compile time is key to implementing advanced optimizations in generic libraries. In a generic function, you can rely on an optimized algorithm if a class implements a certain interface, without having to apply a <B>dynamic_cast</B> for that.<P>
+<P>Detecting inheritance relies on a more general mechanism, that of detecting convertibility. The more general problem that we will solve together is how to detect whether an arbitrary type <B>T</B> supports automatic conversion to an arbitrary type <B>U</B>?<P>
+<P>There is a solution to this problem, and it relies on <B>sizeof</B>. (You thought the only use for <B>sizeof</B> was as an argument to <B>memset</B>, huh?) There is a surprising amount of power in <B>sizeof</B>; this is because you can apply <B>sizeof</B> to any expression, no matter how complex, and <B>sizeof</B> returns its size, without actually evaluating that expression at runtime. This means that <B>sizeof</B> is aware of overloading, template instantiation, conversion rules &#151; everything that can take part in a C++ expression. In fact, <B>sizeof</B> is a complete facility for deducing the type of an expression; eventually, <B>sizeof</B> throws away the expression and returns you only the size of its result <a href="#note3">[3]</a>.<P>
+<P>The idea of conversion detection relies on using <B>sizeof</B> with overloaded functions. You cunningly provide two overloads of a function: one accepts the type to convert to (<B>U</B>), and the other accepts just about anything else. You call the overloaded function with <B>T</B>, whose convertibility to <B>U</B> you  want to determine. If the function that accepts a <B>U</B> gets called, you know that <B>T</B> is convertible to <B>U</B>; if the "fallback" function gets called, then <B>T</B> is not convertible to <B>U</B>.<P>
+<P>To detect which function gets called, you arrange the two overloads to return types of different sizes, and discriminate with <B>sizeof</B>. The types themselves do not matter, as long as they have different sizes.<P>
+<P>Let's first create two types of different sizes. (Apparently, <B>char</B> and <B>long double</B> do have different sizes, but that's not guaranteed by the standard.) A foolproof scheme would be the following:<P>
+
+<pre>
+typedef char Small;
+struct Big { char dummy[2]; };
+</pre>
+
+<P>By definition, <B>sizeof(Small)</B> is one. Also, the size of <B>Big</B> is unknown, but it's for sure greater than one, which is the only guarantee we need.<P>
+<P>Next, we need the two overloads. One accepts a <B>U</B> and returns, say, a <B>Small</B>.<P>
+
+<pre>
+Small Test(U);
+</pre>
+
+<P>How do you write a function that accepts "anything else"? A template is not a solution because the template would qualify as the best match, thus hiding the conversion. We need a worse match than an automatic conversion. A quick look through the conversion rules applied for a function call gives the ellipsis match, which is the worst of all &#151; the bottom of the list. That's exactly what the doctor prescribed.<P>
+
+<pre>
+Big Test(...);
+</pre>
+
+<P>(Calling a function with ellipsis with a C++ object has undefined results, but who cares? Nobody actually calls the function. It's not even implemented.)<P>
+<P>Now we need to apply <B>sizeof</B> to the call of <B>Test</B>, passing it a <B>T</B>:<P>
+
+<pre>
+const bool convExists =
+    sizeof(Test(T())) == sizeof(Small);
+</pre>
+
+<P>That's it! The call of <B>Test</B> gets a default-constructed object, <B>T</B>, and then <B>sizeof</B> extracts that expression's result size. It can be either <B>sizeof(Small)</B> or <B>sizeof(Big)</B>, depending on whether the compiler found a conversion or not.<P>
+<P>There is one little problem. What if <B>T</B> makes its default constructor private? In this case, the expression <B>T</B> fails to compile and so does all of our scaffolding. Fortunately, there is a simple solution &#151; just use a strawman function returning a <B>T</B>. In this case, the compiler is happy and so are we.<P>
+
+<pre>
+T MakeT();
+const bool convExists =
+    sizeof(Test(MakeT())) == sizeof(Small);
+</pre>
+
+<P>(By the way, isn’t it nifty just how much you can do with functions, like <B>MakeT</B> and <B>Test</B>, which not only don’t do anything, but which don’t even really exist at all?)<P>
+<P>Now that we have it working, let's package everything in a class template that hides all the details of type deduction and exposes the result only.<P>
+
+<pre>
+template &lt;class T, class U&gt;
+class Conversion
+{
+    typedef char Small;
+    struct Big { char dummy[2]; };
+    Small Test(U);
+    Big Test(...);
+    T MakeT();
+public:
+    enum { exists = 
+        sizeof(Test(MakeT())) == sizeof(Small) };
+};
+</pre>
+
+<P>Now you can test the <B>Conversion</B> template class by writing:<P>
+
+<pre>
+int main()
+{
+    using namespace std;
+    cout
+        &lt;&lt; Conversion&lt;double, int&gt;::exists &lt;&lt; ' '
+        &lt;&lt; Conversion&lt;char, char*&gt;::exists &lt;&lt; ' '
+        &lt;&lt; Conversion&lt;size_t, vector&lt;int&gt; &gt;::exists &lt;&lt; ' ';
+}
+</pre>
+
+<P>This little program prints "1 0 0". Note that, although <B>std::vector</B> does implement a constructor taking a <B>size_t</B>, the conversion test returns zero because that constructor is <B>explicit</B>.<P>
+<P>We can implement two more constants inside <B>Conversion</B>:<P>
+
+<UL>
+<LI><B>exists2Way</B>, which says whether there are conversions between <B>T</B> and <B>U</B> in both directions. This is the case with <B>int</B> and <B>double</B>, for example, but various user-defined types can implement such two-way conversions.
+<LI><B>sameType</B>, which is true if <B>T</B> and <B>U</B> are the same type.
+</UL>
+<p>
+
+<pre>
+template &lt;class T, class U&gt;
+class Conversion
+{
+    ... as above ...
+    enum { exists2Way = exists &amp;&amp; 
+        Conversion&lt;U, T&gt;::exists };
+    enum { sameType = false };
+};
+</pre>
+
+<P>We implement <B>sameType</B> through a partial specialization of <B>Conversion</B>.<P>
+
+<pre>
+template &lt;class T&gt;
+class Conversion&lt;T, T&gt;
+{
+public:
+    enum { exists = 1, exists2Way = 1, sameType = 1 };
+};
+</pre>
+
+<P>Hey, what about that inheritance detection thing? The nicest part is, once you’ve got the conversion thing, detecting inheritance is easy.<P>
+
+<pre>
+#define SUPERSUBCLASS(B, D) \
+    (Conversion&lt;const D*, const B*&gt;::exists &amp;&amp; \
+    !Conversion&lt;const B*, const void*&gt;::sameType)
+</pre>
+
+<P>Obvious? Maybe still blurred a bit. <B>SUPERSUBCLASS(B, D)</B> evaluates to true if <B>D</B> inherits from <B>B</B> publicly, or if <B>B</B> and <B>D</B> represent the same type. <B>SUPERSUBCLASS</B> does its job by evaluating the convertibility from a const <B>D*</B> to a <B>const B*</B>. There are only three cases when <B>const D*</B> converts implicitly to <B>const B*</B>:<P>
+
+<UL>
+<LI><B>B</B> is the same type as <B>D</B>;
+<LI><B>B</B> is an unambiguous public base of <B>D</B>;
+<LI><B>B</B> is <B>void</B>.</UL>
+
+<P>The last case is eliminated by the second test. Accepting the first case (<B>B</B> same as <B>D</B>) is useful in practice, because for practical purposes you can often consider that a class is its own superclass. If you need a stricter test, you can write it like so:<P>
+
+<pre>
+#define SUPERSUBCLASS_STRICT(B, D) \
+    (SUPERSUBCLASS(B, D) &amp;&amp; \
+    !Conversion&lt;const B, const D&gt;::sameType)
+</pre>
+
+<P>Why does the code add all those <B>const</B> modifiers? The reason is that you don't want the conversion test to fail due to <B>const</B> issues. Therefore, the code uses <B>const</B> all over the place; if template code applies <B>const</B> twice (to a type that's already <B>const</B>), the second <B>const</B> is ignored. In a nutshell, by using <B>const</B> in <B>SUPERSUBCLASS</B>, we're always on the safe side.<P>
+<P>Why <B>SUPERSUBCLASS</B> and not the cuter <B>BASE_OF</B> or <B>INHERITS</B>? For a very practical reason: with <B>INHERITS(B, D)</B>, I kept forgetting which way the test works &#151; does it test whether <B>B</B> inherits <B>D</B> or vice versa? <B>SUPERSUBCLASS(B, D)</B> makes it clearer (at least for me) which one is first and which one is second.<P>
+
+<H4><FONT COLOR="#000080">Conclusion</FONT></H4>
+
+<P>The single most important thing about the three idioms presented here is that they are reusable. You can write them in a library and let programmers use them, as opposed to asking them to grasp their intricate inner workings.<P>
+<P>Reusability of nontrivial techniques is important. Ask people to memorize a complicated technique that helps them do something that they can do in simpler, if a bit more tedious, ways; they won't use it. Give people a simple black box that does a little helpful wonder; they might like it and use it because it's in a way "free."<P>
+<P><B>Int2Type</B>, <B>Type2Type</B>, and especially <B>Conversion</B> belong to a generic utilities library. They extend the compile-time abilities of a programmer, by making important compile-time type inferences.<P>
+
+<H4><FONT COLOR="#000080">Acknowledgment</FONT></H4>
+
+<P>If Clint Eastwood asked me "Do you feel lucky?", I'd certainly say I do. This is my third article in a row that benefits from the direct attention, and the great advice, of Herb Sutter himself.<P>
+<P>Note: This article uses excerpts from Andrei Alexandrescu's upcoming book tentatively titled <I>Modern C++ Design</I> (Addison-Wesley, 2001).<P>
+
+<H4><FONT COLOR="#000080">Notes</FONT></H4>
+
+<P><a name="note1">[1]</a> There is no conceptual hitch to C++ supporting partial specialization of functions, a very desirable (in my opinion) feature.<P>
+<P><a name="note2">[2]</a> Andrei Alexandrescu. "Traits: The else-if-then of Types", <I>C++ Report</I> (April 2000).<P>
+<P><a name="note3">[3]</a> There is a proposal for adding a <B>typeof</B> operator to C++; that is, an operator returning the type of an expression. Having a <B>typeof</B> would make much template code easier to write and understand. Gnu C++ already implements <B>typeof</B> as an extension. Obviously, <B>typeof</B> and <B>sizeof</B> share the same backend, because <B>sizeof</B> has to compute the type anyway. <I>[Look for <a href="../../18.11/gibbons/gibbons.htm">Bill Gibbons’ article</a> in an upcoming issue of </I>CUJ<I>, where he will present a nifty way to create an (almost) natural <B>typeof</B> operator in today’s Standard C++. &#151; mb]</I><P>
+
+
+<p><i><b>Andrei Alexandrescu</b> is a Development Manager at RealNetworks Inc. (www.realnetworks.com), based in Seattle, WA. He may be
+contacted at andrei@metalanguage.com.</i></p>
+</BLOCKQUOTE></body></html>
+
+

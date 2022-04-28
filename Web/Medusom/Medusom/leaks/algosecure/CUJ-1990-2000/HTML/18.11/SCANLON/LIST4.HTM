@@ -1,0 +1,46 @@
+<HTML><HEAD>
+<TITLE>November 2000/Secure Web-Based Licensing/Listing 4</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 4: The GrantLicense method of the License Granting Authority COM object</A></h4>
+<pre>
+STDMETHODIMP 
+CCryptoLicense::GrantLicense(BSTR cookie, BSTR *license)
+{
+    long lCookie = 0;
+    char szLicense[64];
+    ZeroMemory(szLicense,64);
+    char szTmp[13];
+    ZeroMemory(szTmp,13);
+    unsigned short crc = 0;
+    
+    USES_CONVERSION;
+    
+    //Decrypt the cookie
+    Decrypt(W2A(cookie),"UnbreakableKey",szLicense, 64);
+    
+    //Validate the cookie's crc
+    sscanf(szLicense,"%08X%04X",&amp;lCookie,&amp;crc);
+    if (!crc || ComputeCRC(lCookie) != crc)
+    {
+        char err[]="Error: Cookie invalid\n";
+        Error(err);
+        *license = T2BSTR("0");
+        return E_FAIL;
+    }
+    
+    //Compute the new license
+    lCookie = lCookie + 30*86400;
+    
+    //Append a crc
+    sprintf(szTmp,"%08X%04X",lCookie,ComputeCRC(lCookie));
+    
+    //Encrypt the new license
+    ZeroMemory(szLicense,64);
+    Encrypt(szTmp,"UnbreakableKey",szLicense, 64);
+    *license = T2BSTR(szLicense);
+    
+    return S_OK;
+}
+</pre></body></html>

@@ -1,0 +1,36 @@
+<HTML><HEAD>
+<TITLE>December 1999 Java Solutions/Handling Non-User Events in Swing/Figure 9</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 9: The ConfirmTerminateTask class</A></h4>
+<pre>
+class ConfirmTerminateTask implements Runnable {
+   int result = JOptionPane.NO_OPTION;
+   String subSystem = null;
+
+   // Store the subsystem name for display
+   public void setSubSystem(String subSystem) {
+      this.subSystem = subSystem;
+   }
+       
+   // Did the user request subsystem termination?
+   boolean terminateTask() {
+      return (result == JOptionPane.YES_OPTION);
+   }
+      
+   // Build the complete message and display the option dialog.
+   // Store the user's choice.
+   public void run() {
+      StringBuffer buffer = new StringBuffer(subSystem);
+      buffer.append(" has failed. Switch off?");
+      result = 
+         JOptionPane.showConfirmDialog(SwingClient.this,
+            buffer.toString(), "Subsystem Failure",
+            JOptionPane.YES_NO_OPTION);
+   }
+}
+
+</pre>
+</BODY>
+</HTML>

@@ -1,0 +1,106 @@
+<HTML>   
+     <HEAD>
+<TITLE>September 2000 C++ Experts Forum/Conversations</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../18.09/tocsep.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   C++ Experts Forum</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Conversations:  So Who’s the Portable Coder? <a href="#note1">[1]</a></FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Jim Hyslop and Herb Sutter</FONT></H3>
+
+
+<HR>
+<BLOCKQUOTE>   
+
+<P>"Hi, buster." Jeannine came over and sat down across from me in the mess. "Hear any more rumors?"
+<P>I glanced at the time just to make sure, but I wasn’t due to go on for another half hour. "Hi, busted. No, not yet. They’re keeping a lid on it, whatever it is. You’re off watch early?"
+<P>"Brzenkowski couldn’t sleep, so he relieved me. I owe him one."
+<P>"Thoughtful of him," I agreed around another mouthful of lunch. "I really like him. He always does good work, makes sure it won’t affect other people, understands how he fits into the big picture. I wish we could keep working with him after planetfall next month. Everyone should be that professional."
+<P>"Most people are," Jeannine smiled. "You’re no slouch yourself."
+<P>"Actually," I chuckled, "it reminds me of Bob. You know, I’ve told you about him before, the other weird from my first job. Man, sometimes he’d do things that’d just make you fry a lobe. It got to the point where if someone did something dumb we’d say he ‘pulled a Bob.’ "
+<P>I proceeded to explain&#133;
+
+<hr>
+
+<P>A voice beside me said: "Hey, Junior, you broke the build."
+<P>I sighed silently and closed my eyes. I’d been on the job nearly two months and already decided I hated the Guru’s calling me "my apprentice" less than anything this rotten programmer, Bob, might call me – especially "Junior." I counted to ten, then answered without turning: "What are you talking about, Bob?"
+<P>"Your latest code checkin," Bob responded amiably, and sipped at his latt&eacute;. "My compiler barfs on it. It complains that an iterator is already defined. You broke the build, man. Better fix it before Her Holiness finds out." I winced; as inexperienced as I was, I knew that breaking the build was A Bad Thing. I could just imagine the Guru’s reaction: <I>Remember, my young apprentice, the second commandment of team membership: Thou shalt not break the build.</I>
+<P>"Okay, fine," I sighed again, audibly this time. "What part of the code are you talking about?"
+<P>Bob leaned over, hit a few keys, and pulled up a function that looked something like this:
+
+<pre>
+// OBJMAP is a typedef for a standard container
+void f( OBJMAP &amp;theMap )
+{
+    for( OBJMAP::iterator iter = theMap.begin();
+         iter != theMap.end();
+         ++iter ) {
+        // do something
+   }
+   // other code in here
+   for( OBJMAP::iterator iter = theMap.begin();
+        iter != theMap.end();
+        ++iter ) {
+       // do something else
+   }
+}
+</pre>
+
+<P>"What’s wrong with that?" I asked. "I checked it out in Stroustrup, and the iterator should go out of scope at the end of each loop <a href="#note2">[2]</a>." 
+<P>"Yeah, well, not with my compiler." Bob replied, picking at his teeth. "It complains that <B>iter</B> is already defined. Easy fix, though&#133; just get rid of the second declaration of <B>iter</B>. In fact, that was how my code originally read when <I>I</I> checked it in. Then you went and broke the build."
+<P>Then I understood. I had to be diplomatic because I was still on probation, though. "Bob," I said reasonably, "this has to compile on all the platforms we’re targeting. I put the second declaration in because <I>my</I> compiler complained about the second iterator being undefined, and that’s how it’s supposed to work, according to Stroustrup."
+<P>Bob seemed a little put off. "I don’t care about your newfangled compiler. I’ve been using mine for years and it’s never let me down. Your code doesn’t work."
+<P>"Bob. The code’s right. It compiles fine for me."
+<P>"So you got a buggy compiler. Not my fault, I’m just doing my work, I don’t care about other compilers," Bob shrugged again, more defensively.
+<P>A quiet voice behind us said: "I sense much fear in you."
+<P>I jumped a little; Bob jumped more, sloshing his latt&eacute;. The Guru was far too good at gliding up silently behind us, a tome in one hand as she always had.
+<P>The Guru shook her greying head slowly, frowning. "Fear leads to anger," she continued.
+<P>"Aw, cut it out. I’m not afraid of other compilers!" Bob said hotly, sucking the spilled latt&eacute; from his wrist. "I don’t care about them at all."
+<P>"Anger leads to hate. Hate&#133; leads to suffering."
+<P>"I’m suffering, all right," I muttered under my breath. "I’m just trying to write portable code. &#151; All right, Bob," I capitulated, anxious to be rid of him, "I’ll fix it so it works. Okay?"
+<P>"Like I said, <I>Junior</I>, just get rid of the second declaration." He glared once more, then turned and left.
+<P>Wendy gophered up from the next cubicle, watching him go. "So what’s <I>Bahb</I> complaining about this time?" she asked us. While the Guru stood nearby, having resumed reading in her tome, I showed Wendy the code and explained what Bob wanted to do. "Typical," Wendy snorted. "Give him a choice between implementing a portable solution, and a solution geared towards his compiler, he’ll unerringly choose the latter. His code is not portable, just like you said. Y’know, in this case, you don’t really need to declare a new iterator for each loop anyway. Just declare it once, before the first loop, and it’ll work on both compilers." She made some quick changes to the code:
+
+<pre>
+// OBJMAP is a typedef for a standard container
+void f(OBJMAP &amp;theMap)
+{
+    OBJMAP::iterator iter;
+    for( iter = theMap.begin();
+         iter != theMap.end();
+         ++iter ) {
+        // do something
+    }
+    // other code in here
+    for( iter = theMap.begin();
+         iter != theMap.end();
+         ++iter ) {
+    // do something else
+    }
+}
+</pre>
+
+<P>The Guru looked up from her reading and glanced at the solution. "Very wise, daughter." Wendy raised an eyebrow, but only a little; she was used to it. "And, as you implied, that is not the only solution. Another elegant one might be to avoid the iterator declarations entirely, and perhaps improve readability, by using <B>for_each</B> and expression templates, where possible <a href="#note3">[3]</a>. My apprentice," the Guru continued to me, "while it is important to know, understand, and obey the Holy Standard, it is also important to know your tools, even those that are Deviant. Bob is using a compiler that does not obey the scope of a variable declared in a for-init-statement. He cares not about portable code, as long as his own compiles."
+<P>"Hmm&#133;" I said, rubbing my chin. "Writing portable code is harder than I thought. So, we have to wait for a new release of Bob’s compiler before we can take advantage of the code I originally had?"
+<P>The Guru looked off in the distance for a moment. "I am not a prophet, I cannot see the future. However, this I do foresee: Portability issues will never truly disappear. Compilers will not all become Standards-conforming at the same rate. Some vendors may even leave outdated behavior in their compilers, in order not to break legacy code.
+<P>"Also, some compilers will introduce new features to extend the Standard. In and of itself, this is good, else would the language become stale, inflexible, and eventually die stagnant. Programs destined for only one platform may benefit from the new features. Using those non-Standard features in portable code, however, would be disastrous – and some novitiates, such as yourself, may inadvertently use them, without being aware of their non-portability. Do not come to love one compiler so much as to fear others. Fear is the path to the unportable."
+<P>She paused a moment, then turned and walked off. As she left, we could hear her soft voice saying, "I wish I could remember the name of the wise one who said, ‘The difference between theory and practice is greater in practice than it is in theory &#133; .’ "
+
+<hr>
+
+<P>"Bob just wasn’t a big-picture fellow," I finished.
+<P>"Nobody had better pull a Bob on Ganymede," Jeannine agreed. "It’s not quite that forgiving a place, just yet. Hey, you’d better go. Anderson’s waiting."
+<P>I looked at the time and stood up. "Duty calls. What are you and Laura doing after third watch?" I asked, since I was discovering that there were, of course, more pleasant things to talk about than Bob, or even the Guru &#133; .
+
+<H4><FONT COLOR="#000080">Notes</FONT></H4>
+<P><a name="note1">[1]</a> To the tune of "For He's a Jolly Good Fellow."
+<P><a name="note2">[2]</a> Bjarne Stroustrup. <I>The C++ Programming Language, 3rd Edition</I> (Addison-Wesley, 1997).
+<P><a name="note3">[3]</a> See the feature article on expression templates in the May 2000 issue of <I>C++ Report</I>.<p>
+
+<p><i><B>Jim Hyslop</b> is a senior software designer at Leitch Technology International Inc.  He can be reached at <b>jim.hyslop@leitch.com</b>.</i></p>
+<p><i><B>Herb Sutter</b> is chief technology officer of PeerDirect Inc. and secretary of the ISO/ANSI C++ standards committee. He can be reached at <b>hsutter@peerdirect.com</b>.</i></p>
+</blockquote>
+</body></html>
+
+

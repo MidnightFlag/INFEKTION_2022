@@ -1,0 +1,52 @@
+<HTML><HEAD>
+<TITLE>December 1999 Java Solutions/Handling Non-User Events in Swing/Figure 2</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 2: Partial listing of the application that created the display in <a href="fig1.htm">Figure 1</a></A></h4>
+<pre>
+public class ClickCount extends JFrame {
+
+   private int count = 0;
+   final private JButton button = new JButton("Click");
+   final private JLabel label = 
+      new JLabel("Count is : 0",SwingConstants.CENTER);
+   final private GridLayout layout = new GridLayout(2,1);
+   private Container contentPane = null;
+
+   // The actionListener runs in the event thread
+   class CountClicks implements ActionListener {
+      public void actionPerformed(ActionEvent e) {
+          label.setText("Count is : " + ++count); // update label
+      }
+   }
+
+   // The contructor runs in the main thread
+   public ClickCount() {
+      super("User events in Swing");
+   
+      contentPane = getContentPane(); // components are added to 
+                                      // contentPane
+      contentPane.setLayout(layout);  // place components 
+                                      // in a column
+      contentPane.add(button);
+      contentPane.add(label);
+      button.addActionListener(new CountClicks()); // register 
+                                                   // listener
+   }
+
+   // The main routine runs in the main thread
+   static public void main(String args[]) {
+      ClickCount click = new ClickCount(); // instantiate 
+                                           // application class
+      click.pack(); // layout window and components, 
+                    // forcing their display
+      click.show(); // make visible
+      // from this point on all UI update must occur 
+      // in the event thread
+   }
+}
+
+</pre>
+</BODY>
+</HTML>

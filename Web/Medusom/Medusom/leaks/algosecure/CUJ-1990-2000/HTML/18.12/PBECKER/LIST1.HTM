@@ -1,0 +1,32 @@
+<HTML><HEAD>
+<TITLE>December 2000/The Journeyman's Shop/Listing 1</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 1: A template for determining the type of the floating-point value</A></h4>
+<pre>
+#include &lt;iostream&gt;
+#include &lt;limits&gt;
+#include &lt;math.h&gt;
+
+template&lt;class FP&gt;
+bool close_enough(FP f1, FP f2, int NROUNDS)
+{
+return abs((f1 - f2) / (f2 == FP(0.0) ? FP(1.0) : f2)
+   &lt; FP(NROUNDS) * std::numeric_limits&lt;FP&gt;::epsilon());
+}
+
+int main()
+{
+double tenth = 1.0/10.0;
+if (tenth * 10.0 == 1.0)
+   std::cout &lt;&lt; "equal\n";
+else
+   std::cout &lt;&lt; "not equal\n";
+if (close_enough(tenth * 10.0, 1.0, 1))
+   std::cout &lt;&lt; "equal\n";
+else
+   std::cout &lt;&lt; "not equal\n";
+return 0;
+}
+</pre></body></html>

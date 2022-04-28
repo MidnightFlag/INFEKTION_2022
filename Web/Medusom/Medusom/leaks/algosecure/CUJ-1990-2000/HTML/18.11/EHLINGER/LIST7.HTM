@@ -1,0 +1,45 @@
+<HTML><HEAD>
+<TITLE>November 2000/Creating Truly Maintainable Class Factories/Listing 7</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 7: Partial listing of calculator DLL</A></h4>
+<pre>
+#define stack calculator_stack
+
+class plus : public operation
+  {
+  public:
+    virtual int operate( stack* p_stack )
+      {
+      int l = p_stack-&gt;pop( );
+      int r = p_stack-&gt;pop( );
+      int result = l + r;
+      p_stack-&gt;push( result );
+      return result;
+      }
+    virtual void destroy( ) { delete this; }
+  };
+// defined in engine.h; provides the
+// base and prefix tokens
+// required by FACTORYFUNC
+FACTORY_ENTRY( plus , plus )
+FACTORY_ENTRY( plus , add ) // Create an alias for class plus.
+
+class minus : public operation
+  {
+  public:
+    virtual int operate( stack* p_stack )
+      {
+      int l = p_stack-&gt;pop( );
+      int r = p_stack-&gt;pop( );
+      int result = l - r;
+      p_stack-&gt;push( result );
+      return result;
+      }
+    virtual void destroy( ) { delete this; }
+  };
+FACTORY_ENTRY( minus , minus )
+
+...
+</pre></body></html>

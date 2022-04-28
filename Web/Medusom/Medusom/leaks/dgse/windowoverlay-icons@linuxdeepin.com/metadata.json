@@ -1,0 +1,7 @@
+{
+    "shell-version": ["3.0", "3.2"],
+    "uuid": "windowoverlay-icons@linuxdeepin.com",
+    "name": "Window Overlay Icons",
+    "description": "Add application icons to window overview",
+    "url": "https://github.com/sustmi/gnome-shell-extensions-sustmi/tree/master/windowoverlay-icons"
+}

@@ -1,0 +1,99 @@
+<HTML>   
+     <HEAD>
+<TITLE>November 2000 C++ Experts Forum/Obfuscated C++</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../18.11/tocnov.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   C++ Experts Forum</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Obfuscated C++ (Final Column answer only)</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Robert Murray</FONT></H3>
+
+<HR>
+<BLOCKQUOTE>
+
+
+<H4><FONT COLOR="#000080">Last Month's Puzzle</FONT></H4>
+
+<P>Last month we asked you to predict the output of the following program:<P>
+
+<pre>
+#include &lt;iostream&gt;
+using namespace std;
+
+struct C;
+
+struct D {
+    void operator*(D) { cout &lt;&lt; "one\n"; }
+} C;
+
+struct E {
+    void operator*(E) { cout &lt;&lt; "two\n"; }
+} F;
+
+struct F;
+
+int main(){
+    C* C;
+    F* F;
+    return 0;
+}
+</pre>
+
+<P>This puzzle hinges on the meaning of the first two statements in the <B>main</B> program. Syntactically, these statements appear to be declarations of pointers. The white space is misleading. For each statement, the name (<B>C</B> or <B>F</B>) is declared both as a class type and as an object name in the same (global) scope. In this case, regardless of which declaration appears first, the object name hides the class name. The class name can only be invoked using an elaborated type specifier (e.g., <B>struct C* C;</B> ).<P>
+<P>Each of these statements is therefore an application of binary <B>operator*</B>. We can rewrite the code as:<P>
+
+<pre>int main(){
+    C.operator*(C); // Invokes D::operator*(D)
+    F.operator*(F); // Invokes E::operator*(E)
+return 0;
+}</pre>
+
+<P>Our program therefore prints the output<P>
+
+<pre>one
+two</pre>
+
+<H4><FONT COLOR="#000080">That's All, Folks</FONT></H4>
+
+<P>This is my last "Obfuscated C++" Column. I've been writing this column for a bit over 11 years now, ever since the first issue of <I>C++ Report</I> was published in January 1989. C++ has grown over the years, as have I, and my life has taken me in other directions. C++ is no longer a part of what I do, so it's time to put this column to bed. I've had the pleasure of working with a lot of talented people over the years; you know who you are. Thanks for the ride, I'll never forget it!<P>
+   	
+
+<p><i>As Red Sky's Chief Technology Officer, <b>Rob Murray</b> is
+responsible for tracking and evaluating current and
+new Internet technologies. These technologies
+provide the "plumbing" that is critical to Web-based
+solutions that are full-featured, robust and fast.
+"Focus is key," he says. "New tools appear on the
+market every day. We identify and adopt those
+technologies that are the very best match for our
+skills and our customers' needs. Most don't make the
+cut." Before stepping into the CTO role, Mr. Murray
+was the Director of Systems Development for the
+Irvine office of Nuforia, where he was responsible for
+all fulfillment work in that office. An industry veteran,
+Mr. Murray spent the first 14 years of his career at
+AT&T Bell Laboratories, where he worked on
+object-oriented software and tools, including the first
+publicly released C++ compiler. He was the founding
+editor of the <i>C++ Report</i> in 1988, and has been a
+regular contributor to this respected trade magazine.
+Mr. Murray has been a prepublication reviewer for
+many technical textbooks, including important works
+by C++ inventor Bjarne Stroustrup and Java inventor
+James Gosling. His own book, <i>C++ Strategies and
+Tactics</i> (Addison-Wesley 1993), is currently in its
+seventh printing and has been translated into French
+and Japanese. His mission statement? "I have to
+keep three sets of people happy: my customers (who
+pay the bills); my employees and co-workers (who
+make successful projects happen); and my bosses
+(who sign my paycheck). One of the nice things
+about Red Sky is that if I take care of sets one and
+two, set three takes care of itself." Mr. Murray has a
+BS in Computer Science from Michigan State
+University, and a Master's in Computer Science from
+the University of Southern California.</i></p>
+</blockquote></body></html>
+
+

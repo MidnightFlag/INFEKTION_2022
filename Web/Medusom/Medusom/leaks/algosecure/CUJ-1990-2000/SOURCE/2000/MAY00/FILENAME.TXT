@@ -1,0 +1,93 @@
+Keywords: May2000, C, C++, thread, predicate, rendering, error code, 
+state machine
+
+The code listings for the May 2000 issue of C/C++ Users Journal
+include source code for David M. Howard's article, "Using Predicate
+Waits with Win32 Threads," Charles Calkins' article, "Integrating
+Threads and Template Classes," Jeff Kleber's article, "Thread-Safe
+Access to Collections," Dwayne Phillips' article, "Visualizing Depth
+Images via Rendering," Marc Guillemot's article, "Catching Untested
+Return Codes," and David Lafreniere's article, "State Machine Design in
+C++."
+
+*************************  FILE DESCRIPTION **********************************
+
+The following files are included in the disk:
+
+FILENAME		AUTHOR-NAME	    TITLE			       
+(Zip archive/
+subdirectory name)
+-------------------------------------------------------------------------------
+howard                  David M. Howard     Using Predicate Waits with
+                                            Win32 Threads
+
+main.cpp                Listing 1, A program to test queue behavior with
+                                   producer/consumer threads
+win32q1.h               Listing 2, A thread-safe, polled implementation
+                                   without condition wait
+win32q2.h               Listing 3, A thread-safe queue implementation
+                                   that uses semaphores
+win32q3.h               Listing 4, A thread-safe queue implementation
+                                   that uses monitor/condition variables
+win32q4.h               not listed, A template version of
+                                    BoundedInterthreadQueue
+main4.cpp               not listed, Tests the template version of
+                                    BoundedInterthreadQueue
+win32q.dsw              not listed
+win32q1.dsp             not listed
+win32q2.dsp             not listed
+win32q3.dsp             not listed
+win32q4.dsp             not listed
+
+
+calkins                 Charles Calkins     Integrating Threads with
+                                            Template Classes
+
+thrdencp.cpp            Listing 1, A method of encapsulating a thread
+thrdprob.cpp            Listing 2, Illustrates problem with trying to 
+                                   make thread function a template
+                                   function
+wrap.cpp                Listing 3, Wrapping the thread pointer in an
+                                   intermediate object
+
+
+kleber                  Jeff Kleber         Thread-Safe Access to
+                                            Collections
+
+thrdsafe.h              Figure 1, The ThreadSafe helper class
+lockauto.h              Figure 2, A stack-based lock template class
+collection.h            Figure 3, The collection class
+using.cpp               Figure 4, Using the lock template and
+                                  collection class
+lockmanual.h            Figure 5, A more flexible lock template class
+
+
+phillips                Dwayne Phillips     Visualizing Depth Images
+                                            via Rendering
+
+    mainl.c             Listing 1, Main calling routine of depth image
+                                   rendering program
+    lambert.c           Listing 2, The lambert function
+    imageio.c           not listed, Image file I/O routines
+    cips.h              not listed, Main header file for C Image Processing
+                                    System
+
+guillemo                Marc Guillemot      Catching Untested Return Codes
+
+    use.cpp             Figure 1, Typical use (and abuse) of error codes
+    ErrorCode.h         Figure 2, Definition of the ErrorCode class
+    ErrorCode.cpp       Figure 2, Implementation of the ErrorCode class
+
+lafrenie                David Lefreniere    State Machine Design in C++
+
+    Files motor.h, motor.cpp, and statemac.cpp updated by author. Updated
+    on this site 2 May 2000.
+
+
+    eventdat.h          Listing 1, The EventData class
+    statemac.h          Listing 2, Defines base class for state machines
+    statemac.cpp        Listing 3, Implements StateMachine class
+    motor.h             Listing 4, Defines Motor state machine class
+    motor.cpp           Listing 5, Implements Motor class
+
+

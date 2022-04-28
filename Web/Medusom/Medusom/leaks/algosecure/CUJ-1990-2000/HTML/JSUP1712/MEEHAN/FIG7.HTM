@@ -1,0 +1,51 @@
+<HTML><HEAD>
+<TITLE>December 1999 Java Solutions/Handling Non-User Events in Swing/Figure 7</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 7: The Comms thread run method</A></h4>
+<pre>
+public void run() {
+   String input = null;
+   boolean keepRunning = true;
+   while (keepRunning) {
+      try {
+         input = reader.readLine(); // get next message
+      } catch (IOException ioe) {
+         keepRunning = false; // Communications failure
+      }
+      if (!discardMessage(input)) {
+         // Add message to list
+         SwingUtilities.invokeLater(new MessageTask(input)); 
+         // special treatment for failed subsystem
+         if (input.indexOf("FAIL") != -1) {
+            //Parse message to get the subsystem name
+            StringTokenizer tokenizer = 
+               new StringTokenizer(input);
+            tokenizer.nextToken();
+            String subSystem = tokenizer.nextToken();
+            // Store subsystem name in task
+            confirmTerminateTask.setSubSystem(subSystem);
+            try {
+               SwingUtilities.invokeAndWait
+                  (confirmTerminateTask);
+            } catch (InterruptedException ie) {
+               System.err.println("Confirm interrupted " + 
+                  ie.getMessage());
+            } catch (InvocationTargetException ite) {
+               System.err.println
+                  ("Exception in confirmTerminate " + 
+                     ite.getMessage());
+            }
+            // If user requested termination send kill message
+            if (confirmTerminateTask.terminateTask()) {
+               writer.println("Kill " + subSystem);
+               filter.add(subSystem);
+            }
+         }
+      }
+   }
+}
+</pre>
+</BODY>
+</HTML>

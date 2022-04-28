@@ -1,0 +1,164 @@
+Keywords: Mar2000, C, C++, 
+
+The code listings for the March 2000 issue of C/C++ Users Journal
+include source code for Jamie Guinan's article, "Cross-Platform
+Development Using GCC," Radoslav Getov's "Not-So-Obvious Utility
+Macros," Antonio Gomiz Bas's article, "Finding Neat Scales for
+Plotting," Alex Telford's article, "Taming the 3-D Perspective
+Transform," Ben Faul's article, "An Embedded Memory-Based SQL Class for
+C++," Mark L. Smith's article, "An STL-Based N-Way Set," and Juval
+Lowy's article, "Making Primitive Objects Thread Safe." Also included
+are listings from P.J. Plauger's column, "Standard C/C++," and Chuck
+Allison's column, "import java.*".
+ 
+*************************  FILE DESCRIPTION **********************************
+
+The following files are included in the disk:
+
+FILENAME		AUTHOR-NAME	    TITLE			       
+(Zip archive/
+subdirectory name)
+-------------------------------------------------------------------------------
+plauger                 P.J. Plauger        Standard C/C++:
+                                            Testing Conformance
+    twctype.cpp         Listing 1, Simple <wctype.h> tests
+
+guinan                  Jamie Guinan        Cross-Platform Development
+                                            Using GCC
+
+    crc.h               not listed, Header file for C implementation
+                                    of CRC(32)
+    crc.c               Listing 1, C implementation of CRC(32)
+    crcplus.h           Listing 2, C++ Wrapper for C implementation of
+                                   CRC(32)
+    crcplus.cpp         not listed, Implementation of C++ Wrapper shown
+                                    in Listing 2
+    app1.c              Listing 3, Sample C application for CRC library
+    app2.cpp            Listing 4, Sample C++ application for CRC library
+    teststr.h           not listed
+    Readme              not listed
+    Makefile.linux      not listed
+    Makefile.mingw32    not listed
+    Makefile.powerpc    not listed
+
+getov                   Radoslav Getov      Not-So-Obvious Utility Macros
+
+    UtilityMacros.h     Listing 1, The utility macros
+    UtilityMacros.cpp   Listing 2, Tests utility macros
+
+bas                     Antonio Gomiz Bas   Finding Neat Scales for Plotting
+
+    scale.c             Listing 1, The scale function used to compute a
+                                   neat-step size
+
+allison                 Chuck Allison       Arrays
+
+    AsObject.java       Figure 1, Clones an array
+    Array2D.java        Figure 2, Illustrates a ragged array
+    Fibonacci.java      Figure 3, Constructs Fibonacci sequences with
+                                  a single initializer list
+    ArraysTest.java     Figure 4, Illustrates the alorithms in
+                                  java.util.Arrays
+    ArraysTest2.java    Figure 5, Sorts/searches Integers in descending
+                                  order
+    Person.java         Figure 6, A Person class
+    ArraysTest3.java    Figure 7, Sorts/searches an array of Person objects
+    ByName.java         Figure 8, Sorts/searches by a Person's name
+
+telford                 Alex Telford    Taming the 3-D Perspective Transform
+
+    scen.dsw            not listed
+    scen.dsp            not listed
+    scen.h              not listed
+    StdAfx.h            not listed
+    MainFrm.h           not listed
+    scenDoc.h           not listed
+    scenView.h          not listed, includes class CScenView shown
+                                    in Figure 4
+    Resource.h          not listed
+    scen.cpp            not listed
+    StdAfx.cpp          not listed
+    MainFrm.cpp         not listed
+    scenDoc.cpp         not listed
+    scenView.cpp        not listed, includes CScenView::PerspectiveInit
+                                    function shown in Figure 6 and
+                                    PerspectiveTr member function shown
+                                    in Figure 7
+    scen.rc             not listed
+    ReadMe.txt          not listed, Build instructions
+    scen.exe            not listed, Scene display program
+    scenhelp.txt        not listed, Instructions for using scen.exe
+
+    Under subdirectory res:
+
+    scen.ico            not listed
+    scen.rc2            not listed
+    scenDoc.ico         not listed
+
+faul                    Ben Faul    An Embedded Memory-Based SQL Class
+                                    for C++
+
+    Under subdirectory dll:
+
+    SCString.cpp        not listed
+    Readme.txt          not listed, Instructions for building project
+    Parser.cpp          not listed
+    Malloc.cpp          not listed, Includes DLLMain function shown
+                                    in Figure 3
+    ExecuteStack.cpp    not listed
+    Embsql.plg          not listed
+    Embsql.opt          not listed
+    EMBSQL.ncb          not listed
+    Embsql.h            not listed, Contains SCString definition
+                                    shown in Figure 4
+    Embsql.dsw          not listed
+    Embsql.dsp          not listed
+    Column.h            not listed
+    Column.cpp          not listed
+    Collection.cpp      not listed
+    Table.cpp           not listed
+
+    Under subdirectory loadstoc:
+
+    Loadstocks.cpp      Listing 1, A Stock quote server that uses
+                                   the EMBSQL library
+    loadstocks.plg      not listed
+    loadstocks.opt      not listed
+    loadstocks.ncb      not listed
+    loadstocks.dsw      not listed
+    loadstocks.dsp      not listed
+    Readme.txt          not listed, Instructions for building stock
+                                    quote server program
+    
+    Under subdirectory quotes:
+
+    quotes.cpp          Listing 2, The stock quote client program
+    quotes.dsp          not listed
+    quotes.dsw          not listed
+    quotes.ncb          not listed
+    quotes.opt          not listed
+    quotes.plg          not listed
+
+smith                   Mark L. Smith   An STL-Based N-Way Set
+
+    nwayset.h           Listing 1, Header file for nwayset template class
+    hostdb.cpp          Listing 2, Application that uses nwayset
+
+lowy                    Juval Lowy      Making Primitive Objects
+                                        Thread Safe
+
+    safelist.h          not listed
+    safelist.inl        not listed
+    safetype.h          not listed, Includes definition of class SAFETYPE
+                                    shown in Figure 1
+    safetype.cpp        not listed
+    safetype.inl        not listed, Includes definition of SAFETYPE operator-
+                                    shown in Figure 2
+    
+
+
+
+
+
+
+    

@@ -1,0 +1,60 @@
+<HTML><HEAD>
+<TITLE>December 2000 Java Solutions/Developing for the PalmOS Platform using J2ME/Listing 1</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 1: The HelloWorld spotlet</A></h4>
+<pre>
+/* @author Peter Meehan Copyright (c) 2000 */
+
+import com.sun.kjava.*;
+
+public class HelloWorld extends Spotlet {
+
+    /* Palm screen dimensions are constant */
+    private final int SCREEN_WIDTH = 160;
+    private final int SCREEN_HEIGHT = 160;
+
+    /* There is a single graphics context in the KVM */
+    Graphics g = Graphics.getGraphics();
+
+    Button button = null; // Lone UI button
+
+    /* When a key is pressed or a character is entered via 
+     * Graffiti or the soft keyboard, if it is the Agenda 
+     * hard key or the character 'q' quit. */
+    public void keyDown(int keycode) {
+        if ((keycode == Spotlet.KEY_HARD1) || (keycode == 'q'))
+            System.exit(0);
+    }
+
+    /* When the pen is tapped on the screen see if the button 
+     * was pressed. If so quit */
+    public void penDown(int x,int y) {
+        /* test if pen in button and show button feedback */
+        if (button.pressed(x,y)) { System.exit(0); }
+    }
+
+    /* Display the hello world button to start */
+    public HelloWorld() {
+        String hello = "Hello World";
+        // get string dimensions
+        int stringWidth = g.getWidth(hello); 
+        int stringHeight = g.getHeight(hello);
+
+        /* Create a centered button. */
+        button = new Button(hello, 
+                            (SCREEN_WIDTH-stringWidth)/2,
+                            (SCREEN_HEIGHT-stringHeight)/2);
+        g.clearScreen(); // erase screen contents
+        button.paint(); // draw the button on the screen
+    }
+
+    /* Instantiate the spotlet instance and register 
+     * for system key events */
+    public static void main(String args[]) {
+        Spotlet spotlet = new HelloWorld();
+        spotlet.register(Spotlet.WANT_SYSTEM_KEYS);
+    }
+}
+</pre></body></html>

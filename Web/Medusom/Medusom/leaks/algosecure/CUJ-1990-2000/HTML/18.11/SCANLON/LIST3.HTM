@@ -1,0 +1,32 @@
+<HTML><HEAD>
+<TITLE>November 2000/Secure Web-Based Licensing/Listing 3</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 3: The web page that implements the License Granting Authority</A></h4>
+<pre>
+&lt;HTML&gt;
+&lt;HEAD&gt;
+&lt;TITLE&gt;The License Granting Authority Page&lt;/TITLE&gt;
+&lt;/HEAD&gt;
+&lt;BODY&gt;
+&lt;OBJECT ID="CryptoLicense" 
+CLASSID="CLSID:7DFD9060-5CD5-11D4-AD62-00C04F41258E"&gt;&lt;/OBJECT&gt;
+Please input your cookie:
+&lt;INPUT name="Cookie" VALUE = "" SIZE="64"&gt;
+&lt;INPUT TYPE="SUBMIT" VALUE="License Me!" 
+name="cmdLicense" onclick="OnClick()"&gt;&lt;HR&gt;
+Your license is:
+&lt;INPUT name="License" VALUE = "" SIZE="64"&gt;
+&lt;HR&gt;
+
+&lt;SCRIPT LANGUAGE="JScript"&gt;
+function OnClick()
+{
+     License.value = CryptoLicense.GrantLicense(Cookie.value);
+}
+&lt;/SCRIPT&gt;
+
+&lt;/BODY&gt;
+&lt;/HTML&gt;
+</pre></body></html>

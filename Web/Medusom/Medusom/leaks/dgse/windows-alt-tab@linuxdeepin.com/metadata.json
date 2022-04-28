@@ -1,0 +1,8 @@
+{
+    "uuid": "windows-alt-tab@linuxdeepin.com",
+    "name": "Deepin Enhanced Alt-Tab Switcher",
+    "description": "A replacement for Alt-Tab, allows easy switch between apps and workspaces",
+    "shell-version": [ "3.2" ],
+    "url": "https://github.com/tglman/gnome-shell/extensions/",
+    "version": 2
+}

@@ -1,0 +1,53 @@
+<HTML><HEAD>
+<TITLE>December 2000 Java Solutions/Increasing Java Performance/Listing 7</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 7: TestCollection.java &#151; Highlights performance difference</A></h4>
+<pre>
+/* Copyright (c) 2000 Stepping Stone Software Ltd, John Keyes */
+
+import java.util.Vector;
+
+public class TestCollection {
+
+   public static void main(String args []) {
+      TestCollection collect = new TestCollection();
+
+      if(args.length == 0) {
+         System.out.println(
+         "Usage: java TestCollection [ vector | stringvector ]");
+         System.exit(1);
+      }
+
+      if(args[0].equals("vector")) {
+         Vector store = new Vector();
+         long start = System.currentTimeMillis();
+         for(int i = 0; i &lt; 1000000; i++) { 
+            store.addElement("string");
+         }
+         long finish = System.currentTimeMillis();
+         System.out.println((finish-start));
+         start = System.currentTimeMillis();
+         for(int i = 0; i &lt; 1000000; i++) {
+            String result = (String)store.elementAt(i);
+         }
+         finish = System.currentTimeMillis();
+         System.out.println((finish-start));
+      }
+      else if(args[0].equals("stringvector")) {
+         StringVector store = new StringVector();
+         long start = System.currentTimeMillis();
+         for(int i = 0; i &lt; 1000000; i++) { store.add("string"); }
+         long finish = System.currentTimeMillis();
+         System.out.println((finish-start));
+         start = System.currentTimeMillis();
+         for(int i = 0; i &lt; 1000000; i++) {
+            String result = store.getStringAt(i);
+         }
+         finish = System.currentTimeMillis();
+         System.out.println((finish-start));
+      }
+   }
+}
+</pre></body></html>

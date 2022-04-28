@@ -1,0 +1,9 @@
+{
+    "shell-version": ["3.2.0", "3.2.1" ],
+    "uuid": "workspace-navigator@linuxdeepin.com",
+    "localedir": "/usr/share/locale",
+    "original-author": "smotko.si",
+    "name": "Workspace Navigator",
+    "description": "Allow selection of workspaces with up and down arrow keys in overlay mode",
+    "url": "http://github.com/Smotko/gnome-shell-extension-workspaceNavigator"
+}

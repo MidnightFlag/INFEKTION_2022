@@ -1,0 +1,154 @@
+Keywords: Aug2000, C, C++, Java, VCL, Windows, solver, persistence,
+regression, STL, index, tip 
+
+
+The code listings for the August 2000 issue of C/C++ Users Journal
+include source code for Luigi Bianchi's article, "Converting VCL
+Components to Windows Resources," Steve Hanov's article, "A Lightweight
+Window Wrapper," Gary Hsiao's article, "A Simple Persistence Framework,"
+David Swaim II's article, "A Simple Linear Regression Class," and Craig
+Hicks' Tip, "Creating an Index Table in STL." Also included are listings
+from Bobby Schmidt's column, "Uncaught Exceptions," and Letters to the
+Editor.
+
+*************************  FILE DESCRIPTION **********************************
+
+The following files are included in the disk:
+
+FILENAME		AUTHOR-NAME	    TITLE			       
+(Zip archive/
+subdirectory name)
+-------------------------------------------------------------------------------
+bianchi                 Luigi Bianchi       Converting VCL Components
+                                            to Windows Resources
+
+    standard.rc             Figure 1, A standard Windows resource script file
+    vcldfm.txt              Figure 2, The text form of a VCL .DFM file
+                            Listing 1, This listing from the article is not
+                                       included in this zip file; it is a
+                                       partial listing of file
+                                       PVCLComponent.h found in
+                                       subdirectory code (see below)
+                            Listing 2, This listing from the article is not
+                                       included in this zip file; it is a
+                                       partial listing of process.cpp
+                                       found in subdirectory code (see below)
+                            Listing 3, This listing file StlUtils.h, found
+                                       in subdirectory code (see below)
+                                       found in subdirectory code (see below)
+                            Listing 4, This listing from the article is not
+                                       included in this zip file; it is a
+                                       partial listing of file
+                                       PVCLComponent.cpp found in
+                                       subdirectory code (see below)
+
+    Complete archive:
+    -----------------
+
+    Under subdirectory code:
+
+        Files too numerous to list
+
+    Under subdirectory exe:
+
+        Files too numerous to list
+
+    Under subdirectory test:
+
+        Files too numerous to list
+
+hanov                   Steve Hanov         A Lightweight Window Wrapper
+
+    Wndobj.h            Listing 1, Declaration of CWindow
+    Basewnd.h           Listing 2, Implementation of base class
+    Mainwnd.cpp         Listing 3, Sample application
+    App.cpp             Listing 4, Sample application WinMain
+
+perry                   Michael L. Perry    A Reusable Nonlinear System
+                                            Solver, Part 2
+
+                        Listing 1, This listing from the article is not
+                                   included in this zip file. It is a
+                                   partial listing of file Leg.h in
+                                   subdirectory code (see below).
+                        Listing 2, This listing from the article is not
+                                   included in this zip file. It is a
+                                   partial listing of file Vertex.h in
+                                   subdirectory code (see below).
+                        Listing 3, This listing from the article is not
+                                   included in this zip file. It is a
+                                   partial listing of file Network.h in
+                                   subdirectory code (see below).
+                        Listing 4, This listing from the article is the
+                                   same as Main.cpp in subdirectory code
+                                   (see below).
+                        Figure 6, This figure from the article is not
+                                  included in this zip file. It is an
+                                  exerpt of files Network.cpp and
+                                  Vertex.cpp found in subdirectory code 
+                                  (see below).
+                        Figure 7, This figure from the article is not
+                                  included in this zip file. It is a
+                                  partial listing of file
+                                  ComponentBinary.h in subdirectory code
+                                  (see below).
+
+    Under subdirectory code:
+
+        Files too numerous to list
+
+hsiao                   Gary Hsiao          A Simple Persistence Framework
+
+    POBObj.h            Listing 1, The POBObj class
+    POBroker.h          Listing 2, The POBroker template class
+    POBbase.h           Listing 3, The POBase template class
+    GFactory.h          Listing 4, The GFactory template class
+    objAvl.h            Listing 5, The objAvl class
+    objAvl.C            not shown in magazine
+    example1.C          Listing 6, Modifying and resaving a persistent object
+    example.C           not shown in magazine
+    example.h           not shown in magazine
+    example2.C          Listing 7, Permanently deleting a persistent object
+    Gbiostream.C        not shown in magazine
+    Gbiostream.h        not shown in magazine
+    Gbistream.h         not shown in magazine
+    Gbostream.h         not shown in magazine
+    Makefile.html       not shown in magazine
+    POBException.C      not shown in magazine
+    POBException.h      not shown in magazine
+    DskMBTree.h         Listing 8, Article shows partial listing of this class
+    DskMBTree1.C        not shown in magazine
+
+hicks                   Craig Hicks         C/C++ Tip #1: Creating an
+                                            Index Table in STL
+
+    sort_idxtbl.cpp     Makes a permuted array of indices         
+
+swaim                   David C. Swaim II   A Simple Linear Regression
+                                            Class
+
+    linreg.h            Listing 1, The LinearRegression class
+    linreg.cpp          Listing 2, Implementation of the LinearRegression
+                                   class
+    lrtest.cpp          Listing 3, Test driver to test the
+                                   LinearRegression class
+    expreg.h            Listing 4, Exponential regression calculation
+                                   class derived from LinearRegression class
+    decay.cpp           Listing 5, Calculations related to nuclear decay
+
+schmidt                 Bobby Schmidt       Uncaught Exceptions:
+                                            Soft Geek Cafe
+
+    jumpft.cpp          Listing 1, Jump into function try block
+    jumpnorm.cpp        Listing 2, Jump into normal try block
+    selfdesc.cpp        Listing 3, Self-describing exception
+
+letters                 We Have Mail        Letters to the Editor
+
+
+    Mark Van Peteghem's improvements to David Berry's implementation
+    of fast regular expression string search ("Combining Boyer-Moore 
+    String Search with Regular Expressions," CUJ, June 2000).
+
+    regex.h             not shown in magazine, Header File for the CRegEx class
+    regex.cpp           not shown in magazine, Implementation of class CRegEx

@@ -1,0 +1,71 @@
+<HTML><HEAD>
+<TITLE>December 2000/Removing Image Noise with Adaptive Filters/Listing 4</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 4: The SAM filter subroutine</A></h4>
+<pre>
+sam(the_image, out_image,
+    low_pass_image, high_pass_image,
+    rows, cols,
+    noise_variance, konstant,
+    size, 
+    low_pass_type, high_pass_type)
+
+   float konstant, noise_variance;
+   int   high_pass_type, low_pass_type, size;
+   long  cols, rows;
+   short **the_image, **out_image,
+         **low_pass_image, **high_pass_image;
+{
+   char  low_or_high[MAX_NAME_LENGTH];
+   float first_moment, k, 
+         local_variance, second_moment, sigma;
+   int   a, b, i, j, sd2;
+   short filter[3][3];
+
+   sd2 = size/2;
+      
+      /**************************************
+      *
+      *   Create the low pass and high pass
+      *   filter outputs.
+      *
+      **************************************/
+
+   low_or_high[0] = 'l';
+   filter_image(the_image, low_pass_image,
+                rows, cols, 8, 
+                filter, low_pass_type, 
+                low_or_high);
+
+   low_or_high[0] = 'h';
+   filter_image(the_image, high_pass_image,
+                rows, cols, 8, 
+                filter, high_pass_type, 
+                low_or_high);
+
+   for(i=sd2; i&lt;rows-sd2; i++){
+      for(j=sd2; j&lt;cols-sd2; j++){
+         moments(the_image, out_image,
+                 rows, cols, 
+                 size, size,
+                 i, j, 
+                 &amp;first_moment, &amp;second_moment,
+                 &amp;local_variance, &amp;sigma);
+         if(konstant*noise_variance &gt;= local_variance)
+            k = 0.0;
+         else
+            k = 1.0 - konstant*(noise_variance/local_variance);
+         out_image[i][j] = low_pass_image[i][j] +
+                           k*high_pass_image[i][j];
+         if(out_image[i][j] &lt; 0) 
+            out_image[i][j] = 0;
+         if(out_image[i][j] &gt; GRAY_LEVELS)
+            out_image[i][j] = GRAY_LEVELS;
+ 
+      }  /* ends loop over j */
+   }  /* ends loop over i */
+
+}  /* ends sam */
+</pre></body></html>

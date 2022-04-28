@@ -1,0 +1,20 @@
+<HTML><HEAD>
+<TITLE>December 2000 Java Solutions/Increasing Java Performance/Listing 2</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 2: Equivalent byte code/pseudocode for StringBuffer append operations</A></h4>
+<pre>
+create new StringBuffer (STR_BUF_1)
+duplicate the StringBuffer
+load the constant String "Joe" (STR_1)
+call StringBuffer constructor
+store this StringBuffer in the local variable array position 1
+get the static out field from the java.io.PrintStream class (OUT)
+load STR_BUF_1
+load the constant String " is my name." (STR_2)
+invoke the append method on STR_BUF_1 with STR_2 as the argument
+invoke toString method on STR_BUF_1 (STR_3)
+invoke the println method on OUT
+
+</pre></body></html>

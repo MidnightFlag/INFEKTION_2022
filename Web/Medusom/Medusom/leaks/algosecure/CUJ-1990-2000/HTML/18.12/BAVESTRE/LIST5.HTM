@@ -1,0 +1,107 @@
+<HTML><HEAD>
+<TITLE>December 2000/A Class Template for N-Dimensional Generic Resizable Arrays/Listing 5</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 5: Implementation of indexing process</A></h4>
+<pre>
+template &lt;typename T, unsigned int N&gt;
+class SubArray
+{
+   const size_type * const m_pNDimensions;
+   const size_type * const m_pSubArrayLen;
+
+   T * const m_pElements; // The elements
+
+   SubArray&lt;T, N&gt;(T * pElements, const size_type * pNDimensions, 
+                  const size_type * pSubArrayLen)
+     : m_pElements(pElements), m_pNDimensions(pNDimensions),
+       m_pSubArrayLen(pSubArrayLen){} 
+
+public:
+
+   SubArray&lt;T, N-1&gt; operator [](size_type Index)
+   {
+      assert(Index&lt;m_pNDimensions[0]);
+      return
+         SubArray&lt;T, N-1&gt;(&amp;m_pElements[Index*m_pSubArrayLen[0]],
+                          m_pNDimensions+1, m_pSubArrayLen+1);
+   }
+
+   const SubArray&lt;T, N-1&gt;
+   operator [](size_type Index) const
+   {
+      assert(Index&lt;m_pNDimensions[0]);
+      return
+         SubArray&lt;T, N-1&gt;(&amp;m_pElements[Index*m_pSubArrayLen[0]],
+                          m_pNDimensions+1, m_pSubArrayLen+1);
+   }
+
+   friend class Array&lt;T, N+1&gt;; 
+   friend class SubArray&lt;T, N+1&gt;; 
+};
+
+template &lt;typename T&gt;
+class SubArray&lt;T, 1&gt;
+{
+   const size_type * const m_pNDimensions;
+
+   T * const m_pElements; // The elements
+
+   SubArray&lt;T, 1&gt;(T * pElements, const size_type * pNDimensions,
+                  const size_type * pSubArrayLen)
+      : m_pElements(pElements), m_pNDimensions(pNDimensions){}
+
+public:
+
+   T &amp; operator [] (size_type  Index)
+   {
+      assert(Index&lt;m_pNDimensions[0]);
+      return m_pElements[Index];
+   }
+
+   const T &amp; operator [] (size_type Index) const
+   {
+      assert(Index&lt;m_pNDimensions[0]);
+      return m_pElements[Index];
+   }
+
+   friend class Array&lt;T, 2&gt;;
+   friend class SubArray&lt;T, 2&gt;; 
+};
+
+template &lt;typename T, unsigned int N&gt;
+class Array
+{
+   T  *       m_pArrayElements; // Points to all
+                                // the actual elements
+   size_type  m_nArrayElements; // Total number of array elements
+
+   size_type  m_NDimensions[N]; // Sizes of the N dimensions
+   size_type  m_SubArrayLen[N]; // Dimensions of subarrays
+
+public:
+ 
+   Array&lt;T, N&gt;()
+      : m_pArrayElements(NULL), m_nArrayElements(0)
+   { /*...*/ }
+  ~Array&lt;T, N&gt;() { delete [] m_pArrayElements; }
+   
+   SubArray&lt;T, N-1&gt; operator [] (size_type Index) 
+   {
+      assert(Index&lt;m_NDimensions[0]);  
+      return SubArray&lt;T, N-1&gt;
+                (&amp;m_pArrayElements[Index*m_SubArrayLen[0]],
+                 m_NDimensions+1, m_SubArrayLen+1);
+   }
+
+   const SubArray&lt;T, N-1&gt;
+   operator [] (size_type Index) const 
+   {  
+      assert(Index&lt;m_NDimensions[0]);  
+      return SubArray&lt;T, N-1&gt;
+                (&amp;m_pArrayElements[Index*m_SubArrayLen[0]],
+                 m_NDimensions+1,m_SubArrayLen+1);
+   }
+};
+</pre></body></html>

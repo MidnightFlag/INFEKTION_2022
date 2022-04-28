@@ -1,0 +1,30 @@
+page-normal {
+  @include border-difficulty($normal-color-secondary);
+
+  @keyframes animTimer {
+    from {width: 100%;}
+    to {width: 0;}
+  }
+  .content-timer{
+      width: 100%;
+      height: 6px;
+      position: absolute;
+      top: 0px;
+      background: #535763;
+      z-index: 2;
+
+      .timer{
+        width: 100%;
+        height: 6px;
+        position: absolute;
+        background: $normal-color-secondary;
+        top: 0px;
+        z-index: 2;
+        box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.37);
+      }
+  }
+
+  .timer.active{
+    animation: animTimer 3s linear;
+  }
+}

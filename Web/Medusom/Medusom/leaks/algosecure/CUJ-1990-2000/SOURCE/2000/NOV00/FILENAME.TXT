@@ -1,0 +1,101 @@
+Keywords: Nov2000, C, C++, Java, plot, factory, typeof, licensing, STL,
+book review, iostreams, constructor, restrict, FORTRAN
+
+
+The code listings for the November 2000 issue of C/C++ Users Journal
+include source code for Rainer Thierauf's article, "Extracting Data from
+X-Y Plots," Early Ehlinger's article, "Creating Truly Maintainable Class
+Factories," Mike Scanlon's article, "Secure Web-based Licensing," Sol
+Foster's tip, "Creating an Index Table in STL, Take 2," and Brian Button's
+book review of Angelika Langer and Klaus Kreft's book, "Standard C++
+IOStreams and Locales." Also included are listings from Matt Austern's
+column, "The Standard Librarian," and Chuck Allison's column, "import
+java.*," 
+
+*************************  FILE DESCRIPTION **********************************
+
+The following files are included in the disk:
+
+FILENAME		AUTHOR-NAME	    TITLE			       
+(Zip archive/
+subdirectory name)
+-------------------------------------------------------------------------------
+thierauf                Rainer Thierauf     Extracting Data from X-Y Plots
+
+    full source code -- files too numerous to list
+
+ehlinger                Early Ehlinger      Creating Truly Maintainable
+                                            Class Factories
+
+    Under subdirectory build:
+
+    redhat6.2/makefile                     not shown in magazine
+    vc6.0/class_factory/class_factory.dsw  not shown in magazine
+    vc6.0/class_factory/dll/dll.dsp        not shown in magazine
+    vc6.0/class_factory/engine/engine.dsp  not shown in magazine
+
+    Under subdirectory inc:
+
+    dllwrap.h                              partially shown in
+                                             Listings 3, 4, and 5
+    factory.h                              not shown in magazine
+    factory_dll.h                          Listing 1, Defines a macro
+                                                      to define a factory
+                                                      function in a DLL
+
+    Under subdirectory sample:
+
+    dll/dll.cpp                            partially shown as Listing 7
+    engine/engine.h                        not shown in magazine
+    engine/engine.cpp                      Listing 6, The stack calculator
+                                                      engine
+
+gibbons                 Bill Gibbons        A Portable "typeof" Operator
+
+    typeof.cpp              Listing 1, Portable typeof operator
+                                       and test program
+
+foster                  Sol Foster          C/C++ Tip #3: Creating
+                                            an Index Table in STL, Take 2
+
+    sort_idxtbl.cpp         Code that creates indexed comparison functor
+                            and tests it on a vector
+
+scanlon                 Mike Scanlon        Secure Web-based Licensing
+
+    full source code -- files too numerous to list
+    
+button                  Brian Button        Book Review of Standard C++
+                                            IOStreams and Locales, by
+                                            Angelika Langer and Klaus
+                                            Kreft
+
+    CaeserRotateFacet.h     Listing 1, Facet for "rotating" the English
+                                       alphabet through 13 places
+    CaeserRotateFacet.cpp   not shown
+    main.cpp                Listing 3, Imbuing a stream with a facet
+
+austern                 Matt Austern        The Standard Librarian:
+                                            IOStreams and Stdio
+
+    syncbuf.h               Listing 1, A streambuf class that enables
+                                       simultaneous use of a stream
+                                       with both stdio and iostreams
+                                       functions
+
+allison                 Chuck Allison       import java.*:
+                                            Basic Stream I/O
+
+    CopyFile2.java           Listing 1, Copies files or standard I/O
+    InputStreamTest.java     Listing 2, Extends InputStream
+    SequenceInputTest.java   Listing 3, Processes three files as one
+    log1.txt                 Listing 4, Input to Listing 3
+    log2.txt                 Listing 5, Input to Listing 3
+    log3.txt                 Listing 6, Input to Listing 3
+    DataStreamTest.java      Listing 7, Serializes primitive types
+    SerializationTest.java   Listing 8, Serializes Objects
+    NumberLines.java         Listing 9, Reads lines with a BufferedReader
+    NumberLines2.java        Listing 10, Counts lines with LineNumberReader
+    StreamTokenizerTest.java Listing 11, Parse comma-delimited fields
+    StringTokenizerTest.java Listing 12
+    ParseClassNames.java     Listing 13, Extracts class names

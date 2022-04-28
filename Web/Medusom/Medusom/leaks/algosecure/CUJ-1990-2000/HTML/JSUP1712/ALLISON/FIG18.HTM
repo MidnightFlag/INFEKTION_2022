@@ -1,0 +1,46 @@
+<HTML><HEAD>
+<TITLE>December 1999 Java Solutions/The Java 2 Collections -- Finally, Some News You Can Use/Figure 18</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 18: The Map interfaces</A></h4>
+<pre>
+Interface Map
+{
+    void        clear();
+    boolean     containsKey(Object key);
+    boolean     containsValue(Object value);
+    Set         entrySet();
+    boolean     equals(Object o);
+    Object      get(Object key);
+    int         hashCode();
+    boolean     isEmpty();
+    Set         keySet();
+    Object      put(Object key, Object value);
+    void        putAll(Map t);
+    Object      remove(Object key);
+    int         size();
+    Collection  values();
+    
+    static Interface Map.Entry
+    {
+        boolean equals(Object o);
+        Object  getKey();
+        Object  getValue();
+        int     hashCode();
+        Object  setValue(Object value);
+    }
+}
+
+Interface SortedMap extends Map
+{
+    Comparator  comparator();
+    Object      firstKey();
+    SortedMap   headMap(Object toKey);
+    Object      lastKey();
+    SortedMap   subMap(Object fromKey, Object toKey);
+    SortedMap   tailMap(Object fromKey);
+}
+</pre>
+</BODY>
+</HTML>

@@ -1,0 +1,26 @@
+<HTML><HEAD>
+<TITLE>November 2000/Standard C++ IOStreams and Locales/Listing 3</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 3: Imbuing a stream with a facet</A></h4>
+<pre>
+#include  "CaesarRotateFacet.h"
+
+#include  &lt;locale&gt;
+#include  &lt;iostream&gt;
+#include  &lt;fstream&gt;
+
+int main( int, char ** argv )
+{
+   CaesarRotateCvt * c = new CaesarRotateCvt( 0 );
+   std::locale caesarRotate( std::cout.getloc( ), c );
+   std::cout.imbue( caesarRotate );
+      
+   std::basic_ifstream&lt;char&gt; ifs( argv[ 1 ] );
+   ifs &gt;&gt; std::cout.rdbuf( );
+   std::cout.flush( ); 
+      
+   return 0;
+}
+</pre></body></html>

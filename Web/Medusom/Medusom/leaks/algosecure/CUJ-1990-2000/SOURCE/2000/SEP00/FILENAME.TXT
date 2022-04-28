@@ -1,0 +1,98 @@
+Keywords: Sep2000, C, C++, unit test, HTML, Linux, TCP/IP, socket,
+tracing, generic, java, pragmatic
+
+The code listings for the September 2000 issue of C/C++ Users Journal
+include source code for Carlos Moreno's article, "HTML Document
+Templates for CGI Applications," Erik Nelson's article, "Network
+Programming with Linux," Richard Smereka's article, "A TCP/IP Socket
+Location Server," Chuck Allison's article, "The Simplest Automated Unit
+Test Framework That Could Possibly Work," and Boris Bromberg's article,
+"Tracing an Application in Release Configuration." Also included are
+listings from Chuck Allison's column, "import java.*."
+
+*************************  FILE DESCRIPTION **********************************
+
+The following files are included in the disk:
+
+FILENAME		AUTHOR-NAME	    TITLE			       
+(Zip archive/
+subdirectory name)
+-------------------------------------------------------------------------------
+moreno                  Carlos Moreno       HTML Document Templates for
+                                            CGI Applications
+
+    HTMLstream.h            Listing 1, Header file for class HTMLstream
+    HTMLstream.cpp          Listing 2, Implementation of class HTMLstream
+    cgi.h                   Listing 3, Header file for CGI utility functions
+    cgi.cpp                 Listing 4, Implementation of CGI utility
+                                       functions
+
+nelson                  Erik Nelson         Network Programming with Linux
+
+    Comm.h                  Listing 1, The CComm class definition
+    comm.cpp                Listing 2, Implementation of CComm class
+    main.cpp                Listing 3, The Chat application main function
+    udp.exe                 not listed, Windows build of Chat application
+
+smereka                 Richard Smereka     A TCP/IP Socket Location
+                                            Server
+
+    Under subdirectory soclocs:
+
+       Socloc source only (no binaries)
+
+    Under subdirectory soclocw:
+
+       Socloc source with executables for Win32
+
+    Under subdirectory soclocl:
+
+       Socloc source with binaries for Linux
+
+
+allison                 Chuck Allison       The Simplest Automated Unit Test
+                                            Framework That Could Possibly
+                                            Work
+
+    test.h                  Listing 1, The test class header
+    test.cpp                Listing 2, The test class implementation
+    stack.h                 Listing 3, A simple stack template
+    stacktest.cpp           Listing 4, Testing the stack template
+    suite.h                 Listing 5, The file Suite.h
+    suite.cpp               Listing 6, The file Suite.cpp
+    comptest.c              Listing 7, A C test for a complex number
+                                       function
+
+bromberg                Boris Bromberg      Tracing an Application in
+                                            Release Configuration
+
+    Under subdirectory QMonitorAPI:
+
+    QMonitorAPI.h           Listing 1, Header file for trace API
+    QMonitorAPI.cpp         Listing 2, Implementation of trace API
+
+                            Other files too numerous to list
+
+    Under subdirectory QMonitor:
+
+    QMonitorDlg.h           Listing 3, Header file for the MFC-based
+                                       stand-alone application QMonitor.exe
+    QMonitorDlg.cpp         not shown, Implementation file for
+                                       stand-alone application
+
+                            Other files too numerous to list
+
+
+allison2                import java.*       Collections and Algorithms
+
+    VectorTest.java         Listing 1, Illustrates the Vector class
+    VectorTest2.java        Listing 2, Traverses a Vector with an Enumeration
+    BitSetTest.java         Listing 3, Illustrates the BitSet container class
+    HashtableTest.java      Listing 4, Maps states to their capitals
+    ListTest.java           Listing 7, Illustrates ArrayList and Linked List
+    Modify.java             Listing 10, Modifies a List element via a
+                                        ListIterator
+    SetTest.java            Listing 12, Illustrates Sets
+    MapTest.java            Listing 14, Illustrates Maps
+    Xref.java               Listing 15, A cross-reference lister
+

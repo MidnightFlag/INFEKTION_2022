@@ -1,0 +1,59 @@
+<HTML><HEAD>
+<TITLE>December 2000/A Class Template for N-Dimensional Generic Resizable Arrays/Listing 8</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 8: STL-like additions</A></h4>
+<pre>
+template &lt;typename T, unsigned int N&gt;
+class Array
+{
+public:
+
+   // STL-like types
+   typedef T         value_type;
+   typedef T &amp;       reference;
+   typedef const T &amp; const_reference;
+   typedef T *       pointer;
+   typedef const T * const_pointer;
+   typedef T *       iterator;
+   typedef const T * const_iterator;
+   typedef ptrdiff_t difference_type;
+   typedef size_t    size_type;
+
+   enum  { array_dims = N }; // Number of dimensions
+
+private:
+
+   T *       m_pArrayElements; // Elements allocated
+   size_type m_nArrayElements; // Total number of elements
+
+   //..........
+
+public:
+
+   // STL-like iterators
+   iterator begin()             { return m_pArrayElements; }
+   const_iterator begin() const { return m_pArrayElements; }
+   iterator end()
+   { return m_pArrayElements+m_nArrayElements; }
+   const_iterator end() const
+   { return m_pArrayElements+m_nArrayElements; }
+
+   // Some more STL-like members
+   size_type size()       const { return m_nArrayElements: }
+   bool empty()           const { return m_nArrayElements==0; }
+   void swap(Array&lt;T,N&gt; &amp; S); 
+   
+   // Return the size of each dimension
+   size_type size(unsigned int Dim) const
+   { return m_NDimensions[Dim-1]; } 
+   // Return the number of dimensions
+   unsigned int dimensions() const { return N; }
+
+   // Delete all array elements
+   void clear(); 
+
+   //...
+};
+</pre></body></html>

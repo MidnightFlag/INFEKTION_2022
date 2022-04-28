@@ -1,0 +1,36 @@
+<HTML><HEAD>
+<TITLE>December 2000/Uncaught Exceptions/Listing 3</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 3: Preventing self initialization</A></h4>
+<pre>
+#include &lt;stdio.h&gt;
+
+class X
+    {
+public:
+    X()
+        {
+        }
+    X(X const &amp;that)
+        {
+        if (this == &amp;that)
+            throw this;
+        }
+    };
+
+int main()
+    {
+    try
+        {
+        X x1;      // OK
+        X x2 = x1; // OK
+        X x3 = x3; // throws
+        }
+    catch (...)
+        {
+        printf("catch\n");
+        }
+    }
+</pre></body></html>

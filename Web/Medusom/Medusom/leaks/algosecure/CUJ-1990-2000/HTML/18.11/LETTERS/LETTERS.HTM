@@ -1,0 +1,86 @@
+<HTML>   
+     <HEAD>
+<TITLE>November 2000/We Have Mail</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocnov.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   Departments</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">We Have Mail</FONT></H2>
+
+<HR>
+<BLOCKQUOTE>
+<p><I>Letters to the editor may be sent via email to </I>cujed@cmp.com<I>, or via the postal service to Letters to the Editor, </I>C/C++ Users Journal<I>, 1601 W. 23rd St., Ste 200, Lawrence, KS 66046-2700.</I></p>
+<hr><p>Dear Marc,</p>
+<p>In the June 2000 issue <I>CUJ</I> published an article by David Berry on "Combining Boyer-Moore String Search with Regular Expressions."</p>
+<p>Although Regular Expressions have a slightly different syntax on different implementations, in no case do they exhibit a backslash inside brackets, except to mean the <B>'\'</B> char itself. I'm quite disappointed you didn't point out that when responding to Mark van Peteghem in the August 2000 "We Have Mail" department.</p>
+<p>I'm not sure everybody is familiar with RegEx, hence I recall that it is a string matching technique featured in a vast number of utilities, from the classic Sed and Awk to Perl, and many more.</p>
+<p>To give a real-life programming example, let me quote this [broken to fit column]:</p>
+
+<pre>
+"^(([^:/?#]+):)?(//([^/?#]*))?
+([^?#]*)(\\?([^#]*))?(#(.*))?"
+</pre>
+
+<p>It is the RegEx used in PHP3 to parse a URL, according to appendix B of draft-fielding-url-syntax-09, <B>http://www.ics.uci.edu/~fielding/</B></p>
+<p>The example shows how a RegEx can be used for parsing. When applied to Roy Fieldings's URL above, the RegEx will return the matches <B>"http:"</B>, <B>"//www.ics.uci.edu"</B>, <B>"/~fielding/"</B>, and no match for the query string (anything after a question mark) and the anchor (anything after a hash sign).</p>
+<p>Notice that the question mark of the query string is escaped twice (<B>'\\'</B>), as the string constant will be parsed by a C compiler before being passed to the regcomp function. The <B>'?'</B> needs no escapes when it is inside brackets.</p>
+<p>The example also shows the syntax for the so-called <I>extended</I> RegEx. Old style RegEx needs more backslashes to mark a store patterns.</p>
+<p>Finally, the example shows one case where applying a Boyer-Moore string search would lead to worst performance. The RegEx provides a minimal number of explicit characters, namely the 1-length tokens mentioned in the URL syntax, and most of them are optional (i.e. followed by <B>'?'</B>).</p>
+<p>David Berry oversimplified the grammar for RegEx, in order to demonstrate his approach. It is more challenging to take advantage of Boyer-Moore algorithm in a general RegEx package, as is, e.g., Henry Spencer's, in <B>ftp://ftp.zoo.toronto.edu/pub/regex.shar</B>. Presumably, when compiling a RegEx one should set a flag that will indicate what optimizations are worth being tried when executing the RegEx.</p>
+<p>Then, of course, until such a generalization has not been developed, one may be happy to run the available code. However, care should be taken to ensure compatibility with standard RegEx. Reinventing a new syntax for the sole purpose of applying an optimized algorithm won't pay.</p>
+<p>Alessandro Vesely</p>
+<p><I>Sorry my reply disappointed you; I am not a RegEx wizard so the backslash problem escaped me (pun intended). I still think Berry has a neat idea, even if his optimization is not universally applicable. Thanks for writing &#151; mb</i></p>
+
+<hr><p>Dear Erik Nelson,</p>
+<p>In the article, "Network Programming with Linux," <I>CUJ,</I> September 2000, you stated that TCP is built upon UDP. This is not correct &#151; UDP and TCP are both built upon IP.</p>
+<p>This is a minor error, and does not affect your article in any way; just thought you might want to know.</p>
+<p>Cheers,</p>
+<p>Claude Brown<br>
+Sydney, Australia</p>
+
+<hr><p>Dear Erik Nelson,</p>
+<p>You presented a useful class for network programming in "Network Programming with Linux" in the September 2000 issue of <I>CUJ.</I> In your comparison of TCP to UDP, you seemed to imply that TCP is a connection-oriented protocol that uses virtual circuits ("...This connection, or virtual circuit,...").</p>
+<p>TCP is connection-oriented, but it does not use virtual circuits. A virtual circuit implies that packets will take the same path through the network between the two end points and always arrive in order. TCP packets or segments can take different paths through the network and can arrive out of order. The protocol uses the sliding window algorithm and the sequence number of the first byte in the segment to re-order the bytes correctly before sending them to the application.</p>
+<p>My point is that describing a TCP connection as a "virtual circuit" is misleading.</p>
+<p>Regards,</p>
+Jerry Champeau<br>
+Datex-Ohmeda</p>
+<p><I>I suspect we've run into a culture clash here, where one domain has a slightly different definition for "virtual circuit" than another. Nelson's "virtual circuit" illustration for TCP is not without precedent. It is also used in the book </I>Internetworking with TCP/IP, Volume 1, Third Edition<I>, by Douglas E. Comer (Prentice Hall, 1995 &#151; there is a fourth edition out now, which I have not seen). Actually, what you are describing sounds more like a real circuit to me.</I></p>
+<p><I>In any case, your letter points up the limitations of illustration and metaphor in technical literature. (In fact, Herb Sutter and I have had a friendly disagreement over the advisability of his Really Dead Parrot illustration. See p. 72.) Remember, all metaphors should be taken with a big grain of salt. &#151; mb</I></p>
+
+<hr><p>Mr. Hanov,</p>
+<p>Just a few words to thank you for the outstanding article ["A Lightweight Window Wrapper"] in the August 2000 issue of <I>C/C++ Users Journal.</I> As a longtime user of MFC searching for a simpler way of using C++ in small projects, your techniques hit the mark &#151; bull's eye. Your insights are clean and extremely useful. Keep up the good work and good luck in your career.</p>
+<p>Lance Hagen<br>
+San Antonio, Texas</p>
+
+<hr><p>Hi,</p>
+<p>While reading through recent <I>C/C++ Users Journal</I> issues, I was worried by the (lack of) quality in the code examples of several articles. Here are some examples from the August 2000 issue:</p>
+<p>p. 16:  1) Failure of the function <B>DfmConvert</B> is signaled to the caller through some arbitrary negative values. 2) The file referred to by <B>*fin</B> isn't guaranteed to be closed if an exception is thrown between the calls to <B>fopen</B> and <B>fclose</B>.</p>
+<p>p. 20:  The simple Listing 3 does not compile because of lacking <B>#include</B>s and <B>std</B> qualification unless it's always <B>#includ</B>ed from places where the lacking pieces are already defined (same thing for Listings 4/5 on pp. 52/3).</p>
+<p>p. 29:  Usage of identifiers of the form <B>_[_A-Z].*</B> is reserved to the implementation (compiler + Standard library).</p>
+<p>p. 36:  The function <B>Leg::GetCurrent</B> should be const.</p>
+<p>p. 42:  <B>main</B> has to return <B>int</B>.</p>
+<p>p. 46:  The body of function <B>ABC::create</B> looks very strange.</p>
+<p>I don't mean that every article has to discuss the whole Software Engineering theory, Exception safety, const correctness etc. But I'd like you and your authors to understand that the code published serves as a model for a great part of your readership. I've seen too much code with errors like these, and I'd really like them not to be covered by what is now the major C/C++ magazine on the market.</p>
+<p>Thanks,</p>
+<p>Thomas Maeder</p>
+
+<p><I>I don't know about you, but the only way I can improve my coding style is in an incremental fashion. If I'm focusing on const correctness, I will have to put off exception safety for another day. If authors waited to submit articles until their code was </I>exemplary<I> in every conceivable respect &#151; software engineering, exception safety, const correctness, and every other form of correctness you can think of (how about i18n correct?) we would all be the poorer for it, because nobody would send in anything. So I don't get too upset if an author who wants to share his hard work unraveling the Borland VCL happens to use arbitrary return codes to signal errors. I kinda don't think most people are going to seize on that as their model for software engineering.</I></p>
+<p><I>That said, some of your points are very well taken. The errors you found are indeed regrettable. I now have two good technical reviewers on my fledgling editorial board: Dan Saks and Herb Sutter. With their help, I anticipate </I>CUJ<I> will move closer to the ideal of providing model code for our readers. &#151; mb</I></p>
+
+<hr><p>Dear <I>CUJ,</I></p>
+<p>I look forward eagerly to the arrival of [<I>CUJ</I>] each month because there always seem to be a perfect balance between code I can just "slot in" and articles which I have to mull over. Michael Bramley's article in the July 2000 issue on finding "nice" intervals for graph axes falls definitely into the first category.</p>
+<p>His method as it stands suffers, however, from an unnecessary limitation. Ranges involving small magnitudes (e.g. 1e-12 to 5e-12) are disallowed. In my field such values are not uncommon and it seems unreasonable to force my clients to rescale as he blythely suggests. The great advantage of floating-point numbers is surely precisely their accommodation of different magnitudes.</p>
+<p>Mr. Bramley observes that due to inexact floating-point representation and rounding errors, sometimes when the calculated axis minimum should be exactly zero, a very small number is produced instead (e.g. 1.4517e-17). To get around this, he clamps all tiny axis minima values ( &lt; 1e-10) to zero.</p>
+<p>This draconian measure is unnecessary, as one can distinguish easily whether a small axis minimum is real or merely an approximation to zero (fp artefact) by the range of the axis. The recognition of "true zeros" is merely a comparison to 0.0 in disguise. The standard way of testing two inexact floating-point numbers for equality is to examine their their difference scaled appropriately. I believe the following code would do nicely:</p>
+
+<pre>
+if (fabs(Test_min) / Test_inc &lt; 1e-5)
+   Test_min = 0.0;
+</pre>
+<p>Llew Goodstadt<br>
+University Laboratory of Physiology<br>
+Oxford, UK</p>
+
+</blockquote></body></html>

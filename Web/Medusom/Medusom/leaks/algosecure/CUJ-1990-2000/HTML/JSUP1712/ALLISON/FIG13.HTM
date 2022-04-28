@@ -1,0 +1,41 @@
+<HTML><HEAD>
+<TITLE>December 1999 Java Solutions/The Java 2 Collections -- Finally, Some News You Can Use/Figure 13</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 13: Illustrates modifying a List element via a ListIterator</A></h4>
+<pre>
+import java.util.*;
+
+class Modify
+{
+    public static void main(String[] args)
+    {
+        // Build Array:
+        ArrayList a = new ArrayList();
+        a.add(new Integer(1));
+        a.add(new Integer(2));
+        a.add(new Integer(3));
+        System.out.println(a);
+
+        // Modify via iterator:
+        ListIterator p =
+            (ListIterator) a.listIterator();
+        while (p.hasNext())
+        {
+            Integer i = (Integer) p.next();
+            p.set(new Integer(i.intValue()
+                              + 1));
+        }
+        System.out.println(a);
+    }
+}
+
+/* Output:
+[1, 2, 3]
+[2, 3, 4]
+*/
+
+</pre>
+</BODY>
+</HTML>

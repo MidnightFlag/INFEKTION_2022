@@ -1,0 +1,183 @@
+<HTML>   
+     <HEAD>
+<TITLE>November 2000 C++ Experts Forum/Conversations</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../18.11/tocnov.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   C++ Experts Forum</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Conversations: By Any Other Name</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Jim Hyslop and Herb Sutter</FONT></H3>
+
+<HR>
+<BLOCKQUOTE>
+
+<P>Hanging barely a hundred kilometers distant, the small planet filled a fair portion of our field of vision through the viewport. The surface looked like a field of cracked glass repaired with icy glue. Many frozen rivers wended their way among low crisscrossing ridges. Europa was as beautiful as it was inhospitable.<P>
+<P>The speaker said, "Embark, sections three and seven," and fell silent.<P>
+<P>Jeannine and I huddled near the viewport among a small gaggle of fellow mission specialists, the lot of us probably looking for all the world like a bunch of slackjawed cadets. We didn’t care. Better views were available on any screen in the ship, of course, but there’s always something special about seeing the real, original light, reflecting straight from the moon to your eye.<P>
+<P>"Nice place to visit," Jeannine volunteered. "They’re keeping a tight lid on the rumors, still."<P>
+<P>" ‘Tight’ doesn’t begin. Ganymede this, Ganymede that. They could have told us the real destination."<P>
+<P>"Could’ve. I’m sure we’ll find out soon what they discovered down there, under the ice."<P>
+<P>"Mmm? Mmm." I reflected. "I’m happy just to get to be a visitor here. I’ve seen this picture before as a slicked-up virtual, but this is just as good &#151; no, better. We’re really here. This reminds me of my first job."<P>
+<P>She snorted playfully. "Everything reminds you of your first job."<P>
+<P>"So I was young and impressionable. Anyway, it’s just this talk of visiting that made me think of it again just now."<P>
+<P>"Ah." A pause, as the hook settled in, then: "What do you mean?"<P>
+<P>I smiled, and proceeded to explain...<P>
+
+<hr>
+
+<P>I had been struggling with a design problem. I really wanted to solve it on my own, because my probation period was almost over and I wanted to prove myself.<P>
+<P>You remember your first job after graduating, don’t you? How important it was to do things <I>right</I>? I kept remembering the other recruits who hadn’t made it through probation because they couldn’t deal with the Guru. Don’t get me wrong, she was an excellent programmer, just a little... odd. Now here she was my mentor, no less, and I wanted badly to prove myself to her.<P>
+<P>I needed a new virtual function in a class hierarchy, but another team maintained the hierarchy and wouldn’t let anyone else change it. It looked something like:<P>
+
+<pre>
+class Personnel
+{
+public:
+  virtual void Pay ( /*...*/ ) = 0;
+  virtual void Promote( /*...*/ ) = 0;
+  virtual void Accept ( PersonnelV&amp; ) = 0;
+  // ... other functions ...
+};
+
+class Officer : public Personnel { /* override virtuals */ };
+class Captain : public Officer { /* override virtuals */ };
+class First : public Officer { /* override virtuals */ };</pre>
+
+<P>I wanted a function that did one thing if the object was a <b>Captain</b>, and another if the object was a <b>First</b> officer. A virtual function would have been just the thing, declared in either <b>Personnel</b> or <b>Officer</b> and overridden in <b>Captain</b> and <b>First</b>.<P>
+<P>Trouble was, I couldn’t add one. I knew I could’ve worked around the problem by simply adding a type check using run-time type information, like this:<P>
+
+<pre>void f( Officer &amp;o )
+{
+  if( dynamic_cast&lt;Captain*&gt;(&amp;o) )
+    /* do one thing */
+  else if( dynamic_cast&lt;First*&gt;(&amp;o) )
+    /* do another thing */
+}
+
+int main()
+{
+  Captain k;
+  First s;
+  f( k );
+  f( s );
+}</pre>
+
+<P>But I knew that such type checks were frowned upon in the company’s coding standards. "I don’t like it," said I to myself, said I, "but I guess I’ll be able to justify it this time. There’s obviously no other way."<P>
+<P>"Every problem can be solved by adding another layer of indirection."<P>
+<P>I jumped at the Guru’s voice behind me. "Pardon?" I asked, turning toward her.<P>
+<P>"Every probl&#151;"<P>
+<P>"Er, yes," I interrupted her, forgetting myself. "I heard what you said, I just don’t get where you’re coming from." <I>Boy, that’s an understatement,</I> I thought. <I>Neither does half the department.</I><P>
+<P>"Ah, but you will." The Guru leaned toward me. "You will, my young apprentice." She stared at me intently for a moment, then straightened up. "My child, disciples who use C often use a switch statement to direct the program flow based on the object type. Consider this parable." She picked up the dry-erase marker:<P>
+
+<pre>/* A not-atypical C program */
+void f(struct someStruct *s)
+{
+  switch(s-&gt;type) {
+  case APPLE:
+    /* do one thing */
+    break;
+  case ORANGE:
+    /* do another thing */
+    break;
+  /* ... etc. ... */
+  }
+}</pre>
+
+<P>"When those same disciples study the prophet Stroustrup," she continued, "thereby learning C++, they must learn how to design good class hierarchies."<P>
+<P>"Yes," I interrupted again, eager to show that I really did know something. "They’d create a class hierarchy with <b>Fruit</b> as the base class, and derived classes <b>Apple</b> and <b>Orange</b>. The ‘do something’ code would be virtual functions in the derived classes."<P>
+<P>"Very good, my child. Very often, C++ disciples will use the parable I have shown to proselytize, by pointing out that the <b>switch</b> statement is an error-prone maintenance chore. There is, however, another way of looking at this parable: by introducing a virtual function, you have added a layer of indirection." She lay down the marker. "What you want is a new virtual function."<P>
+<P>"Aha. Right. I know that, and," I concluded triumphantly, "I can’t do that here."<P>
+<P>She nodded. "Because you may not modify the hierarchy. Yes."<P>
+<P>That stopped me, but only for a moment. "Oh, you know? That we can’t change it? Then you understand."<P>
+<P>"Oh, yes. I designed that hierarchy."<P>
+<P>"Oh." That stopped me completely.<P>
+<P>"This hierarchy must be kept more stable than most because of unusual cross-system dependencies, but it is designed to let you add virtual functions so as to avoid type-switching code. You can solve your problem by adding another layer of indirection. Consider the parable yet again. What is <b>Personnel::Accept</b>?<P>
+<P>"Uh, um?" I said rather dimly.<P>
+<P>"This class implements the Poorly Named Pattern, or PNP. It is also known as the Visitor pattern <a href="#1">[1]</a>." <P>
+<P>"Uh, um!" I said, a little more brightly now. "I’ve read about Visitor. But that’s just for having objects that can iteratively visit each other. Isn’t it?"<P>
+<P>She sighed. "A common misapprehension. Think that the V means, not so much Visitor, but Virtual," she explained. "The PNP’s most useful application is to enable the addition of virtual functions to an existing class hierarchy without further changing that hierarchy. Note first how <b>Accept </b>is implemented in <b>Personnel</b> and its children." She pulled up code like the following:<P>
+
+<pre>void Personnel::Accept( PersonnelV&amp; v )
+  { v.Visit( *this ); }
+
+void Officer::Accept ( PersonnelV&amp; v )
+  { v.Visit( *this ); }
+
+void Captain::Accept ( PersonnelV&amp; v )
+  { v.Visit( *this ); }
+
+void First::Accept ( PersonnelV&amp; v )
+  { v.Visit( *this ); }</pre>
+
+<P>"And," she continued, "the Visitor base class is thus:"<P>
+
+<pre>class PersonnelV/*isitor*/
+{
+public:
+  virtual void Visit( Personnel&amp; ) = 0;
+  virtual void Visit( Officer&amp; ) = 0;
+  virtual void Visit( Captain&amp; ) = 0;
+  virtual void Visit( First&amp; ) = 0;
+};</pre>
+
+<P>"Ah," I said, as I remembered. "So when I write code that uses <b>Personnel</b>-derived objects polymorphically, I just call <b>Personnel::Accept( myVisitorObject )</b>, and because <b>Accept</b> is virtual <b>myVisitorObject.Visit </b>will be called with the right derived type, and overload resolution picks the right function. That is sort of like adding a new virtual function, isn’t it?"<P>
+<P>"Indeed, my child. The newly added function normally must use only the client class’s public interface, but in all other respects it can and does behave virtually even though not a member. All that is needed is that the original hierarchy support <b>Accept</b>, so as to open itself for extension. If in the future we find that we often extend the visited <b>Personnel</b> hierarchy with new child classes, or we want to better manage recompilation dependencies, we may migrate to Acyclic Visitor &#151; without any change to <b>Personnel</b> and its little ones beyond minor restatement of their <b>Accept</b> functions [<a href="#2">2</a>, <a href="#3">3</a>]." <P>
+<P>I got it. "Okay, so I can do what I was trying to do like this." I quickly wrote:<P>
+
+<pre>class DoSomething : public PersonnelV
+{
+public:
+  virtual void Visit( Personnel&amp; );
+  virtual void Visit( Officer&amp; );
+  virtual void Visit( Captain&amp; );
+  virtual void Visit( First&amp; );
+};
+
+void DoSomething::Visit( Captain&amp; c )
+{
+  if( femaleGuestStarIsPresent )
+    c.TurnOnCharm();
+  else
+    c.StartFight();
+}
+
+void DoSomething::Visit( First&amp; f )
+{
+  f.RaiseEyebrowAtCaptainsBehavior();
+}</pre>
+
+<P>The Guru peered at my code more intently. "What system did you say this code was for?"<P>
+<P>"Ah... a simulator?"<P>
+<P>"I see. Well, go ahead, child, write the rest." I added an example test harness:<P>
+
+<pre>void f( Personnel&amp; p )
+{
+  p.Accept( DoSomething() ); // like p.DoSomething()
+}
+
+int main()
+{
+  Captain k;
+  First s;
+
+  f( k );
+  f( s );
+}</pre>
+
+<P>The Guru stepped back and pushed a graying lock behind one ear. "True, the function does not directly inhabit the original hierarchy with a <b>Personnel::</b> scope name. And yet, in this instance, a function by any other name is still as virtual," she smiled, and glided away. Her words drifted off with her as she passed out of sight: "And a Visitor pattern by <I>any</I> other name is still as useful, and is more aptly described. But that is the way of things...."<P>
+<hr>
+<P>The massive bulk of Jupiter, crushingly majestic and dwarfing the beauty of Europa’s surface, began to shoulder its way into the viewport scene as the ship rotated.<P>
+<P>"I’m going to put in for some surface suit time," I decided. "What a sky to walk under. Even if I am just a visitor here."<P>
+<P>"Visitors we are," Jeannine agreed. "But I wonder, are we the first?"<P>
+<P>Then, for a time, we merely watched in silence.<P>
+<P><B>Notes</B><P>
+<P><a name="1"></a>[1] E. Gamma, R. Helm, R. Johnson, and J. Vlissides. <I>Design Patterns: Elements of Reusable Object-Oriented Software</I> (Addison-Wesley, 1995).<P>
+<P><a name="2"></a>[2]  R.C. Martin. "Design Patterns for Dealing with Dual Inheritance Hierarchies," <I>C++ Report</I>, April 1997). Available online at <b>http://www.objectmentor.com/publications/dih.pdf</b>.<P>
+<P><a name="3"></a>[3] R.C. Martin, "Acyclic Visitor," in R.C. Martin, D. Riehle, F. Buschmann (eds.), Pattern Languages of Program Design 3 (Addison-Wesley, 1998). Available online at <b>http://www.objectmentor.com/publications/acv.pdf</b>.<P>
+
+   	
+<p><i><b>Jim Hyslop</b> is a senior software designer at Leitch Technology International Inc.  He can be reached at <b>jim.hyslop@leitch.com</b>.</i></p>
+<p><i><B>Herb Sutter</b> is chief technology officer of PeerDirect Inc. and secretary of the ISO/ANSI C++ standards committee. He can be reached at <b>hsutter@peerdirect.com</B>.</i></p>
+</blockquote.</body>
+</html>

@@ -1,0 +1,66 @@
+<HTML><HEAD>
+<TITLE>November 2000/import java.*/Listing 12</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 12: File StringTokenizerTest.java</A></h4>
+<pre>
+import java.io.*;
+import java.util.*;
+
+class StringTokenizerTest
+{
+    public static void main(String[] args)
+        throws IOException
+    {
+        BufferedReader f =
+            new BufferedReader(
+                new FileReader("Tokens2.dat")
+            );
+
+        String name = null;
+        String enum = null;
+        String title = null;
+
+        String line;
+        while ((line = f.readLine()) != null)
+        {
+            StringTokenizer in =
+                new StringTokenizer(line, ",\n");
+            for (int fieldno = 0;
+                 in.hasMoreTokens();
+                 ++fieldno)
+            {
+                switch (fieldno)
+                {
+                case 0:
+                    System.out.print("name");
+                    break;
+                case 1:
+                    System.out.print(", enum");
+                    break;
+                case 2:
+                    System.out.print(", title");
+                    break;
+                }
+                System.out.print(" = " + in.nextToken());
+            }
+            System.out.println();
+        }
+
+        f.close();
+    }
+}
+
+/* Input (file Tokens2.dat):
+John Doe,1,Engineer
+Jane Dear,2,President &amp; CEO
+John Deere,3,Mail Clerk
+*/
+
+/* Output:
+name = John Doe, enum = 1, title = Engineer
+name = Jane Dear, enum = 2, title = President &amp; CEO
+name = John Deere, enum = 3, title = Mail Clerk
+*/
+</pre></body></html>

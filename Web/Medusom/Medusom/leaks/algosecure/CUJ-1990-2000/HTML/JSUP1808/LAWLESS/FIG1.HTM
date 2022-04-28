@@ -1,0 +1,25 @@
+<HTML><HEAD>
+<TITLE>August 2000 Java Solutions/Using the Java Core Reflection API/Figure 1</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Figure 1: Properties file for script example</A></h4>
+<pre>
+# AfterInit section
+AfterInit.1=print "In post-initialization section."
+
+# let the user know they're in debug mode...
+AfterInit.2=setString title "Number game : debug mode : (1-100)"
+
+# set the number to
+AfterInit.3=setInt    number 27
+
+
+# UserInput section
+UserInput.1=print "The user guessed the following..."
+UserInput.2=printVar guess
+
+# PlayAgain section
+PlayAgain.1=callMethod terminate
+
+</pre></body></html>

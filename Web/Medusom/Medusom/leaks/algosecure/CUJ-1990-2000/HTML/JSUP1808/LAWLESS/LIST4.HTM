@@ -1,0 +1,172 @@
+<HTML><HEAD>
+<TITLE>August 2000 Java Solutions/Using the Java Core Reflection API/Listing 4</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 4: The Script class, a simple script interpreter</A></h4>
+<pre>
+import java.io.*;
+import java.util.*;
+import java.lang.reflect.*;
+
+
+   // Script commands...
+   //   print 
+   //   printVar    varName
+   //   callMethod  methodName
+   //   setInt      varname value
+   //   setBoolean  varname value
+   //   setString   varname value
+
+
+public class Script {
+   Properties prop;
+   Object obj;
+   Class cl;
+   boolean scriptPresent;
+
+
+      // Construct accepts an object and a
+      // property file name.
+   public Script( Object o, String fileName) {
+         // Save Object reference.
+      obj=o;
+
+         // Get Class reference.
+      cl=obj.getClass();
+
+         // Load properties.
+      prop=new Properties();
+      scriptPresent=true;
+      try {
+         prop.load(new FileInputStream(new File(
+            fileName)));
+      }
+      catch(FileNotFoundException e) {
+         scriptPresent=false;         
+      }
+      catch(IOException e) {
+         System.err.println("IO exception - " +  e);
+         System.exit(0);
+      }
+   }
+   public void doHook(String section) throws Exception {
+      String s;
+
+         // If property file not present, drop out.
+      if( !scriptPresent)
+         return;
+
+         // Iterate through each script line in the hook
+      for(int i=1;;i++) {
+         if((s=prop.getProperty( section + "." + i))
+            ==null)
+            break;
+            // Invoke script command.
+         doCommand(s);
+      }
+   }
+   private void doCommand(String commandLine) throws
+      Exception {
+
+      StringTokenizer st;
+      String s;
+      st=new StringTokenizer(commandLine);
+      while( st.hasMoreTokens() ) {
+         s=st.nextToken();
+
+         // If the first token matches any of our
+         // commands, pass the StringTokenizer
+         // object to the appropriate routine to
+         // finish command-execution.
+
+         if( s.equals("print")) {
+            doPrint( st );
+         }
+         else
+         if( s.equals("printVar")) {
+            doPrintVar(st);
+         }
+         else
+         if( s.equals("callMethod")) {
+            doCallMethod(st);
+         }
+         else
+         if( s.equals("setInt")) {
+            doSetInt(st);
+         }
+         else
+         if( s.equals("setBoolean")) {
+            doSetBoolean(st);
+         }
+         else
+         if( s.equals("setString")) {
+            doSetString(st);
+         }
+      }
+   }
+
+      // Print a string on the console with "\n"
+   private void doPrint(StringTokenizer tok) throws
+      Exception {
+
+      String value;
+      value=tok.nextToken("\"");
+      value=tok.nextToken("\"");
+      System.out.println(value);
+   }
+
+
+      // Print an attribute of Object "obj"
+   private void doPrintVar(StringTokenizer tok) throws
+      Exception {
+
+      Field f;
+      String s;
+      s=tok.nextToken();
+      f=cl.getField( s );
+      System.out.println( f.get(obj) );
+   }
+
+      // invoke specified method of Object "obj"
+   private void doCallMethod(StringTokenizer tok) throws
+      Exception {
+
+      Method m;
+      m=cl.getMethod(tok.nextToken(),null);
+      m.invoke(obj,null);
+   }
+
+
+      // Set an int property.
+   private void doSetInt(StringTokenizer tok) throws Exception {
+      Field f;
+      String var,value;
+      var=tok.nextToken();
+      value=tok.nextToken();
+      f=cl.getField(var);
+      f.setInt(obj,Integer.parseInt(value));
+   }
+
+      // Set a boolean property
+   private void doSetBoolean(StringTokenizer tok) throws Exception {
+      Field f;
+      String var,value;
+      var=tok.nextToken();
+      value=tok.nextToken();
+      f=cl.getField(var);
+      f.setBoolean(obj,value.equals("true"));
+   }
+
+      // Set a string property
+   private void doSetString(StringTokenizer tok) throws Exception {
+      Field f;
+      String var,value;
+      var=tok.nextToken();
+      value=tok.nextToken("\"");
+      value=tok.nextToken("\"");
+      f=cl.getField(var);
+      f.set(obj,value);
+   }
+}
+</pre></body></html>

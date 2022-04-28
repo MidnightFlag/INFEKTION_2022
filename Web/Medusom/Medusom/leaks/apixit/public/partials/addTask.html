@@ -1,0 +1,38 @@
+ <section class="container d-flex justify-content-center p-0">
+  <div class="col-lg-6 col-md-12 p-0">
+    <form id="newTask" action="#" ng-submit="addTask()">
+      <div class="d-flex align-items-center flex-column">
+        <div class="d-flex w-100 text-dark bg-blue flex-row justify-content-between mb-2 p-2">
+          <button class="btn bg-blue mr-1 text-uppercase" ng-click="back()">Annuler</button>
+          <button class="btn bg-blue mr-1 text-uppercase" type="submit">Ajouter</button>
+        </div>
+      </div>
+      <div class="p-4">
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="inputTitle">Titre</label>
+            <input type="text" class="form-control bg-dark border-0 text-white" id="inputTitle" placeholder="Tâche ménagère" ng-model="newTodo.title" required>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="inputCategory">Catégorie</label>
+            <input type="text" class="form-control bg-dark border-0 text-white" id="inputCategory" placeholder="Vie commune" ng-model="newTodo.category">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputDescription">Description</label>
+          <input type="text" class="form-control bg-dark border-0 text-white" id="inputDescription" placeholder="Nettoyer la cuisine" ng-model="newTodo.description">
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="inputDate">Date</label>
+            <input type="text" class="form-control bg-dark border-0 text-white" id="inputDate" placeholder="01/01/1900" ng-model="newTodo.date" required>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="inputTime">Durée</label>
+            <input type="text" class="form-control bg-dark border-0 text-white" id="inputTime" placeholder="00:00" ng-model="newTodo.time" required>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+ </section>

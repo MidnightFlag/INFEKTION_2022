@@ -1,0 +1,35 @@
+<HTML><HEAD>
+<TITLE>November 2000 C++ Experts Forum/From Mechanism to Method/Listing 1</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 1:  Function object class and helper for binding target object and member function pointer</A></h4>
+<pre>
+template&lt;typename target_ptr_type, typename member_ptr_type&gt;
+class remember_function
+{
+public:
+    remember_function(target_ptr_type on, member_ptr_type call)
+      : ptr(on), member(call)
+    {
+    }
+    void operator()() const
+    {
+        (ptr-&gt;*member)();
+    }
+private:
+    target_ptr_type ptr;
+    member_ptr_type member;
+};
+template&lt;typename target_ptr_type, typename member_ptr_type&gt;
+remember_function&lt;target_ptr_type, member_ptr_type&gt;
+remember(target_ptr_type on, member_ptr_type call)
+{
+    return remember_function&lt;
+                target_ptr_type, member_ptr_type&gt;(on, call);
+}</pre></pre></body></html>
+
+
+
+
+

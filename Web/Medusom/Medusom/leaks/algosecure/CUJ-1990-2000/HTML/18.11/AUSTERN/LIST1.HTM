@@ -1,0 +1,47 @@
+<HTML><HEAD>
+<TITLE>November 2000/The Standard Librarian/Listing 1</TITLE></HEAD>
+
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<h4><A NAME="heading1">Listing 1: A streambuf class that enables simultaneous use of a stream with both stdio and iostreams functions</A></h4>
+<pre>
+class syncbuf : public std::streambuf {
+public:
+   syncbuf(FILE*);
+
+protected:
+   virtual int overflow(int c = EOF);
+   virtual int underflow();
+   virtual int uflow();
+   virtual int pbackfail(int c = EOF);
+   virtual int sync();
+
+private:
+   FILE* fptr;
+};
+
+syncbuf::syncbuf(FILE* f)
+   : std::streambuf(), fptr(f) {}
+
+int syncbuf::overflow(int c) {
+   return c != EOF ? fputc(c, fptr) : EOF;
+}
+
+int syncbuf::underflow() {
+   int c = getc(fptr);
+   if (c != EOF)
+      ungetc(c, fptr);
+   return c;
+}
+
+int syncbuf::uflow() {
+   return getc(fptr);
+}
+
+int syncbuf::pbackfail(int c) {
+   return c != EOF ? ungetc(c, fptr) : EOF;
+}
+
+int syncbuf::sync() {
+   return fflush(fptr);
+}</pre></pre></body></html>

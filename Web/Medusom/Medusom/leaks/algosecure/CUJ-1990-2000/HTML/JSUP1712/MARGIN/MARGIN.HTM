@@ -1,0 +1,240 @@
+<HTML>   
+     <HEAD>
+<TITLE>December 1999 Java Solutions/Communication Between Browsers Using RMI</TITLE></HEAD>
+<BODY BACKGROUND="" BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../tocjsup.htm"><IMG SRC="../../toc.gif" ALT="{back to toc}" WIDTH="54" HEIGHT="54"></A><FONT COLOR="#FF0000">   Java Solutions</FONT></H2>
+
+<HR>
+
+<H2 ALIGN="center"><FONT COLOR="#800000">Communication Between Browsers Using RMI</FONT></H2>
+<H3 ALIGN="center"><FONT COLOR="#800000">Petru Marginean</FONT></H3>
+
+<BLOCKQUOTE>
+<p>Remote method invocation can help offset some of the limitations on Java applets imposed in the name of security.</p>
+</BLOCKQUOTE>
+
+<HR>
+<BLOCKQUOTE>
+
+<h4><FONT COLOR="#000080">Introduction</FONT></H4>
+
+<p>Java was designed specifically for distributed applications and networked environments. It includes innate support for TCP/IP in its standard library. However, because Java was also designed to enforce a secure environment for running applets, its ability to perform TCP/IP communications while running in a browser is seriously impaired.</p>
+<p>To be more specific, an untrusted applet cannot connect to any other TCP/IP address than the one from which it was downloaded. (Untrusted applets are the vast majority of the applets on the Web and most likely the kind you would create.) Your applet running in a browser could open a listening port (which must be greater than 1023). But socket-level programming is inherently low-level and involves a lot of marshaling and parsing back and forth. Besides, Microsoft's Internet Explorer 4, even with low security settings, does not allow an applet to open a listening port at all. You have to go to custom security settings &#151; reserved, as the dialog reads, to "expert users" &#151; set Java Permissions to "custom," and eventually set Access All Network Addresses to "Enable."</p>
+<p>A simple and primitive workaround to this limitation is to have the browser query for information at fixed intervals of time. This can be achieved with META tags or JavaScript in HTML, or by code in the Java applet. Since the client has no clue whether the information on the server has changed or not, this solution implies a tradeoff between unnecessary network traffic (fast refresh rate) and annoying delays (slow refresh rate).</p>
+<p>Wouldn't it be nice if there were a clean way in Java to open a socket (from inside any browser), handle all the messy details, and provide a higher-level communication interface? Actually, there is, and it's called Remote Method Invocation, a.k.a. RMI.</p>
+<p>This article describes a complete framework that leverages RMI to provide point-to-point communication between two arbitrary clients running in regular web browsers. (Of course, the Java implementation in those browsers should support RMI, included in JDK 1.1.) No installation, configuration, <B>CLASSPATH</B> editing, etc. is necessary on the client side. This means that your dream of having a chat client accessible from anywhere might become true. Actually, a simple chat program is the illustration I use for this framework. I have tested the application with Internet Explorer 4.0 and Netscape Navigator 4.06. The only requirement for the browser is that it support RMI and AWT 1.1.</p>
+
+<h4><FONT COLOR="#000080">RMI Background</FONT></H4>
+
+<p>RMI is an RPC (Remote Procedure Call) mechanism, which allows Java objects stored in a network to be run remotely. A Java program can call any method on a remote interface (derived from <B>java.rmi.Remote</B>) once it obtains a reference to the interface, either by looking it up in the bootstrap naming service provided by RMI or by receiving the reference as an argument or a return value. The RMI mechanism marshals object and method information, and the parameters, to the remote server. It then returns the response (return value) back to the caller. In case of an error, an exception of type <B>java.rmi.RemoteException</B> will be thrown.</p>
+<p>Although this kind of communication is bidirectional it is always initiated by the client. Parameters and return values are passed by value, using Java's object serialization mechanism, which deals with streaming object states across the network. (The remote object itself is not serialized; instead, it is passed by reference to a stub.)</p>
+<p>It is important to emphasize that RMI is fully integrated with the Java language itself; it is not just a limited API built on top of it. Although there are some understandable differences such as pass-by-value semantics, RMI allows true polymorphism and cast semantics using the built-in Java syntax. What's important for this article is that RMI takes care of all the socket communication details &#151; and best of all, it works in an untrusted applet too.</p>
+
+<h4><FONT COLOR="#000080">The Communication Framework</FONT></H4>
+
+<p>Suppose you want to build a simple, portable chat application that runs in a web page. The basic purpose of the application is to send messages between two browsers. A Java applet cannot send RMI calls from a client to a target other than its own host, so it will be necessary to use an intermediate server that acts as a message dispatcher. The message will go from Client 1 (the sender) to the server, which will then forward it to Client 2 (the receiver). The former is very easy to achieve with a simple RMI call. For the latter part the server must notify the receiver about that message &#151; and here lies the whole problem, because the server cannot make an RMI call back to a client.</p>
+<p>Back to sockets? There has to be a better way. The solution I present is based on the following idea: the receiver starts a new thread that makes a synchronous blocking call on the server. That call doesn't return until a message is available on the server for the client. The call will return the next available message. The final outcome is just as if the server sent a message directly to the receiving client, as soon as a message is available and without any polling. As two or more clients communicate, they will always have pending calls on the server while they wait for new messages. The communication details are handled now by the RMI mechanism; the client doesn't block because the blocking call is in a separate thread; and messages are delivered as soon as they are received <a href="#1">[1]</a>.</p>
+<p>To support this communication mechanism in a reusable manner, a certain amount of plumbing is necessary. First, the server must maintain a list of clients, and provide a message queue for every client. Just like in a mailing system, the sender identifies itself, the receiver, and the message via a call to a method named <B>PostMessage</B>. The server takes responsibility for the delivery. The receiver will get the message as the result of calling <B>ReadNextMessage</B>. This process is illustrated in <a href="fig1.htm">Figure 1</a>.</p>
+<p>A typical usage of the system might be as follows <a href="#2">[2]</a>:</p>
+
+<pre>
+// Query the server to find out the display name for the other users
+String[] Clients = Server.GetClients();
+
+// Register and get an ID (your signature)
+String myID = Server.Register("Chat client #1"); 
+
+// Send a message to Chat Client #2 client;
+// Chat Client #2 should be in the Clients[] array
+Server.PostMessage("Chat client #2", myID,
+   new Message("Chat client #1", Message.INFO, "Hello world!")); 
+
+// Waiting for a new message
+// This call is blocking so it should be performed from a
+// secondary thread
+Client.OnMessage(Server.ReadNextMessage(myID));
+
+//Unregister from server
+Server.Unregister(myID);
+</pre>
+
+<p>A more elaborate client would display the contents of the <B>Clients[]</B> array to the would-be chat participant prior to registering.</p>
+<p>The housekeeping required by RMI is quite straightforward. Because instances of the <B>Message</B> class appear in parameter lists and returned values, this class must implement the <B>java.io.Serializable</B> interface. The <B>Server</B> class (the remote object) must extend <B>java.rmi.server.UnicastRemoteObject</B> to support point-to-point active object references (invocations, parameters, and results) using TCP streams. The server's remote interface must extend the <B>java.rmi.Remote</B> interface. Last but not least, any method that belongs to this interface may throw a <B>java.rmi.RemoteException</B> exception.</p>
+<p>As suggested by the code snippet above, the server implements the following messaging interface:</p>
+
+<pre>
+public interface IServer extends java.rmi.Remote
+{
+   // returns an array of displayNames; IDs aren't known except
+   // to the server itself
+   String[] GetClients();
+   String Register(String clientDisplayName);
+   void Unregister(String clientID);
+   void PostMessage(String destinationDisplayName,
+      String senderID, Message msg);
+
+   // ReadNextMessage won't return until a new message is available
+   Message ReadNextMessage(String receiverID);
+}
+</pre>
+
+<p>It is important for the client's blocking call to occur in a separate thread &#151; otherwise the client GUI would freeze. The notion of waiting for a message is tightly linked to that of having an extra thread running. For this reason I extended the <B>Runnable</B> interface with a simple method that enables its implementer to be notified of messages:</p>
+
+<pre>
+interface INotifiable extends Runnable
+{
+   void OnMessage(Message msg);
+}
+</pre>
+
+<p>The base client class for receiving messages is outlined below. Since the intent is to run in a browser, this class inherits from <B>Applet</B>. All you have to do to use this class is extend it and provide an appropriate override for <B>OnMessage</B>.</p>
+
+<pre>
+abstract public class Client
+   extends java.applet.Applet implements INotifiable
+{
+   IServer m_server;
+   String m_myDisplayName;
+   String m_myID;
+     
+   public void start()
+   {
+      //A string with the server name;
+      //It may be passed as a parameter from the HTML page
+      String serverName = "MyServer";
+
+      m_server = (IServer)Naming.lookup(serverName);
+      String[] Clients = m_server.GetClients();
+
+      //The user can enter Display name
+      m_myDisplayName = "John Doe";
+
+      m_myID = m_server.Register(m_myDisplayName);
+      new Thread(this).start();
+   }
+        
+   public void stop()
+   {
+      m_server.Unregister(m_myID);
+   }
+
+   //Pump messages in a secondary thread
+   public void run()
+   {
+      for (;;)
+      {
+         Message msg = m_server.ReadNextMessage(m_ID);
+         if (msg.Code() == Message.END)
+             return;
+         onMessage(msg);
+      }
+   }
+}
+</pre>
+
+<p>The message-pumping thread terminates when the framework sends a special message (<B>Message.END</B>).</p>
+<p>Every client knows just its own ID (obtained only after registration) and the <B>displayName</B>s of the others. Thus, anonymous messages are avoided by design, as is the possibility that a malicious client could send messages on someone else's behalf. The client ID is like a signature certifying the sender of a message. The IDs themselves are non-elaborated strings, but they can be encrypted in a security-concerned application. The only methods that can be called without having an ID are <B>GetClients</B> and <B>Register</B>. These methods must be available without ID to enable clients to connect to the server.</p>
+
+<h4><FONT COLOR="#000080">Making Communication Reliable</FONT></H4>
+
+<p>In a networked application, both the client and the communication line should be considered unreliable. The application should be designed so that even if a client crashes, the rest of the system will be unaffected and continue to function. It is possible to increase reliability on the server side (by using a solid operating system, uninterruptible power supplies, user access restrictions, etc.) but such measures would be impossible to require of web-based clients. Thus, core information and recovery mechanisms must be kept on the server.</p>
+<p>Given the above considerations, the framework presented here is designed to meet the following reliability requirements:</p>
+
+<UL><LI>The persistent state of the client is stored on the server. (Even if it was desirable to store this state on the client machine, the browser's Security Manager would make it impossible.)</LI>
+<LI>A client should be able to start a new server session, save the current session, and load a previously saved session.</LI>
+<LI>After a crash and restart, a client should be able to resume the current session.</LI>
+<LI>The server should have at least some minimal level of protection against overloaded queues due to crashed clients.</LI></UL>
+
+<p>The first two issues can be solved relatively simply by extending the server's interface and using RMI calls. (For instance, you can add methods such as <B>Save</B>, <B>Load</B>, and so on.)</p>
+<p>The framework itself solves the third problem. The server can detect if a user is able to read its messages by "pinging" &#151; putting a message in the client message queue and waiting a certain amount of time for it to be read. This technique also enables the server to distinguish a legitimate reconnection from an intrusion attempt. In the case of a reconnection, when a reconnecting client calls <B>Register</B> (shown below), the server unregisters the "dead" client and allows the new client to initialize itself with the old client's data. The framework ensures that the reconnected client will be able to read its pending messages. Most likely, the reconnected client is physically the same as the old one, trying to recover after a crash/lost connection. The framework defines separate messages for "connect" and "reconnect" operations, so the caller can perform different initialization procedures.</p>
+
+<pre>
+public class Server extends UnicastRemoteObject
+   implements IServer
+{
+   synchronized public String
+   Register(String displayName) throws Exception
+   {
+      String newID;
+      try
+      {
+         ClientInfo crtCI = GetClient(displayName);
+         crtCI.m_ClientIsAlive = false;
+         PostMessage(displayName, m_id,
+            new Message(m_id, Message.INFO,
+                   "Server is verifying if you are alive"));
+         crtCI.WaitNewRequest();
+         if (crtCI.m_ClientIsAlive)
+         {
+            // Client is alive
+            System.out.println("Acknowledge.");
+            PostMessage(displayName, m_id,
+              new Message(m_id, Message.INFO,
+              "Someone tried to replace you; attempt REJECTED"));
+            throw new Exception
+                      ("Try to connect as an existing client");
+         }
+         System.out.println("Negative Acknowledge.");
+         // Client crashed; replace it!
+         // Change ID of ClientInfo with newID =&gt; that means
+         // the older client will be discarded
+         newID = new Integer(m_crtClientID++).toString();
+         crtCI.SetID(newID);
+         PostMessage(displayName, m_id,
+            new Message(m_id, Message.RECONNECT,
+               "Welcome back, " + displayName + "."));
+         System.out.println
+         ("The client already exists but seems to be hung up;
+           it was replaced.");
+      }
+      catch(ClientNotFound e)
+      {
+         // New client
+         if (m_clientsList.size() &gt;= MaxClientsNumber())
+            throw new Exception
+                      ("Too many clients (" +
+                       MaxClientsNumber() + ").");
+         NotifyAll(new Message(m_id, Message.MODIFY_CLIENTS,
+            displayName + " joined to " + m_id));
+         newID = new Integer(m_crtClientID++).toString();
+         ClientInfo newCI = NewClient(displayName, newID);
+         m_clientsList.addElement(newCI);
+         PostMessage(displayName, m_id,
+            new Message(m_id, Message.NEW,
+                   "Welcome, " + displayName + "."));
+          System.out.println("\t=&gt; reg. NEW " + newCI);
+       }
+       return newID;
+   }
+       //...
+}
+</pre>
+
+<p>To meet the last requirement, the server simply limits the number of messages that can be held in the message queue. The <B>PostMessage</B> method notifies the sender if the message couldn't be delivered correctly. Actually this is the usual behavior for the vast majority of messaging systems, such email servers.</p>
+<p>The current system uses Java vectors and linear searching for client ID/name management. A more scalable implementation could use hash tables or a database.</p>
+<p>Speaking of scalability, this approach allocates a connection on the server for each active client. As the number of active clients increases, server load may grow unacceptably. To address this problem, I provide four overridable methods that customize the maximum number of active clients, maximum number of pending messages, and the keep-alive time.</p>
+
+<h4><FONT COLOR="#000080">Conclusion</FONT></H4>
+
+<p>In this article I have presented what I believe to be an elegant and efficient solution to a typical communication problem. The solution is reusable and easy to extend and adapt to various needs. It leverages RMI as a high-level port handling mechanism. On top of RMI, a message-passing framework was introduced. As always in networking environments, use of multiple threads for achieving responsiveness is a must. Java is a good choice for this kind of application, as it provides native support for both threads and remote calls. The end result is a portable chat application that can be run from virtually any popular browser without any setup.</p>
+
+<h4><FONT COLOR="#000080">Notes</FONT></H4>
+
+<p><a name="1"></a>[1]  Actually, the framework outlined here does not depend on Java. You can apply the same strategy for encapsulating socket communication in any language that supports RPC calls (either bare, wrapped by DCOM, etc.) and multithreading.</p>
+<p><a name="2"></a>[2]  In all code samples error handling was intentionally omitted to increase clarity.</p>
+
+<h4><FONT COLOR="#000080">Acknowledgement</FONT></H4>
+
+<p>Thanks to my colleague Andrei Alexandrescu for reviewing and commenting on this article.</p>
+
+<h4><FONT COLOR="#000080">Source Code</FONT></H4>
+
+<p>The source code for the framework can be obtained from the <I>CUJ</I> website at <B>www.cuj.com/java/code.htm</B>.</p>
+
+<p><i><B>Petru Marginean</B> is a specialist in C++. He works for Micro Modeling Associates, Inc. (<B>www.MMAnet.com</B>), an eSolutions consultancy that helps businesses thrive in the digital economy. He can be reached at <B>http://members.xoom.com/petrum</B>.</i></p>
+
+<h4><a href="../../../source/1999/jsup99/marginea.zip">Get Article Source Code</a></h4>
+
+</BLOCKQUOTE>
+</BODY>
+</HTML>
