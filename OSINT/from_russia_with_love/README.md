@@ -28,9 +28,9 @@ On commence avec le reddit de l'utilisateur magojo__ (https://www.reddit.com/use
 
 ![](./photos/reddit.png)
 
-Le reddit étant vide, on comprend rapidement que le contenu a été supprimé.
+Le reddit étant vide, on remarque rapidement la mention “time traveler”, faisant penser à la WaybackMachine.
 
-En utilisant la WaybackMachine (https://archive.org/web/), on retrouve un post qui nous redirige vers son twitter (https://twitter.com/johnmago12) sur lequel il y a un tweet avec une photo.
+En utilisant cet outil (https://archive.org/web/), on retrouve un post qui nous redirige vers son twitter (https://twitter.com/johnmago12) sur lequel il y a un tweet avec une photo.
 
 ![](./photos/twitter.png)
 
@@ -98,15 +98,11 @@ La basse altitude de l'avion combinée au fait que nous connaissons sa destinati
 
 À partir de la date et de l'heure (Lundi 2 Mai à 11h29), le tout combiné au fait évoqué précédemment, nous allons donc remonter les différents vols effectués depuis Brest.
 
-Bingo ! On retrouve les vols effectués depuis Brest sur leur site officiel : https://www.brest.aeroport.bzh/
+Bingo ! On peut retrouver l’historique des vols sur Airportia (https://www.airportia.com/france/brest-bretagne-airport/departures/) ou depuis le site de l’aéroport de Brest en utilisant la wayback machine (https://www.brest.aeroport.bzh/departs-et-arrivees)
+En indiquant la bonne date, on retrouve un vol qui pourrait correspondre :
 
-Malheureusement, les vols affichés ne remontent pas à plus de deux jours... 
-On va donc utiliser la wayback machine sur l'url : https://www.brest.aeroport.bzh/departs-et-arrivees
+![](./photos/airportia.png)
 
-À partir de là, on peut accéder à la bonne date et observer les arrivées ainsi que les départs du jour. 
+Départ à 19h14 vers Paris, ce qui est logique avec la basse altitude et l’heure de la photo. On a donc notre flag.
 
-![](./photos/aéroport.png)
-
-Départ à 11h20 vers Paris, ce qui est logique avec la basse altitude et l'heure de la photo. On a donc notre flag.
-
-**Flag : MCTF{AF7741:Paris}**
+**Flag : MCTF{AF7733:Paris}**
