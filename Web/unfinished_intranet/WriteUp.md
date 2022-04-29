@@ -1,10 +1,9 @@
-## unfinished intranet
+# unfinished intranet
+## <u> **Categorie** </u>
+## <u> **Description ** </u> : 
+
 ```
-Points : ???
-
-Author : .Yo0x
-
-Description : Des hackers de l'URSS ont réussi à lire le code source de l'intranet en construction d'une agence gouvernementale des Etats-unis. 
+ Des hackers de l'URSS ont réussi à lire le code source de l'intranet en construction d'une agence gouvernementale des Etats-unis. 
 
 Cette agence vous à demandé de leur faire un rapport sur la faille qui rendu possible cette action.
 
@@ -12,17 +11,25 @@ le flag est sous la forme MCTF{}
 
 ```
 
-Nous n'avons pas beaucoup de possibilités avec cette application, seule la création de compte est possible mais pas terminée.
+## <u> **Hints** </u> : 
+Observer le format de la requête
+
+## <u> **Auteur ** </u>: 
+.Yo0x
+
+## <u> ** Solution** </u>:
+
+Nous n'avons pas beaucoup de possibilité avec cette application, seul la création de compte est possible mais pas terminé.
 
 De plus la création de compte semble vulnérable. 
 
-après la création du compte on est redirigé vers un endpoint nous informants de l'indisponibilité du site 
+après la création du compte on est rediriger vers un endpoint nous informant de l'indisponibilité du site 
 
-![Pasted image 20220404231904.png]
+![](https://github.com/Yo-0x/MidNightFlagCtf/blob/main/Pasted%20image%2020220404231904.png?raw=true)
 
-Pour y voir plus clair, il est nécessaire de capturer la requête.
+Pour y voir plus claire, il est nécessaire de capturer la requête.
 
-![[Pasted image 20220404190139.png]]
+![](https://github.com/Yo-0x/MidNightFlagCtf/blob/main/Pasted%20image%2020220404190139.png?raw=true)
 
 Après capture de la requête nous pouvons observer que les données sont passé au format xml.
 
@@ -33,9 +40,9 @@ si on tente une deuxième fois, un message d'erreur apparaît en nous infomant q
 tentons alors une XXE : 
 
 
-![[Pasted image 20220404193354.png]]
+![](https://github.com/Yo-0x/MidNightFlagCtf/blob/main/Pasted%20image%2020220404193354.png?raw=true)
 
-![[Pasted image 20220404193405.png]]
+![](https://github.com/Yo-0x/MidNightFlagCtf/blob/main/Pasted%20image%2020220404193405.png?raw=true)
 
 Nous avons récupéré le code source de l'application.
 
@@ -60,3 +67,7 @@ echo "Sorry, $email is already registered!";
 ```
 
 On peut maintenant voir le flag dans les commentaires.
+
+## **Flag : MCTF{34sy_XXE_1nt0duct10n}**
+
+#chall 
