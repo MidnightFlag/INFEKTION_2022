@@ -21,7 +21,7 @@ On vous donne les éléments suivants :
 
 Script :
 
-    ![](./images/script.png) 
+![](./images/script.png) 
 
 Output : 
 
@@ -39,26 +39,26 @@ L'objectif ici est de déchiffer le flag contenu dans ct.
 
 Nous avons deux clés RSA, K1 et K2 qui ont un modulo commun N. On nous donne la clé privée de K1 à travers la valeur de d1 :
 
-    ![](./images/k1.png) 
+![](./images/k1.png) 
 
 Si on a la valeur de e1, d1, et N il est alors possible de factoriser N en p et q. Avec p et q, on toruve la clé privée K2
 
 La premiere étape consiste à trouver la clé 
 
-    ![](./images/find_key.png) 
+![](./images/find_key.png) 
 
 Maintenant nous avons K, N, e1 et e2. Nous avons un système de 2 équations avec 2 inconnus p et q.
 
 Une des solutions pour résoudre cette équation serait la suivante :
 
-    ![](./images/find_p%26q.png) 
+![](./images/find_p%26q.png) 
 
 la dernière étape consiste a utilisé p&q pour trouver phi et utiliser phi pour trouver la deuxième clé permettant de déchiffrer le flag.
 
-    ![](./images/final_step.png) 
+![](./images/final_step.png) 
 
 Voici le script final :
 
-    ![](./images/solution.png) 
+![](./images/solution.png) 
 
 **Flag : MCTF{Y0u_jU5t_c4n"t_fInd_Th7s_FLaG}**
