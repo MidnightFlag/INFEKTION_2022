@@ -38,8 +38,7 @@ Github  : https://github.com/MidnightFlag
 | [T'es dans ta jalousie, je suis dans mon Jacque Houzit 3/3.](OSINT/Tes_dans_ta_jalousie_je_suis_dans_mon_Jacque_Houzit/Challenge_n°3)| OSINT | Kazuno|Medium|
 | [Watch your driving](OSINT/watch_your_driving)                   | OSINT         | x          |Medium      |
 | [From Russia with love](OSINT/from_russia_with_love)             | OSINT         | x          |Hard        |
-| [Escape route](OSINT/escape_route)                               | OSINT         | x          |Hard        | 
-| [To be private or not to be private](Web/to_be_private_or_not_to_be_private)| Web| Spownark   |Easy        |      
+| [Escape route](OSINT/escape_route)                               | OSINT         | x          |Hard        |     
 | [Unfinished intranet](Web/unfinished_intranet)                   | Web           | .Yo0x      |Easy        | 
 | [Infektion_api](Web/Infektion_api)                               | Web           | .Yo0x      | Medium     |
 | [Bien plus qu'une simpe gallerie](Web/Bien_plus%20qu_une_simpe_gallerie)  | Web  | 0xSysr3ll  |Medium      |
@@ -60,6 +59,7 @@ Github  : https://github.com/MidnightFlag
 | [Sur Écoute](Forensic/Sur_écoute_Réseau_Abyss_Watcher)           | Forensic      | Abyss Watcher|Hard      |
 | [Trousse social](Android/Trousse_social)                         | Android       | ToRr0aN    |  Easy      |
 | [Admin panel](Android/Admin_panel)                               | Android       | Arathor    |  Easy      |
+| [To be private or not to be private](Steganographie/to_be_private_or_not_to_be_private)| Steganography| Spownark   |Easy        |  
 | [sPoNs0r PaGe](Steganographie/sPoNs0r_PaGe)                      | Steganography | x          |Easy        |
 | [Nothing is classified](Steganographie/nothing_is_classified)    | Steganography | x          |Easy        |
 | [Can you hear me?](Steganographie/Can_You_Hear_Me)               | Steganography | A0d3n      |Easy/Medium |
